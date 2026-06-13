@@ -10,9 +10,9 @@ list_tree() {
 
   [ -d "$root" ] || return
 
-  while IFS= read -r -d '' skill_md; do
+  find "$root" -mindepth 2 -maxdepth 2 -type f -name SKILL.md -print | sort | while IFS= read -r skill_md; do
     printf '%-8s %s\n' "$label" "$(basename "$(dirname "$skill_md")")"
-  done < <(find "$root" -mindepth 2 -maxdepth 2 -type f -name SKILL.md -print0 | sort -z)
+  done
 }
 
 list_tree "$repo_root/private" private

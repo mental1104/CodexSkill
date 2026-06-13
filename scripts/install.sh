@@ -138,9 +138,9 @@ install_tree() {
 
   [ -d "$root" ] || return
 
-  while IFS= read -r -d '' skill_md; do
+  find "$root" -mindepth 2 -maxdepth 2 -type f -name SKILL.md -print | sort | while IFS= read -r skill_md; do
     install_skill "$(dirname "$skill_md")" "$label"
-  done < <(find "$root" -mindepth 2 -maxdepth 2 -type f -name SKILL.md -print0 | sort -z)
+  done
 }
 
 ensure_public_submodule() {

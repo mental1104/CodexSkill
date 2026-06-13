@@ -37,6 +37,24 @@ Useful options:
 ./scripts/install.sh --target /path/to/skills
 ```
 
+## Link Private Skills
+
+For day-to-day maintenance, keep `private/` as the source of truth and link runtime skill directories back to it:
+
+```bash
+./scripts/link-private-skills.sh
+```
+
+Common targets:
+
+```bash
+./scripts/link-private-skills.sh --workspace "/path/to/project"
+./scripts/link-private-skills.sh --global --workspace "/path/to/project"
+./scripts/link-private-skills.sh --dry-run --global --workspace "/path/to/project"
+```
+
+The script is a small Bash wrapper around `install.sh --private-only --mode symlink`. It works with the default Bash and core tools on Linux and macOS.
+
 ## Update Public Skills
 
 ```bash
