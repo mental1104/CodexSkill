@@ -1,0 +1,4 @@
+interface:
+  display_name: "Archive Code Demand Note"
+  short_description: "Archive code and requirements into notes"
+  default_prompt: "Use $archive-code-demand-note to turn this code file and original requirement into a self-contained Obsidian archive note."

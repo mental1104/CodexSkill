@@ -1,0 +1,7 @@
+interface:
+  display_name: "Technical Document Optimization"
+  short_description: "Improve technical Obsidian notes with code and test analysis"
+  default_prompt: "Use $technical-document-optimization to review and improve a technical Obsidian note, preserving the original body while adding highlighted explanations, frontmatter, code implementation analysis, and test-case coverage."
+
+policy:
+  allow_implicit_invocation: true
