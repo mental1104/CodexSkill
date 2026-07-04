@@ -1,7 +1,7 @@
 interface:
   display_name: "Blue Espeon Notes"
-  short_description: "Write technical and library notes in the established vault style"
-  default_prompt: "Use $blue-espeon-note-style to create or revise a technical Obsidian note in this vault, including stepwise library tutorial notes with compile-ready examples, comments on Go library-specific code, and build/run outputs when relevant."
+  short_description: "Write and place technical notes in the established vault style"
+  default_prompt: "Use $blue-espeon-note-style to create or revise a technical Obsidian note in this vault, choose the best existing vault directory for reusable topic notes, split Q&A-derived material into single-thesis notes instead of aggregate topic notes, add backlinks, include diagrams when useful, and produce stepwise library tutorial notes with compile-ready examples and build/run outputs when relevant."
 
 policy:
   allow_implicit_invocation: true

@@ -1,6 +1,6 @@
 ---
 name: general-document-optimization
-description: Optimize general Obsidian notes and old non-technical documents from an article-lifecycle perspective, improving title, summary, frontmatter, logic, linear readability, prerequisites, images, diagrams, callouts, and related wikilinks while preserving the original body and marking additions. Use when the user asks to improve a note but does not need code implementation, source-file, or test-case analysis.
+description: Optimize general Obsidian notes and old non-technical documents from an article-lifecycle perspective, improving title, summary, frontmatter, logic, linear readability, conclusion/theme-first structure, wikilink navigation, prerequisites, images, diagrams, callouts, and related links while preserving the original body. Use when the user asks to improve a note but does not need code implementation, source-file, or test-case analysis.
 ---
 
 # General Document Optimization
@@ -11,12 +11,12 @@ Use this skill to review and transform old Obsidian notes into coherent, searcha
 
 - Diagnose before editing unless the user explicitly confirms direct changes.
 - Preserve the original body and intent.
-- New prose added to the note must use Obsidian highlight syntax: `==新增内容==`.
-- If text is only moved, reordered, or typo-corrected, highlight is not required.
+- Add new prose directly in normal Obsidian Markdown. Do not visually mark additions unless the user explicitly asks.
 - Do not rewrite into marketing, textbook, or public-account style.
 - Prefer concise, direct, searchable, reusable wording.
 - Do not add unsupported facts.
 - Use wikilinks only for real prerequisites or related notes.
+- Prefer total-to-detail organization when the note is an overview, introduction, archive, reading note, or concept map: start from conclusions/themes, link to supporting process sections, and keep original/raw information near the end.
 
 ## Diagnosis Stage
 
@@ -80,6 +80,7 @@ Check whether:
 - images or diagrams are explained;
 - prerequisites are linked;
 - related links are useful, not decorative;
+- the opening can serve as a navigation surface when the note has several themes, conclusions, or supporting details;
 - the note can be read linearly from top to bottom.
 
 ## Recommended Note Structure
@@ -89,13 +90,58 @@ Use this order when appropriate:
 1. YAML frontmatter.
 2. Title.
 3. Summary callout.
-4. Prerequisite callout if needed.
-5. Plain-language concept or topic explanation.
-6. What problem the note answers.
-7. Main body reorganized for linear reading.
-8. Images/diagrams with bridging explanations.
-9. Takeaways or conclusion.
-10. Related links.
+4. Conclusion/theme navigation when the note benefits from a total-to-detail structure.
+5. Prerequisite callout if needed.
+6. Plain-language concept or topic explanation.
+7. What problem the note answers.
+8. Supporting process, reasoning, examples, or evidence reorganized for linear reading.
+9. Images/diagrams with bridging explanations.
+10. Original/raw information archive when the source note contains scattered records, excerpts, meeting notes, observations, or source material.
+11. Takeaways or conclusion.
+12. Related links.
+
+## Total-To-Detail Wikilink Navigation
+
+Use this mode for non-technical notes that should be read from the answer/topic outward rather than from old chronological fragments: introductions, overview notes, learning maps, reading notes, research notes, meeting summaries, and archive notes.
+
+Structure:
+
+1. Put the core conclusion, topic, or decision at the top.
+2. Make the first substantial section a navigation surface. Use a short list or table where each item links to:
+   - a concrete support section in the same note, such as `[[#支撑过程：xxx]]`;
+   - real detail notes, prerequisites, or follow-up notes when they already exist.
+3. In the middle, explain the supporting process: reasoning path, examples, observations, comparisons, image explanations, or evidence.
+4. Near the end, preserve original/raw information: old fragments, copied source material, meeting records, reading excerpts, or unprocessed observations.
+5. End with related links or next reading only when they help the reader continue.
+
+Rules:
+
+- The opening should answer "what is this note saying?" before asking the reader to inspect the details.
+- Do not scatter raw material before the conclusion unless the note is intentionally a diary or chronological log.
+- Do not turn every noun into a wikilink. Use wikilinks as routing handles from theme to support, from support to prerequisite, and from conclusion to related detail.
+- When using an Obsidian table, avoid wikilink alias syntax such as `[[#heading|alias]]`; the `|` can break Markdown table parsing. Use `[[#heading]]: explanation` or place the link outside the table.
+- If no real local target exists, use plain text or a deliberate placeholder such as `[[待补：xxx]]` with a short reason.
+
+Suggested skeleton:
+
+```markdown
+> [!summary]
+> 一句话说明主题、结论和阅读方向。
+
+## 核心结论 / 主题导航
+
+| 主题 | 先记住什么 | 支撑过程 / 细节 |
+|---|---|---|
+| [[#支撑过程：xxx]] | 结论或主题判断。 | [[相关细节笔记]] |
+
+## 支撑过程：xxx
+
+原笔记内容重排或新增桥接说明。
+
+## 原始信息 / 资料归档
+
+原始片段、摘录、记录或未加工信息。
+```
 
 ## YAML Frontmatter
 
@@ -177,8 +223,10 @@ When editing a file, report:
 Before finishing:
 
 - Frontmatter exists and fields are coherent.
-- Added prose is highlighted with `==...==`.
+- Added prose reads naturally in the note and is not visually marked unless requested.
 - Title, summary, body, and conclusion are consistent.
+- Conclusion/theme navigation, when present, links to concrete supporting sections or real related notes.
+- Raw/original information is preserved but does not block the reader from seeing the main conclusion first.
 - A reader can read linearly without sudden unexplained concepts.
 - Prerequisites are linked instead of over-explained.
 - Images have bridging explanation.

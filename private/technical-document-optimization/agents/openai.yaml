@@ -1,7 +1,7 @@
 interface:
   display_name: "Technical Document Optimization"
-  short_description: "Improve technical Obsidian notes with code and test analysis"
-  default_prompt: "Use $technical-document-optimization to review and improve a technical Obsidian note, preserving the original body while adding highlighted explanations, frontmatter, code implementation analysis, and test-case coverage."
+  short_description: "Improve technical notes with conclusions, evidence links, code, tests, and Mermaid maps"
+  default_prompt: "Use $technical-document-optimization to improve a technical Obsidian note with total-to-detail structure, conclusion-to-verification wikilinks, frontmatter, source or implementation analysis, centralized source/output archives, inline Mermaid snapshots, data/control/state/concurrency maps, test coverage maps, curated verified extension-reading links for broad sections without local detail, and recorded validation."
 
 policy:
   allow_implicit_invocation: true

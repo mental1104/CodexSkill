@@ -1,6 +1,6 @@
 ---
 name: blue-espeon-note-style
-description: Create or extend technical Obsidian notes in the Blue Espeon vault following the user's established note-generation preferences: same-directory supplement notes, explicit wikilink backlinks, Mermaid flowcharts in necessary sections, concrete examples, reference links, and stepwise library/tutorial notes with compile-ready examples plus build/run outputs. Use when the user asks to generate or revise notes in this vault and wants the output to match the existing style, especially for third-party library usage notes.
+description: "Create or extend technical Obsidian notes in the Blue Espeon vault following the user's established note-generation preferences: same-directory supplement notes, explicit wikilink backlinks, Mermaid flowcharts in necessary sections, concrete examples, reference links, best-fit vault directory placement for reusable topic notes, and stepwise library/tutorial notes with compile-ready examples plus build/run outputs. Use when the user asks to generate or revise notes in this vault and wants the output to match the existing style, especially for third-party library usage notes or technical notes extracted from project reviews."
 ---
 
 # Blue Espeon Note Style
@@ -9,7 +9,8 @@ Use this skill when writing or revising technical notes in this vault and the us
 
 ## Core Preferences
 
-- Default new companion notes to the **same directory** as the source note unless the user says otherwise.
+- Every new Markdown content note in the Blue Espeon vault must be based on `Templates/default-note.md`: keep the `read_status`, `read_depth`, `read_at`, and `read_note` frontmatter keys, include `## AI摘要` and `## 正文`, and place generated note content under `## 正文`. Fill `## AI摘要` only when a concise summary is available. This template rule does not apply to skills, plugin files, templates, or other control/configuration documents.
+- Default new companion notes to the **same directory** as the source note only when the new note is source-specific or project-specific. For durable technical topic notes, first choose the best existing vault directory using the placement rules below.
 - Preserve the existing local naming scheme instead of inventing a new one. For sequenced notes, continue adjacent names such as `2-3a`, `2-3b`.
 - When a new note expands an existing section, create an **explicit double link**:
   - In the source note, add a short wikilink near the relevant heading.
@@ -18,6 +19,7 @@ Use this skill when writing or revising technical notes in this vault and the us
 - Prefer **concrete, compilable or runnable examples** when explaining language features, compiler behavior, tools, or APIs.
 - When discussing implementation details, internals, standards, or current behavior, include **reference links** and note the relevant version/date when it matters.
 - Keep prose **concise, direct, and structured**, but detailed enough to support follow-up analysis.
+- Prefer one independent note per single center thesis. Do not create "Q&A aggregate topic notes" whose structure is just a bundle of unrelated review questions.
 
 ## Library Tutorial Rules
 
@@ -42,21 +44,70 @@ Use these rules when the note teaches a library, package, framework, CLI, or API
 2. Decide whether the task is:
    - an inline expansion inside the existing note, or
    - a new companion note that should live beside it.
-3. If creating a companion note:
+3. Before creating a new note, decide whether it is a project/source companion note or a reusable topic note:
+   - Project/source companion notes stay beside the source note.
+   - Reusable topic notes go to the best existing topic directory, even when the question was discovered while reviewing a project note.
+   - Add backlinks both ways so the original project note keeps the review trail.
+4. For reusable topic notes, identify the single center thesis before writing:
+   - The title should state one reusable technical question, design decision, or mechanism.
+   - If the draft needs several unrelated source Q&A items to justify its table of contents, split it into multiple notes.
+   - A note may cite several Q&A entries only when they all support the same thesis.
+   - Avoid section lists that mirror the source Q&A order; reorganize by concept, decision flow, mechanism, example, and caveat.
+5. Use `tree` or nearby `readme.md` files to inspect the relevant vault hierarchy before choosing a destination when the directory is not obvious.
+6. If creating a companion note:
    - place it in the same directory;
    - continue the local naming pattern;
    - add the backlink line at the top;
    - add a forward wikilink in the source note at the relevant section.
-4. Structure the content so that the reader can scan it top-down:
+7. Structure the content so that the reader can scan it top-down:
    - definition or scope;
    - mechanism or workflow;
    - examples;
    - caveats or boundaries;
    - references when needed.
-5. Add Mermaid diagrams to sections where process understanding matters.
-6. Minimize churn in existing notes. Only edit the source note where the new cross-link is relevant.
+8. Add Mermaid diagrams to sections where process understanding matters.
+9. Minimize churn in existing notes. Only edit the source note where the new cross-link is relevant.
 
-For library tutorial notes, refine step 4 into this concrete section pattern:
+## Single-Thesis Note Rule
+
+When extracting durable notes from review Q&A, the Q&A entries are evidence and backlinks, not the outline. Before creating a topic note, write the intended center thesis in one sentence. If that sentence needs "and" to join unrelated topics, split the note.
+
+Good examples:
+
+- `FastAPI CPU密集型任务执行器设计`: one thesis about where and how CPU-heavy work should leave the event loop.
+- `FastAPI同步阻塞代码发现机制`: one thesis about catching sync blocking calls in async routes.
+- `FastAPI与上层网关超时配置同步`: one thesis about coordinating app timeout and gateway timeout.
+
+Poor examples:
+
+- `FastAPI网关并发与CPU任务方案` when it includes ContextVar, K8S memory, low-frequency precomputation, static analysis, and experiments as peer sections.
+- `网关数据模型与分层设计` when it mixes application layers, Redis async, Serializer APIs, response envelopes, and domain table design.
+
+If several split notes are useful as a learning path, create at most one short index/map note only when it adds navigation value. The index should contain links and ordering guidance, not full answers copied from each child note.
+
+## Directory Placement Rules
+
+Choose the destination by the note's durable subject, not merely by the note where the question originated.
+
+- **Project-specific design, requirements, incident context, or implementation decisions**: keep under `Archive/500-Project/<project>/...`.
+- **Reusable programming language, framework, library, code pattern, tests, or runtime behavior**: use `Archive/200-Program/210-Code/<language>/...`.
+  - Python + FastAPI, Starlette, ASGI, API middleware, response handling, FastAPI concurrency, or FastAPI app architecture: `Archive/200-Program/210-Code/Python/fastapi`.
+  - Python asyncio/event loop/concurrency concepts not tied to FastAPI: `Archive/200-Program/210-Code/Python/asyncio`.
+  - Python SQLAlchemy usage: `Archive/200-Program/210-Code/Python/sqlalchemy`.
+  - Python pytest/testing technique: `Archive/200-Program/210-Code/Python/pytest`.
+  - Python standard-library behavior: `Archive/200-Program/210-Code/Python/stdlib`.
+- **Infrastructure products and operations**: use `Archive/300-Infras/<technology>` such as `Redis`, `Clickhouse`, `Kubernetes`, `Docker`, `PostgreSQL`, or `Pulsar`.
+- **Computer-science concepts independent of one implementation stack**: use `Archive/100-Computer Science/...`, such as Architecture, Operating System, Network, Database, or Distributed System.
+- **Software/tool usage not primarily code-library knowledge**: use `Archive/600-Software/...`.
+- **Playbooks, learning maps, debugging guides, and cross-topic guidance**: use `Guide/...`.
+
+When a project review produces a reusable topic note, put the new note in the reusable topic directory and link it from the project note's Q&A. Example: FastAPI gateway status-code and middleware analysis belongs in `Archive/200-Program/210-Code/Python/fastapi`, not in `Archive/500-Project/<project>/...`.
+
+Do not create a broad reusable note only because several Q&A entries came from one project review session. Split by durable subject first, then place each note in its best directory.
+
+Do not create a new directory just to avoid a decision. If no existing directory is clearly suitable, ask the user to choose the destination.
+
+For library tutorial notes, refine the content-structure step into this concrete section pattern:
 
 1. short purpose/when to use
 2. one full example program
