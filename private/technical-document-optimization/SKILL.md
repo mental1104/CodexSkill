@@ -122,6 +122,18 @@ Rules:
 - Remove empty future-work, TODO, or "next plan" sections from archive notes unless the user explicitly asks to keep them.
 - Preserve original data, code, and outputs. Do not invent new measurements to complete the structure.
 
+### Reproducible Experiment Evidence Chain
+
+For experiment reports, benchmark notes, debugging notes, and fact-verification notes, enforce a complete evidence chain:
+
+1. The core conclusion table must link each conclusion to a concrete verification subsection.
+2. Each verification subsection must link back to the exact archive subsection containing the supporting source code, run command, and raw output.
+3. The archive section must include the minimal source file set or exact source paths, every command needed to reproduce the result, the actual stdout/stderr immediately after each command, and a short next-action note.
+4. If a command succeeds with no output, write `无输出，退出码 0`; if it fails, record the real error, exit code when available, and blocker instead of fabricating expected output.
+5. If the claim is about request concurrency, service lifecycle, network behavior, or framework runtime behavior, prefer a real server/client or framework-level test over an in-process semantic toy test. Keep toy tests only as supporting evidence and state their boundary.
+
+Do not finalize an experiment report where the reader cannot reproduce the opening conclusion from the archived source, commands, and outputs.
+
 Suggested skeleton:
 
 ```markdown
@@ -519,7 +531,9 @@ Before finishing:
 - Title, summary, body, conclusion, and related links are consistent.
 - A reader can read linearly without sudden unexplained concepts, and archive-style notes can also be read non-linearly from conclusions to verification details through wikilinks.
 - Core conclusion tables link each conclusion to a concrete verification subsection and do not use `[[#heading|alias]]` inside Markdown tables.
+- Verification subsections link onward to exact source, command, and raw-output archive subsections, so the evidence chain is conclusion -> verification -> original material.
 - Verification sections sit before file/source/output archives, while raw commands, complete source blocks, and terminal outputs are centralized near the end.
+- Experiment archives include source code or exact file paths, run commands, actual command outputs, and a next-action note.
 - Empty future-work, TODO, or next-plan sections are removed unless the user explicitly requested them.
 - Prerequisites are linked instead of over-explained.
 - Broad concept sections without local detailed notes either link to specific local prerequisites or include a short verified extension-reading list with source quality checked.
