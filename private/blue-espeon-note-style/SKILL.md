@@ -1,202 +1,176 @@
 ---
 name: blue-espeon-note-style
-description: "Create or extend technical Obsidian notes in the Blue Espeon vault following the user's established note-generation preferences: same-directory supplement notes, explicit wikilink backlinks, Mermaid flowcharts in necessary sections, concrete examples, reference links, best-fit vault directory placement for reusable topic notes, and stepwise library/tutorial notes with compile-ready examples plus build/run outputs. Use when the user asks to generate or revise notes in this vault and wants the output to match the existing style, especially for third-party library usage notes or technical notes extracted from project reviews."
+description: Blue Espeon Obsidian vault convention layer. Use only to decide note style, template shape, directory placement, naming, wikilinks, backlinks, Mermaid usage, and single-thesis boundaries. This skill is not a primary document-rewrite executor; pair its conventions with a concrete editing skill such as general-document-optimization, technical-document-optimization, or obsidian-frontmatter-metadata.
 ---
 
 # Blue Espeon Note Style
 
-Use this skill when writing or revising technical notes in this vault and the user wants the output to follow their established note style. If the target file is Markdown in Obsidian, use this skill together with `obsidian-markdown`.
+## Role
 
-## Core Preferences
+This skill defines **vault conventions** for the Blue Espeon Obsidian vault.
 
-- Every new Markdown content note in the Blue Espeon vault must be based on `Templates/default-note.md`: keep the `read_status`, `read_depth`, `read_at`, and `read_note` frontmatter keys, include `## AI摘要` and `## 正文`, and place generated note content under `## 正文`. Fill `## AI摘要` only when a concise summary is available. This template rule does not apply to skills, plugin files, templates, or other control/configuration documents.
-- Default new companion notes to the **same directory** as the source note only when the new note is source-specific or project-specific. For durable technical topic notes, first choose the best existing vault directory using the placement rules below.
-- Preserve the existing local naming scheme instead of inventing a new one. For sequenced notes, continue adjacent names such as `2-3a`, `2-3b`.
-- When a new note expands an existing section, create an **explicit double link**:
-  - In the source note, add a short wikilink near the relevant heading.
-  - In the new note, add a top-line backlink such as `关联笔记：[[Source Note#Section]]`.
-- For explanatory technical notes, include **Mermaid flowcharts in necessary sections**. Prefer diagrams for decision flow, lifecycle flow, compiler/runtime pipeline, or diagnosis workflow. Do not add decorative diagrams.
-- Prefer **concrete, compilable or runnable examples** when explaining language features, compiler behavior, tools, or APIs.
-- When discussing implementation details, internals, standards, or current behavior, include **reference links** and note the relevant version/date when it matters.
-- Keep prose **concise, direct, and structured**, but detailed enough to support follow-up analysis.
-- Prefer one independent note per single center thesis. Do not create "Q&A aggregate topic notes" whose structure is just a bundle of unrelated review questions.
+It answers:
 
-## Library Tutorial Rules
+- where a note should live;
+- how a note should be named;
+- whether a new note should be a companion note or a reusable topic note;
+- what template shape the note should follow;
+- how backlinks and wikilinks should be placed;
+- whether Mermaid is useful;
+- whether the note has one center thesis or should be split.
 
-Use these rules when the note teaches a library, package, framework, CLI, or API through examples.
+It does not perform full note rewrites by itself.
 
-- Every code block must be a **complete minimal unit** that can be compiled or run on its own. For Go, each example should be a full `package main` program unless the user explicitly wants a library snippet instead.
-- For Go library notes, add **succinct code comments on every library-related line or block** inside the Go code block. Comment the import, constructor/setup calls, key helper functions, and important method calls that belong to the library. Do **not** waste comments on obvious Go syntax that is unrelated to the library.
-- Do not merge "prepare workspace" and "compile" into one command block when the reader must paste a file in between. The default order is:
-  1. create directory and `cd`
-  2. instruct the reader to save the example as `main.go` (or the exact required filename)
-  3. initialize dependencies and compile
-  4. show compile result
-  5. show run command
-  6. show run result
-- If local verification is possible, paste the **actual build output** and **actual run output** into the note. If a successful build normally produces no output, show proof of success in a compact way, for example by listing the generated binary.
-- If version resolution matters, record the checked date and the resolved version in the note body.
-- Keep examples operational for copy-paste use. Avoid hidden prerequisites between adjacent command blocks.
+## Use When
 
-## Writing Workflow
+Use this skill when the task involves:
 
-1. Identify the anchor note and its directory.
-2. Decide whether the task is:
-   - an inline expansion inside the existing note, or
-   - a new companion note that should live beside it.
-3. Before creating a new note, decide whether it is a project/source companion note or a reusable topic note:
-   - Project/source companion notes stay beside the source note.
-   - Reusable topic notes go to the best existing topic directory, even when the question was discovered while reviewing a project note.
-   - Add backlinks both ways so the original project note keeps the review trail.
-4. For reusable topic notes, identify the single center thesis before writing:
-   - The title should state one reusable technical question, design decision, or mechanism.
-   - If the draft needs several unrelated source Q&A items to justify its table of contents, split it into multiple notes.
-   - A note may cite several Q&A entries only when they all support the same thesis.
-   - Avoid section lists that mirror the source Q&A order; reorganize by concept, decision flow, mechanism, example, and caveat.
-5. Use `tree` or nearby `readme.md` files to inspect the relevant vault hierarchy before choosing a destination when the directory is not obvious.
-6. If creating a companion note:
-   - place it in the same directory;
-   - continue the local naming pattern;
-   - add the backlink line at the top;
-   - add a forward wikilink in the source note at the relevant section.
-7. Structure the content so that the reader can scan it top-down:
-   - definition or scope;
-   - mechanism or workflow;
-   - examples;
-   - caveats or boundaries;
-   - references when needed.
-8. Add Mermaid diagrams to sections where process understanding matters.
-9. Minimize churn in existing notes. Only edit the source note where the new cross-link is relevant.
+- creating or placing a note in the Blue Espeon vault;
+- deciding note directory or naming;
+- adding companion-note backlinks;
+- checking whether a note violates the single-thesis rule;
+- applying vault-level style expectations to another Obsidian editing skill.
 
-## Single-Thesis Note Rule
+## Do Not Use As Primary Skill When
 
-When extracting durable notes from review Q&A, the Q&A entries are evidence and backlinks, not the outline. Before creating a topic note, write the intended center thesis in one sentence. If that sentence needs "and" to join unrelated topics, split the note.
+- The task only changes YAML metadata: use `obsidian-frontmatter-metadata`.
+- The task rewrites an old non-technical note: use `general-document-optimization`.
+- The task rewrites an old technical note, experiment note, code note, or test note: use `technical-document-optimization`.
+- The task reconstructs source-code context for ChatGPT: use `source-walk`.
 
-Good examples:
+When paired with another skill, this skill supplies conventions only. The concrete editing skill owns the workflow.
 
-- `FastAPI CPU密集型任务执行器设计`: one thesis about where and how CPU-heavy work should leave the event loop.
-- `FastAPI同步阻塞代码发现机制`: one thesis about catching sync blocking calls in async routes.
-- `FastAPI与上层网关超时配置同步`: one thesis about coordinating app timeout and gateway timeout.
+## Core Vault Rules
 
-Poor examples:
+### Default Note Template
 
-- `FastAPI网关并发与CPU任务方案` when it includes ContextVar, K8S memory, low-frequency precomputation, static analysis, and experiments as peer sections.
-- `网关数据模型与分层设计` when it mixes application layers, Redis async, Serializer APIs, response envelopes, and domain table design.
+Every new Markdown content note in the Blue Espeon vault should follow `Templates/default-note.md` unless the target directory clearly uses another established pattern.
 
-If several split notes are useful as a learning path, create at most one short index/map note only when it adds navigation value. The index should contain links and ordering guidance, not full answers copied from each child note.
+Keep:
 
-## Directory Placement Rules
+- `read_status`;
+- `read_depth`;
+- `read_at`;
+- `read_note`;
+- `## AI摘要`;
+- `## 正文`.
 
-Choose the destination by the note's durable subject, not merely by the note where the question originated.
+Generated note content goes under `## 正文`.
+Fill `## AI摘要` only when a concise summary is available.
 
-- **Project-specific design, requirements, incident context, or implementation decisions**: keep under `Archive/500-Project/<project>/...`.
-- **Reusable programming language, framework, library, code pattern, tests, or runtime behavior**: use `Archive/200-Program/210-Code/<language>/...`.
-  - Python + FastAPI, Starlette, ASGI, API middleware, response handling, FastAPI concurrency, or FastAPI app architecture: `Archive/200-Program/210-Code/Python/fastapi`.
-  - Python asyncio/event loop/concurrency concepts not tied to FastAPI: `Archive/200-Program/210-Code/Python/asyncio`.
-  - Python SQLAlchemy usage: `Archive/200-Program/210-Code/Python/sqlalchemy`.
-  - Python pytest/testing technique: `Archive/200-Program/210-Code/Python/pytest`.
-  - Python standard-library behavior: `Archive/200-Program/210-Code/Python/stdlib`.
-- **Infrastructure products and operations**: use `Archive/300-Infras/<technology>` such as `Redis`, `Clickhouse`, `Kubernetes`, `Docker`, `PostgreSQL`, or `Pulsar`.
-- **Computer-science concepts independent of one implementation stack**: use `Archive/100-Computer Science/...`, such as Architecture, Operating System, Network, Database, or Distributed System.
-- **Software/tool usage not primarily code-library knowledge**: use `Archive/600-Software/...`.
-- **Playbooks, learning maps, debugging guides, and cross-topic guidance**: use `Guide/...`.
+This template rule does not apply to skills, plugin files, templates, or other control/configuration documents.
 
-When a project review produces a reusable topic note, put the new note in the reusable topic directory and link it from the project note's Q&A. Example: FastAPI gateway status-code and middleware analysis belongs in `Archive/200-Program/210-Code/Python/fastapi`, not in `Archive/500-Project/<project>/...`.
+### Companion Notes
 
-Do not create a broad reusable note only because several Q&A entries came from one project review session. Split by durable subject first, then place each note in its best directory.
+Use a same-directory companion note only when the new note is source-specific or project-specific.
 
-Do not create a new directory just to avoid a decision. If no existing directory is clearly suitable, ask the user to choose the destination.
+For a companion note:
 
-For library tutorial notes, refine the content-structure step into this concrete section pattern:
-
-1. short purpose/when to use
-2. one full example program
-   - for Go examples, annotate the library-specific parts with concise comments
-3. workspace creation commands
-4. explicit "paste into `main.go`" instruction
-5. compile commands
-6. compile result
-7. run commands
-8. run result
-9. brief caveats or selection guidance
-
-## Diagram Rules
-
-- Add at least one Mermaid diagram when the note explains:
-  - a decision process;
-  - a multi-stage implementation pipeline;
-  - a diagnostic workflow;
-  - a lifecycle or state transition.
-- Prefer `flowchart TD` or `flowchart LR`.
-- Keep node text short and analytic. The diagram should help later reasoning, not just restate prose.
-- For medium notes, 1 to 3 diagrams is the default sweet spot.
-
-Example:
-
-````markdown
-```mermaid
-flowchart TD
-    A["发现问题或概念"] --> B["拆成判断步骤"]
-    B --> C{"是否需要跨函数/跨阶段说明？"}
-    C -->|"否"| D["写正文示例"]
-    C -->|"是"| E["补 Mermaid 流程图"]
-```
-````
-
-## Cross-Link Pattern
-
-Use this pattern when making a companion note:
-
-````markdown
-关联笔记：[[原笔记名#相关章节]]
-
-# 新笔记标题
-````
-
-In the source note, use a short local sentence near the heading, for example:
+1. Place it beside the source note.
+2. Preserve the local naming scheme.
+3. Add a top-line backlink such as:
 
 ```markdown
-更详细的说明见：[[新笔记名]]
+关联笔记：[[Source Note#Section]]
 ```
 
-## Reference Rules
+4. Add a short forward wikilink in the source note near the relevant section.
 
-- Prefer official or primary sources when the note describes implementation details.
-- Use Markdown links for external references.
-- If the topic is version-sensitive, state the checked date and version in the note body.
-- Do not pad the note with low-signal links; include only the references that support the explanation.
+### Reusable Topic Notes
 
-## Editing Discipline
+For durable reusable knowledge, choose the best existing topic directory instead of blindly placing the note beside the source note.
 
-- Preserve the tone and section style of nearby notes.
-- Do not rename existing notes unless the user explicitly asks.
-- Do not add frontmatter unless the surrounding note set already uses it or the user asks for it.
-- When updating an existing note, avoid large rewrites if a targeted insert is enough.
+A reusable note should have one center thesis.
 
-## Default Output Shape
+Good:
 
-For a new technical companion note, this is the preferred baseline:
+- `FastAPI CPU密集型任务执行器设计`
+- `FastAPI同步阻塞代码发现机制`
+- `FastAPI与上层网关超时配置同步`
 
-1. Backlink line
-2. H1 title
-3. Short scope/definition section
-4. Mechanism section with one Mermaid diagram if needed
-5. Concrete examples
-6. Caveats or interpretation notes
-7. Reference links when the topic depends on external authority
+Bad:
 
-For a library usage note, prefer this stricter baseline instead:
+- `FastAPI网关并发与CPU任务方案` when it mixes ContextVar, K8S memory, precomputation, static analysis, and experiments as peer topics.
+- `网关数据模型与分层设计` when it mixes application layers, Redis async, Serializer APIs, response envelopes, and domain table design.
 
-1. H1 title
-2. short scope and 2 to 4 key takeaways
-3. note that each code block is independently compilable/runnable
-4. repeated per-example structure:
-   - full example program
-   - concise comments on the library-specific lines inside the Go code
-   - workspace creation commands
-   - instruction to save as `main.go`
-   - compile commands
-   - compile result
-   - run commands
-   - run result
-5. selection guidance or caveats
+If the thesis sentence needs "and" to join unrelated topics, split the note.
+
+### Directory Placement
+
+Choose by durable subject, not by where the question originated.
+
+- Project-specific design, requirements, incidents, or implementation decisions: `Archive/500-Project/<project>/...`.
+- Reusable programming language, framework, library, code pattern, tests, or runtime behavior: `Archive/200-Program/210-Code/<language>/...`.
+  - FastAPI, Starlette, ASGI, API middleware, response handling, concurrency, or app architecture: `Archive/200-Program/210-Code/Python/fastapi`.
+  - Python asyncio/event loop/concurrency concepts not tied to FastAPI: `Archive/200-Program/210-Code/Python/asyncio`.
+  - SQLAlchemy: `Archive/200-Program/210-Code/Python/sqlalchemy`.
+  - pytest/testing technique: `Archive/200-Program/210-Code/Python/pytest`.
+  - Python standard library behavior: `Archive/200-Program/210-Code/Python/stdlib`.
+- Infrastructure products and operations: `Archive/300-Infras/<technology>`.
+- Computer-science concepts independent of one implementation stack: `Archive/100-Computer Science/...`.
+- Software/tool usage not primarily code-library knowledge: `Archive/600-Software/...`.
+- Playbooks, learning maps, debugging guides, and cross-topic guidance: `Guide/...`.
+
+Do not create a new directory just to avoid a decision. If no existing directory is clearly suitable, ask the user or report uncertainty.
+
+## Wikilink Rules
+
+Use wikilinks for:
+
+- real prerequisites;
+- source notes;
+- durable related notes;
+- companion-note navigation.
+
+Do not wikilink every noun.
+Do not add decorative links.
+Do not use Obsidian table cells with `[[#heading|alias]]`; the `|` can break Markdown table parsing. Use `[[#heading]]: explanation` instead.
+
+## Mermaid Rules
+
+Mermaid is a navigation aid, not decoration.
+
+Use Mermaid when the note explains:
+
+- decision flow;
+- lifecycle;
+- runtime pipeline;
+- diagnosis workflow;
+- control/data flow;
+- state transition.
+
+Default: 5-9 nodes.
+Split large diagrams.
+Place the diagram near the paragraph it explains.
+Add one sentence before and after the diagram to explain what to observe and what conclusion to take.
+
+Do not use Mermaid for flat lists, simple definitions, or decorative summaries.
+
+## Example Rules
+
+When the note teaches a library, package, framework, CLI, or API through examples:
+
+1. Prefer complete minimal examples that can compile or run.
+2. For Go examples, use a full `package main` program unless the user asks otherwise.
+3. Comment library-specific lines, not obvious language syntax.
+4. Keep workspace setup, file paste, dependency install, compile, and run steps separate when the reader must act between steps.
+5. If local verification is possible, paste actual build/run output.
+
+## Output Contract
+
+When this skill is used alone, return only a style decision packet:
+
+```markdown
+## Blue Espeon Style Decision
+
+- Note type: companion / reusable topic / inline expansion
+- Suggested location: `<path>`
+- Naming rule: <rule>
+- Required backlinks: <yes/no + where>
+- Template: <default-note / existing local pattern / unknown>
+- Mermaid: <needed / not needed + reason>
+- Split required: <yes/no + reason>
+- Uncertainty: <max 3 bullets>
+```
+
+When paired with another skill, do not output a separate long report unless the user asks.
