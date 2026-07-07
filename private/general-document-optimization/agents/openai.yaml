@@ -1,7 +1,0 @@
-interface:
-  display_name: "General Document Optimization"
-  short_description: "Improve non-technical Obsidian notes with conclusion-first navigation"
-  default_prompt: "Use $general-document-optimization to review and improve a non-technical Obsidian note, preserving the original body while adding structure, frontmatter, conclusion/theme navigation, supporting-process sections, prerequisites, callouts, diagrams, and related links."
-
-policy:
-  allow_implicit_invocation: true
