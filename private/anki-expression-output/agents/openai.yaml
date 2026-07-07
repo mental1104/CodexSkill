@@ -1,6 +1,0 @@
-interface:
-  display_name: "Anki Expression Output"
-  short_description: "Import expression TSVs into Anki"
-  default_prompt: "Use $anki-expression-output to import a sentence_usage_analysis.tsv file into Anki or update the expression card templates for ChatGPT feedback."
-policy:
-  allow_implicit_invocation: true
