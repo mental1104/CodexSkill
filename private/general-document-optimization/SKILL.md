@@ -1,234 +1,169 @@
 ---
 name: general-document-optimization
-description: Optimize general Obsidian notes and old non-technical documents from an article-lifecycle perspective, improving title, summary, frontmatter, logic, linear readability, conclusion/theme-first structure, wikilink navigation, prerequisites, images, diagrams, callouts, and related links while preserving the original body. Use when the user asks to improve a note but does not need code implementation, source-file, or test-case analysis.
+description: Non-technical Obsidian note execution layer. Use to diagnose or improve old general notes, reading notes, personal planning notes, meeting notes, research notes, travel notes, reflection notes, and other non-code documents. For vault style and placement, follow blue-espeon-note-style. For metadata-only edits, use obsidian-frontmatter-metadata. Do not use for technical implementation, experiments, benchmarks, tests, or source-code notes.
 ---
 
 # General Document Optimization
 
-Use this skill to review and transform old Obsidian notes into coherent, searchable, maintainable documents. This is the non-technical version: it excludes source-code implementation analysis and test-case explanation.
+## Role
+
+This skill is the **general note execution layer**.
+
+It improves existing non-technical Obsidian notes into coherent, searchable, maintainable documents while preserving the original intent and useful raw material.
+
+It should not own vault-wide conventions.
+
+Delegate:
+
+- Vault style, directory placement, naming, backlinks, Mermaid conventions, and single-thesis boundaries: `blue-espeon-note-style`.
+- Metadata-only edits: `obsidian-frontmatter-metadata`.
+- Technical note rewriting: `technical-document-optimization`.
+- Source-code scene reconstruction: `source-walk`.
+
+## Use When
+
+Use for:
+
+- reading notes;
+- life planning notes;
+- meeting notes;
+- research notes;
+- travel notes;
+- reflection notes;
+- idea fragments;
+- general non-technical archive notes.
+
+Main effect:
+
+- conclusion or topic becomes clear;
+- scattered fragments become readable;
+- raw material is preserved near the end when useful;
+- prerequisites and related links become useful instead of decorative;
+- the note becomes easier to search and revisit.
+
+## Do Not Use When
+
+Do not use for:
+
+- code implementation notes;
+- experiment reports;
+- benchmark notes;
+- debugging records;
+- pprof/trace notes;
+- API/framework/library tutorials;
+- algorithm/data-structure notes;
+- source-code analysis;
+- metadata-only edits.
 
 ## Core Rules
 
-- Diagnose before editing unless the user explicitly confirms direct changes.
-- Preserve the original body and intent.
-- Add new prose directly in normal Obsidian Markdown. Do not visually mark additions unless the user explicitly asks.
-- Do not rewrite into marketing, textbook, or public-account style.
-- Prefer concise, direct, searchable, reusable wording.
-- Do not add unsupported facts.
-- Use wikilinks only for real prerequisites or related notes.
-- Prefer total-to-detail organization when the note is an overview, introduction, archive, reading note, or concept map: start from conclusions/themes, link to supporting process sections, and keep original/raw information near the end.
+1. Diagnose before editing unless the user explicitly confirms direct changes.
+2. Preserve original body, intent, and useful raw material.
+3. Do not rewrite into marketing, textbook, public-account, or motivational-poster style.
+4. Prefer concise, direct, searchable, reusable wording.
+5. Do not add unsupported facts.
+6. Use wikilinks only for real prerequisites or related notes.
+7. Prefer total-to-detail organization when the note is an overview, introduction, archive, reading note, meeting note, research note, or concept map.
+8. Keep raw fragments, excerpts, meeting records, and old chronological material near the end unless chronology is the point.
+9. Do not over-format with decorative callouts or diagrams.
 
-## Diagnosis Stage
+## Diagnosis Output
 
-When the user provides a note path or content, first inspect the note. Then output:
+When asked to diagnose first, output:
 
-````markdown
+```markdown
 # 旧笔记改造建议
 
-## 总体判断
+## 1. 选择理由
 
-这篇笔记目前的问题是：
+- Type: general note
+- Reason: <why this is not a technical note>
 
-## 需要修改的地方
+## 2. 总体判断
 
-### 1. xxx
+这篇笔记目前的主要问题是：
+
+## 3. 需要修改的地方
+
+### 1. <issue>
 
 - 问题：
 - 为什么需要改：
 - 建议怎么改：
 
-## 可能缺失的前置知识
+## 4. 需要保留的原始材料
 
-- [[xxx]]
-  - 缺失原因：
-  - 建议补充位置：
+- <fragments / excerpts / images / observations / meeting records>
 
-## 建议更新的 YAML Front Matter
+## 5. 不确定点
 
-```yaml
----
-title:
-summary:
-tags:
-  -
-aliases:
-  -
-related:
-  - "[[]]"
-created:
-updated:
----
-```
+- <max 3 bullets>
 
-## 等待确认
+## 6. 等待确认
 
 请确认是否按以上方案改造。
-````
+```
 
-If the user has already confirmed, proceed to edit.
+If the user already asked to write directly, edit directly.
 
-## Required Review Dimensions
+## Preferred Structure
 
-Check whether:
-
-- title accurately summarizes the body;
-- opening explains what the note is about;
-- summary helps future readers decide whether to read;
-- paragraphs are in a natural order;
-- concepts appear after enough context;
-- conclusion follows from the body;
-- images or diagrams are explained;
-- prerequisites are linked;
-- related links are useful, not decorative;
-- the opening can serve as a navigation surface when the note has several themes, conclusions, or supporting details;
-- the note can be read linearly from top to bottom.
-
-## Recommended Note Structure
-
-Use this order when appropriate:
+Use this structure when appropriate:
 
 1. YAML frontmatter.
 2. Title.
-3. Summary callout.
-4. Conclusion/theme navigation when the note benefits from a total-to-detail structure.
-5. Prerequisite callout if needed.
-6. Plain-language concept or topic explanation.
-7. What problem the note answers.
-8. Supporting process, reasoning, examples, or evidence reorganized for linear reading.
-9. Images/diagrams with bridging explanations.
-10. Original/raw information archive when the source note contains scattered records, excerpts, meeting notes, observations, or source material.
-11. Takeaways or conclusion.
-12. Related links.
+3. Summary or AI摘要.
+4. Core conclusion, topic, or decision.
+5. Navigation surface when the note has several themes.
+6. Plain-language context.
+7. Supporting process, reasoning, examples, observations, or evidence.
+8. Images/diagrams with bridging explanations when useful.
+9. Original/raw information archive when the source note contains scattered material.
+10. Takeaways or conclusion.
+11. Related links.
 
-## Total-To-Detail Wikilink Navigation
+## Total-To-Detail Rule
 
-Use this mode for non-technical notes that should be read from the answer/topic outward rather than from old chronological fragments: introductions, overview notes, learning maps, reading notes, research notes, meeting summaries, and archive notes.
+Use this mode when the reader should first know what the note is saying before inspecting old fragments.
 
 Structure:
 
-1. Put the core conclusion, topic, or decision at the top.
-2. Make the first substantial section a navigation surface. Use a short list or table where each item links to:
-   - a concrete support section in the same note, such as `[[#支撑过程：xxx]]`;
-   - real detail notes, prerequisites, or follow-up notes when they already exist.
-3. In the middle, explain the supporting process: reasoning path, examples, observations, comparisons, image explanations, or evidence.
-4. Near the end, preserve original/raw information: old fragments, copied source material, meeting records, reading excerpts, or unprocessed observations.
-5. End with related links or next reading only when they help the reader continue.
+1. Put the core conclusion, topic, or decision near the top.
+2. Make the first substantial section a navigation surface when the note has multiple themes.
+3. Explain the supporting process in the middle.
+4. Preserve raw material near the end.
+5. Add related links only when they help future navigation.
 
-Rules:
-
-- The opening should answer "what is this note saying?" before asking the reader to inspect the details.
-- Do not scatter raw material before the conclusion unless the note is intentionally a diary or chronological log.
-- Do not turn every noun into a wikilink. Use wikilinks as routing handles from theme to support, from support to prerequisite, and from conclusion to related detail.
-- When using an Obsidian table, avoid wikilink alias syntax such as `[[#heading|alias]]`; the `|` can break Markdown table parsing. Use `[[#heading]]: explanation` or place the link outside the table.
-- If no real local target exists, use plain text or a deliberate placeholder such as `[[待补：xxx]]` with a short reason.
-
-Suggested skeleton:
-
-```markdown
-> [!summary]
-> 一句话说明主题、结论和阅读方向。
-
-## 核心结论 / 主题导航
-
-| 主题 | 先记住什么 | 支撑过程 / 细节 |
-|---|---|---|
-| [[#支撑过程：xxx]] | 结论或主题判断。 | [[相关细节笔记]] |
-
-## 支撑过程：xxx
-
-原笔记内容重排或新增桥接说明。
-
-## 原始信息 / 资料归档
-
-原始片段、摘录、记录或未加工信息。
-```
-
-## YAML Frontmatter
-
-Create or update:
-
-```yaml
----
-title: 笔记标题
-summary: 用一到三句话说明这篇笔记解决什么问题、核心结论是什么
-tags:
-  - 标签1
-  - 标签2
-aliases:
-  - 可能会搜索到的别名1
-related:
-  - "[[相关笔记1]]"
-created:
-updated: YYYY-MM-DD
----
-```
-
-Rules:
-
-- `title`: clear and searchable.
-- `summary`: explain the note’s object, scope, and conclusion.
-- `tags`: only theme/use tags, no status/source tags.
-- `aliases`: search anchors, old titles, common names.
-- `related`: only strongly related notes.
-- `created`: preserve existing value if present, otherwise leave blank.
-- `updated`: current date.
-
-## Prerequisites And Wikilinks
-
-If a reader may lack necessary background:
-
-```markdown
-## 可能缺失的前置知识
-
-- [[前置知识笔记名]]
-  - 缺失原因：
-  - 建议补充位置：
-```
-
-If the note name is unknown:
-
-```markdown
-- [[待补：xxx]]
-  - 缺失原因：
-  - 建议之后新建或链接已有笔记。
-```
-
-Do not force long prerequisite explanations into the current note unless they are necessary to understand the note.
-
-## Images, Callouts, And Mermaid
-
-- Every image should have surrounding prose:
-  - before the image: what to look at;
-  - after the image if needed: what conclusion follows.
-- Use callouts sparingly:
-  - `[!summary]` for summary;
-  - `[!note]` for memory hooks or context;
-  - `[!tip]` for selection rules;
-  - `[!warning]` for misuse or caveats.
-- Use Mermaid only when it improves readability, such as flow, decision trees, timelines, mappings, or relationships.
-- Mermaid node labels should be quoted when they include brackets or symbols.
-
-## Output After Editing
-
-When editing a file, report:
-
-- file path;
-- major structural changes;
-- frontmatter changes;
-- any added prerequisites/related links;
-- any sections still uncertain.
+Do not scatter raw material before the conclusion unless the note is intentionally a diary, timeline, or chronological log.
 
 ## Validation Checklist
 
-Before finishing:
+Before finishing, check:
 
-- Frontmatter exists and fields are coherent.
-- Added prose reads naturally in the note and is not visually marked unless requested.
-- Title, summary, body, and conclusion are consistent.
-- Conclusion/theme navigation, when present, links to concrete supporting sections or real related notes.
-- Raw/original information is preserved but does not block the reader from seeing the main conclusion first.
-- A reader can read linearly without sudden unexplained concepts.
-- Prerequisites are linked instead of over-explained.
-- Images have bridging explanation.
-- Callouts and Mermaid diagrams improve readability rather than decorate.
-- No code implementation or test analysis is added; use `technical-document-optimization` for that.
+- the note is genuinely non-technical;
+- original intent is preserved;
+- no unsupported facts were added;
+- metadata rules did not drift from `obsidian-frontmatter-metadata`;
+- vault style did not drift from `blue-espeon-note-style`;
+- raw material was preserved when useful;
+- links are useful, not decorative;
+- the opening answers what the note is about.
+
+## Chat Output Policy
+
+After editing, do not paste the full note unless the user asks.
+
+Return:
+
+```markdown
+## 完成情况
+
+- Edited: `<path>`
+- Main changes:
+  - ...
+  - ...
+- Preserved:
+  - ...
+- Uncertainty:
+  - ...
+```
