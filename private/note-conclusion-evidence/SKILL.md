@@ -268,9 +268,13 @@ Before embedding lifecycle material, check whether the vault already has a suita
 
 If a suitable note exists, link to it from the raw material section instead of copying the whole setup again.
 
-If no suitable note exists, create or recommend a separate reusable operation-manual note when the setup is likely to be reused.
+If no suitable note exists and the setup is likely to be reused, do not create that reusable note immediately.
 
-Use a separate reusable note when the material is:
+First finish the current note with the available local material and a short reusable-note proposal.
+
+Then ask the user whether to create the reusable note and where it should live in the vault.
+
+A separate reusable note is worth proposing when the material is:
 
 - common across multiple notes;
 - likely to be referenced by 3 or more notes;
@@ -302,7 +306,21 @@ This proof assumes:
 Experiment-specific seed data is included below because it belongs only to this note.
 ```
 
+Good reusable note proposal:
+
+```markdown
+## 可复用笔记建议
+
+建议单独创建：`Redis 本地实验环境`
+
+原因：Redis 启动、端口、连通性检查、清理命令会被多篇 Redis 实验笔记复用。
+
+当前笔记已完成；是否要新开这篇可复用笔记？如果要，放在哪个目录？
+```
+
 Do not make every raw material item an external note. Only extract stable, reusable lifecycle material.
+
+Do not create a new reusable note without explicit user confirmation.
 
 ## Raw Material Rules
 
@@ -314,7 +332,7 @@ For code or experiments, preserve enough to rerun or rebuild:
 - file content or file tree;
 - parameters;
 - environment assumptions;
-- lifecycle bootstrap from zero to proof initial state, or a link to a reusable lifecycle note;
+- lifecycle bootstrap from zero to proof initial state, a link to an existing reusable lifecycle note, or a proposal for creating one;
 - execution method;
 - key long outputs;
 - benchmark tables;
@@ -336,7 +354,7 @@ Prefer idempotent and single-shot reproduction materials.
 
 If a script is required, include the script or the exact path plus enough content to recreate it.
 
-Never keep only a vague note like `ran benchmark`, `see script`, or `see Redis setup` without either enough local detail or a concrete Obsidian link to the reusable note.
+Never keep only a vague note like `ran benchmark`, `see script`, or `see Redis setup` without either enough local detail, a concrete Obsidian link to the reusable note, or a reusable-note proposal awaiting confirmation.
 
 ## Link Rules
 
@@ -383,7 +401,12 @@ After creating or editing the note, respond with:
 - 主要结论：
   - ...
 - 证据链：
-  - `结论 -> proof -> raw material/reusable note/none`
+  - `结论 -> proof -> raw material/reusable note/proposal/none`
+- 可复用笔记建议：
+  - 是否建议新开：是/否
+  - 建议标题：`...`
+  - 建议原因：...
+  - 需要用户确认目录：是/否
 - 不确定点：
   - ...
 ```
