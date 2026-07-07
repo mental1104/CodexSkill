@@ -35,9 +35,9 @@ Use for current context, chat history, terminal output, or final working command
 Extract:
 
 - prerequisites;
-- steps;
-- commands;
-- expected output;
+- shortest working steps;
+- copyable commands;
+- only essential verification checks;
 - common errors;
 - rollback or cleanup.
 
@@ -62,7 +62,7 @@ Use `note-conclusion-evidence` when the main value is proof.
 1. Purpose.
 2. Prerequisites.
 3. Steps.
-4. Expected result.
+4. Minimal verification.
 5. Common errors.
 6. Rollback or cleanup.
 7. Links to deeper explanation only when useful.
@@ -71,9 +71,63 @@ Use `note-conclusion-evidence` when the main value is proof.
 
 Keep it short.
 
-Prefer commands, checks, and expected output over explanation.
+Prefer commands and checks over explanation.
 
 Do not explain theory unless it prevents a dangerous mistake.
+
+## Quiet Command Rule
+
+Operation manuals should follow command-line ergonomics:
+
+```text
+No response is often the best response.
+```
+
+Do not add `Expected output` or `State after` after every command by default.
+
+For most setup/configuration procedures, provide a clean sequence of copyable commands and let the user execute them top to bottom.
+
+Only include expected output or state notes when:
+
+- the command is a verification checkpoint;
+- the output is needed to copy into the next step;
+- the operation is destructive, dangerous, or hard to undo;
+- the command commonly fails in a confusing way;
+- the output is the user's only evidence that setup worked;
+- different output changes the next action.
+
+Good:
+
+```bash
+git config --global user.name "mental1104"
+git config --global user.email "mental1104@gmail.com"
+git config --global init.defaultBranch main
+```
+
+Then one verification block:
+
+```bash
+git config --global --list
+```
+
+Bad:
+
+```markdown
+Expected output: no output means success
+State after: user.name is configured
+```
+
+Do not repeat this after every quiet command.
+
+## Command Style
+
+Commands should be directly copyable.
+
+Prefer one coherent command block per phase.
+
+Add short comments only when they prevent misuse.
+
+Avoid wrapping every command in prose.
 
 ## Output Policy
 
