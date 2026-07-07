@@ -56,6 +56,7 @@ Extract:
 - short copyable commands and outputs needed for the proof;
 - long reproducible materials when needed;
 - lifecycle bootstrap material when the proof assumes a prepared state;
+- reusable lifecycle references when a shared note already exists or should exist;
 - boundaries;
 - uncertainty.
 
@@ -218,7 +219,7 @@ These should usually stay inside the proof section.
 
 ## Lifecycle Bootstrap Rule
 
-If a proof section begins from a prepared state, the raw material archive must explain how to reach that state from zero.
+If a proof section begins from a prepared state, the raw material archive must explain how to reach that state from zero or link to a reusable lifecycle note that already explains it.
 
 This includes enough lifecycle material to answer:
 
@@ -230,7 +231,7 @@ empty environment / fresh repo / no service
 -> proof section initial state reached
 ```
 
-For Redis-like notes, this usually means preserving:
+For Redis-like notes, this usually means preserving or linking to:
 
 - how Redis was started;
 - how the target port was chosen;
@@ -240,7 +241,7 @@ For Redis-like notes, this usually means preserving:
 - how to verify the initial key state before the proof command begins;
 - how to clean up afterward.
 
-For application experiments, this usually means preserving:
+For application experiments, this usually means preserving or linking to:
 
 - setup script or file tree creation;
 - dependency install command;
@@ -251,7 +252,57 @@ For application experiments, this usually means preserving:
 
 If the lifecycle bootstrap is short and only used once, it may still be placed in raw material when it would distract from conclusion proof.
 
-Proof sections should link to this raw material when they assume that starting state.
+Proof sections should link to this raw material or reusable lifecycle note when they assume that starting state.
+
+## Reusable Lifecycle Material Rule
+
+Do not duplicate common lifecycle/bootstrap material across many notes.
+
+Before embedding lifecycle material, check whether the vault already has a suitable note for that reusable setup, such as:
+
+```markdown
+[[Redis 本地实验环境]]
+[[Redis Docker 启动与清理]]
+[[FastAPI CPU-bound Benchmark 实验环境]]
+```
+
+If a suitable note exists, link to it from the raw material section instead of copying the whole setup again.
+
+If no suitable note exists, create or recommend a separate reusable operation-manual note when the setup is likely to be reused.
+
+Use a separate reusable note when the material is:
+
+- common across multiple notes;
+- likely to be referenced by 3 or more notes;
+- stable enough to maintain once;
+- about environment setup, service startup, dependency install, benchmark harness setup, or shared cleanup;
+- not specific to one conclusion.
+
+Embed the material directly in the current raw material archive when it is:
+
+- one-off;
+- experiment-specific;
+- tightly coupled to this note's evidence;
+- unlikely to be reused;
+- short enough that a separate note would create navigation overhead.
+
+Good raw material reference:
+
+```markdown
+### 9.1 Raw - Lifecycle bootstrap
+
+Shared setup: [[Redis 本地实验环境]]
+
+This proof assumes:
+
+- Redis is running on `127.0.0.1:6380`;
+- `redis-cli` is available;
+- test keys use the `lab:*` namespace.
+
+Experiment-specific seed data is included below because it belongs only to this note.
+```
+
+Do not make every raw material item an external note. Only extract stable, reusable lifecycle material.
 
 ## Raw Material Rules
 
@@ -263,7 +314,7 @@ For code or experiments, preserve enough to rerun or rebuild:
 - file content or file tree;
 - parameters;
 - environment assumptions;
-- lifecycle bootstrap from zero to proof initial state;
+- lifecycle bootstrap from zero to proof initial state, or a link to a reusable lifecycle note;
 - execution method;
 - key long outputs;
 - benchmark tables;
@@ -285,7 +336,7 @@ Prefer idempotent and single-shot reproduction materials.
 
 If a script is required, include the script or the exact path plus enough content to recreate it.
 
-Never keep only a vague note like `ran benchmark` or `see script` without enough reproducible detail.
+Never keep only a vague note like `ran benchmark`, `see script`, or `see Redis setup` without either enough local detail or a concrete Obsidian link to the reusable note.
 
 ## Link Rules
 
@@ -295,6 +346,7 @@ Use Obsidian heading links:
 [[#4.1 Proof - Redis pipeline improves throughput]]
 [[#9.1 Raw - Redis benchmark harness]]
 [[#9.2 Raw - Lifecycle bootstrap]]
+[[Redis 本地实验环境]]
 ```
 
 Every important conclusion links to one proof section.
@@ -310,7 +362,7 @@ Preserve commands, outputs, screenshots, metrics, source snippets, tables, and p
 Choose placement by size and reading flow:
 
 - short and proof-critical: proof section;
-- long, reusable, or lifecycle/bootstrap material: raw material archive.
+- long, reusable, or lifecycle/bootstrap material: raw material archive or linked reusable note.
 
 For proof sections, preserve copyability first. Add expected output and state annotations around the command block instead of replacing the command block with a table.
 
@@ -331,7 +383,7 @@ After creating or editing the note, respond with:
 - 主要结论：
   - ...
 - 证据链：
-  - `结论 -> proof -> raw material/none`
+  - `结论 -> proof -> raw material/reusable note/none`
 - 不确定点：
   - ...
 ```
