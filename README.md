@@ -9,6 +9,15 @@ Personal Codex skill collection with a split between first-party skills and publ
 - `public/obsidian-skills/`: public upstream skills from `kepano/obsidian-skills`, tracked as a git submodule.
 - `scripts/install.sh`: links the optional `ROUTER` and every discovered skill into `${CODEX_HOME:-$HOME/.codex}/skills`.
 
+## ChatGPT Chat Skills
+
+These skills are currently written for ChatGPT chat-triggered workflows, not Codex coding or shell-execution workflows.
+
+| Skill | Use when the user wants to... |
+|---|---|
+| `task-harvest` | turn the current conversation into a small JSON todo list |
+| `english-harvest` | extract reusable English expressions from the current conversation |
+
 ## Active Note Skills
 
 The Obsidian note system is organized by future reading intention, not by "general vs technical" topic category.
