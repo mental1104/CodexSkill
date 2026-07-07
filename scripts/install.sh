@@ -7,6 +7,7 @@ target="${CODEX_HOME:-$HOME/.codex}/skills"
 force=0
 dry_run=0
 list_only=0
+router_root="$repo_root/ROUTER"
 private_root="$repo_root/private"
 public_root="$repo_root/public/obsidian-skills/skills"
 
@@ -14,7 +15,7 @@ usage() {
   cat <<'USAGE'
 Usage: scripts/install.sh [options]
 
-Link every skill in this repository into ${CODEX_HOME:-$HOME/.codex}/skills.
+Link the optional repository ROUTER and every skill into ${CODEX_HOME:-$HOME/.codex}/skills.
 
 Options:
   --target DIR   Link into DIR instead of the default skills directory.
@@ -105,6 +106,10 @@ for_each_skill() {
   local root
   local label
   local dir
+
+  if [ -f "$router_root/SKILL.md" ]; then
+    "$callback" "$router_root" router
+  fi
 
   for root in "$private_root" "$public_root"; do
     [ -d "$root" ] || continue
