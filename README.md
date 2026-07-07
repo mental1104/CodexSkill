@@ -4,9 +4,28 @@ Personal Codex skill collection with a split between first-party skills and publ
 
 ## Layout
 
+- `ROUTER/`: runtime routing skill. It is installed as `${CODEX_HOME:-$HOME/.codex}/skills/ROUTER` when `ROUTER/SKILL.md` exists.
 - `private/`: skills maintained directly in this repository.
 - `public/obsidian-skills/`: public upstream skills from `kepano/obsidian-skills`, tracked as a git submodule.
-- `scripts/install.sh`: links every skill into `${CODEX_HOME:-$HOME/.codex}/skills`.
+- `scripts/install.sh`: links the optional `ROUTER` and every discovered skill into `${CODEX_HOME:-$HOME/.codex}/skills`.
+
+## Active Note Skills
+
+The Obsidian note system is organized by future reading intention, not by "general vs technical" topic category.
+
+| Skill | Use when the future reader wants to... |
+|---|---|
+| `note-linear-achievement` | understand how a goal was reached step by step |
+| `note-conclusion-evidence` | read conclusions first, then drill down into verification and raw evidence |
+| `note-operation-manual` | follow the shortest repeatable procedure without reading theory |
+
+Helper skills:
+
+| Skill | Narrow responsibility |
+|---|---|
+| `blue-espeon-note-style` | vault style, directory placement, naming, backlinks, Mermaid convention, single-thesis boundary |
+| `obsidian-frontmatter-metadata` | `summary`, `aliases`, and `tags` only |
+| `source-walk` | source-code context snapshot reports under `/tmp` for ChatGPT analysis |
 
 ## Install
 
