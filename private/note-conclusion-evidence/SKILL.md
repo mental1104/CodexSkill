@@ -53,7 +53,7 @@ Extract:
 - conclusions;
 - evidence;
 - proof process;
-- short commands and outputs needed for the proof;
+- short copyable commands and outputs needed for the proof;
 - long reproducible materials when needed;
 - lifecycle bootstrap material when the proof assumes a prepared state;
 - boundaries;
@@ -126,48 +126,64 @@ Keep the proof on the main road.
 
 Do not dump every detail into the proof section.
 
-Short terminal commands, short Redis/SQL interactions, short benchmark commands, compact tables, and short outputs belong directly in the proof section when they make the proof clearer.
+Short terminal commands, short Redis/SQL interactions, short benchmark commands, compact outputs, and small result tables belong directly in the proof section when they make the proof clearer.
 
 Do not move short commands to the raw material archive merely because they are commands.
 
-## Proof State Annotation Rules
+## Copyable Command Rule
 
-For command-line, Redis, SQL, shell, REPL, API, or similar interactive proof steps, do not list commands without state annotations.
+Proof commands should remain directly copyable whenever possible.
 
-Each command or logical command group should make clear:
+Do not turn runnable command sequences into Markdown tables just to annotate state.
 
-- command;
-- expected output;
-- state before or assumption;
-- state after;
-- why this state change matters to the conclusion.
+Prefer annotated command blocks plus nearby output/state comments.
 
-Prefer a table when commands form a sequence:
+Good forms:
 
-| Step | Command | Expected output | State after |
-|---|---|---|---|
-| 1 | `SADD lab:set:a alice bob` | `2` | `lab:set:a = {alice,bob}` |
-| 2 | `SISMEMBER lab:set:a alice` | `1` | `alice` is confirmed as a member |
-
-Use command blocks only when the exact copyable command is the main value, and add comments or nearby text for output and state.
+1. Use shell comments before or after commands when the comment will not break execution.
+2. Use separate `Expected output` blocks after the command block.
+3. Use short `State after:` lines after the output.
+4. Use tables only for non-copyable summaries or when no command needs to be copied.
 
 Bad:
-
-```redis
-SADD lab:set:a alice bob charlie
-SISMEMBER lab:set:a alice
-SCARD lab:set:a
-```
-
-Good:
 
 | Step | Command | Expected output | State after |
 |---|---|---|---|
 | 1 | `SADD lab:set:a alice bob charlie` | `3` | `lab:set:a = {alice,bob,charlie}` |
 | 2 | `SISMEMBER lab:set:a alice` | `1` | confirms `alice` exists |
-| 3 | `SCARD lab:set:a` | `3` | confirms the set has 3 members |
 
-The reader should not need to mentally simulate the state machine.
+Good:
+
+```bash
+# Start from a clean key.
+redis-cli -p 6380 DEL lab:set:a
+
+# Add 3 unique members.
+redis-cli -p 6380 SADD lab:set:a alice bob charlie
+
+# Confirm alice exists.
+redis-cli -p 6380 SISMEMBER lab:set:a alice
+
+# Confirm the set size.
+redis-cli -p 6380 SCARD lab:set:a
+```
+
+Expected output:
+
+```text
+0 or 1   # DEL: old key may or may not exist
+3        # SADD: three new members were inserted
+1        # SISMEMBER: alice exists
+3        # SCARD: the set has three members
+```
+
+State after:
+
+```text
+lab:set:a = {alice,bob,charlie}
+```
+
+The reader should not need to mentally simulate the state machine, but the command block should still be copyable.
 
 ## Raw Material Boundary
 
@@ -295,6 +311,8 @@ Choose placement by size and reading flow:
 
 - short and proof-critical: proof section;
 - long, reusable, or lifecycle/bootstrap material: raw material archive.
+
+For proof sections, preserve copyability first. Add expected output and state annotations around the command block instead of replacing the command block with a table.
 
 Do not fabricate missing evidence.
 
