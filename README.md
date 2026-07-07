@@ -24,6 +24,7 @@ Helper skills:
 | Skill | Narrow responsibility |
 |---|---|
 | `blue-espeon-note-style` | vault style, directory placement, naming, backlinks, Mermaid convention, single-thesis boundary |
+| `latex-math-writing` | LaTeX math notation for calculus, linear algebra, probability/statistics, discrete math, and algorithms |
 | `obsidian-frontmatter-metadata` | `summary`, `aliases`, and `tags` only |
 | `source-walk` | source-code context snapshot reports under `/tmp` for ChatGPT analysis |
 
