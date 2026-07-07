@@ -108,6 +108,8 @@ Do not add a generic `reading scope` section by default.
 
 Proof sections may start around section 4 or 5. The exact number is less important than keeping the top conclusion table jumpable.
 
+Do not add `Reusable note proposal`, `可复用笔记建议`, or similar confirmation sections inside the generated note body.
+
 ## Proof Process Rules
 
 Each proof section must be linear.
@@ -270,9 +272,9 @@ If a suitable note exists, link to it from the raw material section instead of c
 
 If no suitable note exists and the setup is likely to be reused, do not create that reusable note immediately.
 
-First finish the current note with the available local material and a short reusable-note proposal.
+First finish the current note with the available local material.
 
-Then ask the user whether to create the reusable note and where it should live in the vault.
+Then ask the user in the Codex/ChatGPT response, outside the generated note body, whether to create the reusable note and where it should live in the vault.
 
 A separate reusable note is worth proposing when the material is:
 
@@ -290,7 +292,7 @@ Embed the material directly in the current raw material archive when it is:
 - unlikely to be reused;
 - short enough that a separate note would create navigation overhead.
 
-Good raw material reference:
+Good raw material reference inside the note:
 
 ```markdown
 ### 9.1 Raw - Lifecycle bootstrap
@@ -306,7 +308,7 @@ This proof assumes:
 Experiment-specific seed data is included below because it belongs only to this note.
 ```
 
-Good reusable note proposal:
+Good assistant response after the note is complete:
 
 ```markdown
 ## 可复用笔记建议
@@ -317,6 +319,8 @@ Good reusable note proposal:
 
 当前笔记已完成；是否要新开这篇可复用笔记？如果要，放在哪个目录？
 ```
+
+Do not put the reusable note proposal inside the generated note.
 
 Do not make every raw material item an external note. Only extract stable, reusable lifecycle material.
 
@@ -332,7 +336,7 @@ For code or experiments, preserve enough to rerun or rebuild:
 - file content or file tree;
 - parameters;
 - environment assumptions;
-- lifecycle bootstrap from zero to proof initial state, a link to an existing reusable lifecycle note, or a proposal for creating one;
+- lifecycle bootstrap from zero to proof initial state, a link to an existing reusable lifecycle note, or local bootstrap material when no reusable note is confirmed;
 - execution method;
 - key long outputs;
 - benchmark tables;
@@ -354,7 +358,7 @@ Prefer idempotent and single-shot reproduction materials.
 
 If a script is required, include the script or the exact path plus enough content to recreate it.
 
-Never keep only a vague note like `ran benchmark`, `see script`, or `see Redis setup` without either enough local detail, a concrete Obsidian link to the reusable note, or a reusable-note proposal awaiting confirmation.
+Never keep only a vague note like `ran benchmark`, `see script`, or `see Redis setup` without either enough local detail or a concrete Obsidian link to the reusable note.
 
 ## Link Rules
 
@@ -401,12 +405,14 @@ After creating or editing the note, respond with:
 - 主要结论：
   - ...
 - 证据链：
-  - `结论 -> proof -> raw material/reusable note/proposal/none`
-- 可复用笔记建议：
-  - 是否建议新开：是/否
-  - 建议标题：`...`
-  - 建议原因：...
-  - 需要用户确认目录：是/否
+  - `结论 -> proof -> raw material/reusable note/none`
 - 不确定点：
   - ...
+
+## 可复用笔记建议
+
+- 是否建议新开：是/否
+- 建议标题：`...`
+- 建议原因：...
+- 需要用户确认目录：是/否
 ```
