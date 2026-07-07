@@ -55,6 +55,7 @@ Extract:
 - proof process;
 - short commands and outputs needed for the proof;
 - long reproducible materials when needed;
+- lifecycle bootstrap material when the proof assumes a prepared state;
 - boundaries;
 - uncertainty.
 
@@ -65,7 +66,7 @@ Use when the future reader wants:
 - conclusions first;
 - selective proof reading;
 - evidence that can be traced later;
-- reproducible raw material when the proof depends on long scripts, long outputs, or reusable setup artifacts.
+- reproducible raw material when the proof depends on long scripts, long outputs, reusable setup artifacts, or a non-trivial lifecycle bootstrap.
 
 ## Avoid
 
@@ -113,11 +114,13 @@ Each proof section must be linear.
 It should explain:
 
 1. what question this conclusion answers;
-2. what evidence was inspected;
-3. the exact short commands, interactions, or observations that form the main proof path;
-4. how the evidence leads to the conclusion;
-5. what boundary or exception remains;
-6. which raw material can reproduce or verify it, if raw material is needed.
+2. what initial state the proof starts from;
+3. what evidence was inspected;
+4. the exact short commands, interactions, or observations that form the main proof path;
+5. the expected output and state change after each important command or interaction;
+6. how the evidence leads to the conclusion;
+7. what boundary or exception remains;
+8. which raw material can reproduce or verify it, if raw material is needed.
 
 Keep the proof on the main road.
 
@@ -127,30 +130,44 @@ Short terminal commands, short Redis/SQL interactions, short benchmark commands,
 
 Do not move short commands to the raw material archive merely because they are commands.
 
-Good proof section shape:
+## Proof State Annotation Rules
 
-```markdown
-## 4.1 Proof - <conclusion name>
+For command-line, Redis, SQL, shell, REPL, API, or similar interactive proof steps, do not list commands without state annotations.
 
-Question: ...
+Each command or logical command group should make clear:
 
-Main path:
-1. Run/inspect the short command or observation:
+- command;
+- expected output;
+- state before or assumption;
+- state after;
+- why this state change matters to the conclusion.
 
-   ```bash
-   <short command>
-   ```
+Prefer a table when commands form a sequence:
 
-2. Observe the compact result:
+| Step | Command | Expected output | State after |
+|---|---|---|---|
+| 1 | `SADD lab:set:a alice bob` | `2` | `lab:set:a = {alice,bob}` |
+| 2 | `SISMEMBER lab:set:a alice` | `1` | `alice` is confirmed as a member |
 
-   ```text
-   <short output>
-   ```
+Use command blocks only when the exact copyable command is the main value, and add comments or nearby text for output and state.
 
-3. Therefore, ...
+Bad:
 
-Raw material: none / [[#9.1 Raw - <name>]]
+```redis
+SADD lab:set:a alice bob charlie
+SISMEMBER lab:set:a alice
+SCARD lab:set:a
 ```
+
+Good:
+
+| Step | Command | Expected output | State after |
+|---|---|---|---|
+| 1 | `SADD lab:set:a alice bob charlie` | `3` | `lab:set:a = {alice,bob,charlie}` |
+| 2 | `SISMEMBER lab:set:a alice` | `1` | confirms `alice` exists |
+| 3 | `SCARD lab:set:a` | `3` | confirms the set has 3 members |
+
+The reader should not need to mentally simulate the state machine.
 
 ## Raw Material Boundary
 
@@ -161,6 +178,7 @@ Raw material means material that is too large, too reusable, or too interruptive
 Typical raw material:
 
 - long scripts;
+- lifecycle bootstrap commands that create the runtime state used by proof sections;
 - long one-shot setup commands that create directories, files, services, or full experiment scaffolding;
 - full benchmark harnesses;
 - file trees;
@@ -182,9 +200,46 @@ Not raw material by default:
 
 These should usually stay inside the proof section.
 
+## Lifecycle Bootstrap Rule
+
+If a proof section begins from a prepared state, the raw material archive must explain how to reach that state from zero.
+
+This includes enough lifecycle material to answer:
+
+```text
+empty environment / fresh repo / no service
+-> service running
+-> dependencies available
+-> test data created
+-> proof section initial state reached
+```
+
+For Redis-like notes, this usually means preserving:
+
+- how Redis was started;
+- how the target port was chosen;
+- how connectivity was checked;
+- how test keys were cleaned;
+- how test data was seeded;
+- how to verify the initial key state before the proof command begins;
+- how to clean up afterward.
+
+For application experiments, this usually means preserving:
+
+- setup script or file tree creation;
+- dependency install command;
+- app start command;
+- workload or benchmark start command;
+- health check;
+- cleanup command.
+
+If the lifecycle bootstrap is short and only used once, it may still be placed in raw material when it would distract from conclusion proof.
+
+Proof sections should link to this raw material when they assume that starting state.
+
 ## Raw Material Rules
 
-The end of the note should include a raw material archive only when the note has real raw material.
+The end of the note should include a raw material archive when the note has real raw material or when a non-trivial lifecycle bootstrap is required.
 
 For code or experiments, preserve enough to rerun or rebuild:
 
@@ -192,6 +247,7 @@ For code or experiments, preserve enough to rerun or rebuild:
 - file content or file tree;
 - parameters;
 - environment assumptions;
+- lifecycle bootstrap from zero to proof initial state;
 - execution method;
 - key long outputs;
 - benchmark tables;
@@ -222,11 +278,12 @@ Use Obsidian heading links:
 ```markdown
 [[#4.1 Proof - Redis pipeline improves throughput]]
 [[#9.1 Raw - Redis benchmark harness]]
+[[#9.2 Raw - Lifecycle bootstrap]]
 ```
 
 Every important conclusion links to one proof section.
 
-Every proof section links to raw material only when raw material exists.
+Every proof section links to raw material only when raw material exists or when it assumes a lifecycle/bootstrap state.
 
 Raw material sections may link back to the proof section when useful.
 
@@ -237,7 +294,7 @@ Preserve commands, outputs, screenshots, metrics, source snippets, tables, and p
 Choose placement by size and reading flow:
 
 - short and proof-critical: proof section;
-- long or reusable: raw material archive.
+- long, reusable, or lifecycle/bootstrap material: raw material archive.
 
 Do not fabricate missing evidence.
 
