@@ -219,6 +219,54 @@ Usually not raw material:
 
 These usually stay inside proof sections.
 
+## Raw Material Output Explanation Rule
+
+Raw material must not be a blind dump of commands and outputs.
+
+When raw material contains command output, include a short explanation of what the output means.
+
+If multiple commands are executed together, map each output block back to the exact input command or logical command group that produced it.
+
+The goal is:
+
+```text
+reader can tell which command produced which output, and why that output matters
+```
+
+Good:
+
+```markdown
+### 9.1 Raw - Redis benchmark seed data
+
+Command:
+
+```bash
+redis-cli -p 6380 DEL lab:zset:n10000
+seq 1 10000 | awk '{ printf "ZADD lab:zset:n10000 %d member:%05d\n", $1, $1 }' | redis-cli -p 6380 --pipe
+redis-cli -p 6380 ZCARD lab:zset:n10000
+```
+
+Output meaning:
+
+- `redis-cli ... DEL ...` returns `0` or `1`: old benchmark key did not exist or was deleted.
+- `redis-cli --pipe` reports `errors: 0, replies: 10000`: all 10000 `ZADD` commands succeeded.
+- `ZCARD lab:zset:n10000` returns `10000`: the benchmark zset has the expected size.
+```
+
+Bad:
+
+```markdown
+```text
+1
+errors: 0, replies: 10000
+10000
+```
+```
+
+Do not force the reader to infer which output belongs to which command.
+
+Keep explanations simple. Explain output semantics, not full theory.
+
 ## Lifecycle Bootstrap Rule
 
 If a proof starts from a prepared state, the proof section should either:
@@ -309,9 +357,13 @@ For experiments, preserve enough to rerun or rebuild:
 - benchmark tables;
 - logs;
 - pprof or trace text;
-- source snippets.
+- source snippets;
+- simple explanation for important outputs;
+- input-command mapping when multiple commands produce multiple outputs.
 
 Never write vague references like `ran benchmark`, `see script`, or `see Redis setup` without enough local detail or a concrete Obsidian link.
+
+Never paste multi-command output without explaining which command produced which output.
 
 ## Link Rules
 
