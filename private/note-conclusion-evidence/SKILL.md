@@ -1,35 +1,38 @@
 ---
 name: note-conclusion-evidence
-description: Create or transform Obsidian notes that preserve conclusions, verification paths, and raw evidence in a top-down three-hop structure. Use when the future reader wants conclusions first, then selective jump links into linear proof processes and reproducible raw materials.
+description: Create or transform Obsidian notes that preserve conclusions, proof paths, and reproducible evidence in a conclusion-first chained structure. Use when the reader wants conclusions first, then a linear proof path, and only then raw material when the proof needs it.
 ---
 
 # Note Conclusion Evidence
 
 ## Role
 
-Create or transform conclusion evidence notes.
+Create or transform conclusion-evidence Obsidian notes.
 
-This note type preserves what the user believes, how each conclusion was proven, and how to reproduce or inspect the original material.
+This note type preserves:
 
-Main reading mode: top-down and selective jump reading.
+- what conclusion is believed;
+- how it was proven;
+- what raw material can reproduce or inspect the proof when needed.
 
-The note must support collapsed-heading reading in Obsidian: the reader can collapse the whole note, open only the conclusion table, then jump to the proof process for one conclusion, then jump to raw material only if needed.
+Main reading mode: collapsed-heading, top-down, selective jump reading.
 
 ## Core Structure
 
-A conclusion evidence note must use a three-hop structure:
-
-1. Conclusion index.
-2. Linear proof process.
-3. Raw material archive.
-
-Every important conclusion should follow:
+Use a chained three-hop structure:
 
 ```text
-conclusion -> proof process -> raw material
+conclusion -> linear proof process -> raw material / reusable note / none
 ```
 
-Do not flatten everything into one long explanation.
+Do not create two parallel links like:
+
+```text
+conclusion -> proof process
+conclusion -> raw material
+```
+
+The conclusion index is only an entrance into proof sections. Raw material should be reached from the proof process, not directly from the conclusion index.
 
 ## Modes
 
@@ -42,7 +45,8 @@ Reorganize scattered material into:
 - conclusion index table;
 - linear proof sections;
 - raw material archive when needed;
-- Obsidian heading links between conclusions, proof, and raw material.
+- links from conclusions to proof sections;
+- links from proof sections to raw material only when needed.
 
 ### materialize-mode
 
@@ -53,12 +57,11 @@ Extract:
 - conclusions;
 - evidence;
 - proof process;
-- short copyable commands and outputs needed for the proof;
-- long reproducible materials when needed;
+- short copyable commands and outputs needed for proof;
+- raw material only when proof needs extra context or reproducibility material;
 - lifecycle bootstrap material when the proof assumes a prepared state;
 - reusable lifecycle references when a shared note already exists or should exist;
-- boundaries;
-- uncertainty.
+- boundaries and uncertainty.
 
 ## Use When
 
@@ -67,7 +70,7 @@ Use when the future reader wants:
 - conclusions first;
 - selective proof reading;
 - evidence that can be traced later;
-- reproducible raw material when the proof depends on long scripts, long outputs, reusable setup artifacts, or a non-trivial lifecycle bootstrap.
+- reproducible raw material when the proof depends on scripts, long outputs, setup artifacts, logs, traces, screenshots, or context that would interrupt the main proof.
 
 ## Avoid
 
@@ -81,17 +84,19 @@ The note may start with `AI摘要`.
 
 The first body section after `AI摘要` must be a conclusion index table.
 
-The conclusion index table must contain Obsidian links to proof sections.
+The conclusion index table must link to proof sections only.
 
 Recommended columns:
 
-| Conclusion | Proof process | Raw material | Confidence / boundary |
-|---|---|---|---|
-| `<conclusion>` | `[[#4.1 Proof - <name>]]` | `[[#9.1 Raw - <name>]]` or `none` | `<short boundary>` |
+| Conclusion | Proof process | Confidence / boundary |
+|---|---|---|
+| `<conclusion>` | `[[#4.1 Proof - <name>]]` | `<short boundary>` |
 
-This table is the main reading entrance.
+Do not include a raw material column in the conclusion index by default.
 
-Do not put long explanations before this table.
+Do not place raw material links in the conclusion index unless the user explicitly asks for a raw-material map.
+
+The table is the main reading entrance. Do not put long explanations before it.
 
 ## Default Structure
 
@@ -106,32 +111,66 @@ Prefer this structure:
 
 Do not add a generic `reading scope` section by default.
 
-Proof sections may start around section 4 or 5. The exact number is less important than keeping the top conclusion table jumpable.
-
 Do not add `Reusable note proposal`, `可复用笔记建议`, or similar confirmation sections inside the generated note body.
 
 ## Proof Process Rules
 
-Each proof section must be linear.
+Each proof section must be linear and stay on the main road.
 
 It should explain:
 
 1. what question this conclusion answers;
 2. what initial state the proof starts from;
 3. what evidence was inspected;
-4. the exact short commands, interactions, or observations that form the main proof path;
-5. the expected output and state change after each important command or interaction;
-6. how the evidence leads to the conclusion;
-7. what boundary or exception remains;
-8. which raw material can reproduce or verify it, if raw material is needed.
+4. the exact short commands, interactions, observations, or compact tables that form the proof path;
+5. expected output or state change only when it helps the proof;
+6. how the evidence supports the conclusion;
+7. boundaries or exceptions;
+8. raw material / reusable note link only when the proof needs it.
 
-Keep the proof on the main road.
+Short Bash, Redis, SQL, shell, API, benchmark commands, compact outputs, and small tables belong directly in the proof section when they clarify the proof.
 
-Do not dump every detail into the proof section.
+Do not move short commands to raw material only because they are commands.
 
-Short terminal commands, short Redis/SQL interactions, short benchmark commands, compact outputs, and small result tables belong directly in the proof section when they make the proof clearer.
+## Raw Material Link Timing Rule
 
-Do not move short commands to the raw material archive merely because they are commands.
+Raw material links must be introduced from inside proof sections, not from the conclusion index.
+
+Link to raw material only when one of these is true:
+
+- the proof section would be too long if the material were inlined;
+- the proof code or excerpt is not enough to explain the conclusion;
+- the reader must first understand setup/context before trusting the proof;
+- the material is needed to reproduce the result;
+- the material is a long script, harness, trace, log, screenshot, file tree, or long output;
+- the proof uses a prepared lifecycle state that needs setup explanation.
+
+Do not link to raw material when the proof section is already self-contained.
+
+Good pattern:
+
+```markdown
+## 4.1 Proof - ZRANGEBYSCORE cost grows with returned members
+
+Question: ...
+
+Main path:
+1. Run the compact benchmark command.
+2. Compare small range and large range output.
+3. The QPS drop follows returned member count.
+
+Raw material, only if you need to rebuild the dataset: [[#9.1 Raw - ZSet benchmark seed data]]
+```
+
+Bad pattern:
+
+```markdown
+| Conclusion | Proof process | Raw material |
+|---|---|---|
+| `ZRANGEBYSCORE` slows down with many returned members | [[#4.1 Proof - ...]] | [[#9.1 Raw - ...]] |
+```
+
+The reader should first read the proof. The proof decides whether raw material is needed.
 
 ## Copyable Command Rule
 
@@ -143,124 +182,84 @@ Prefer annotated command blocks plus nearby output/state comments.
 
 Good forms:
 
-1. Use shell comments before or after commands when the comment will not break execution.
-2. Use separate `Expected output` blocks after the command block.
-3. Use short `State after:` lines after the output.
-4. Use tables only for non-copyable summaries or when no command needs to be copied.
+- shell comments that do not break execution;
+- separate expected-output blocks when output matters;
+- short state-before/state-after text only when it prevents confusion;
+- tables only for non-copyable summaries.
 
-Bad:
-
-| Step | Command | Expected output | State after |
-|---|---|---|---|
-| 1 | `SADD lab:set:a alice bob charlie` | `3` | `lab:set:a = {alice,bob,charlie}` |
-| 2 | `SISMEMBER lab:set:a alice` | `1` | confirms `alice` exists |
-
-Good:
-
-```bash
-# Start from a clean key.
-redis-cli -p 6380 DEL lab:set:a
-
-# Add 3 unique members.
-redis-cli -p 6380 SADD lab:set:a alice bob charlie
-
-# Confirm alice exists.
-redis-cli -p 6380 SISMEMBER lab:set:a alice
-
-# Confirm the set size.
-redis-cli -p 6380 SCARD lab:set:a
-```
-
-Expected output:
-
-```text
-0 or 1   # DEL: old key may or may not exist
-3        # SADD: three new members were inserted
-1        # SISMEMBER: alice exists
-3        # SCARD: the set has three members
-```
-
-State after:
-
-```text
-lab:set:a = {alice,bob,charlie}
-```
-
-The reader should not need to mentally simulate the state machine, but the command block should still be copyable.
+The reader should not need to mentally simulate a state machine, but the command block should still be copyable.
 
 ## Raw Material Boundary
 
 Raw material is not every command or every output.
 
-Raw material means material that is too large, too reusable, or too interruptive to inline into the proof process, but is still needed to reproduce, inspect, or rebuild the conclusion.
+Raw material means material that is too large, reusable, or disruptive to inline, but still needed to reproduce, inspect, or rebuild the conclusion.
 
 Typical raw material:
 
 - long scripts;
-- lifecycle bootstrap commands that create the runtime state used by proof sections;
-- long one-shot setup commands that create directories, files, services, or full experiment scaffolding;
-- full benchmark harnesses;
+- lifecycle bootstrap commands;
+- one-shot setup commands that create directories, files, services, or experiment scaffolding;
+- benchmark harnesses;
 - file trees;
 - config files;
 - long outputs;
 - logs;
 - pprof or trace text;
-- source snippets that are too long for the proof path;
-- screenshots or tables that would break the main proof flow;
-- original conversation fragments or references that are too long to inline.
+- long source snippets;
+- screenshots or large tables;
+- long source conversation fragments or references.
 
-Not raw material by default:
+Usually not raw material:
 
-- short `bash` commands;
-- short Redis, SQL, or shell interactions;
+- short Bash/Redis/SQL/shell interactions;
 - compact command output;
 - small result tables;
 - one or two-line observations.
 
-These should usually stay inside the proof section.
+These usually stay inside proof sections.
 
 ## Lifecycle Bootstrap Rule
 
-If a proof section begins from a prepared state, the raw material archive must explain how to reach that state from zero or link to a reusable lifecycle note that already explains it.
+If a proof starts from a prepared state, the proof section should either:
 
-This includes enough lifecycle material to answer:
+- include the short setup inline if it is small and local; or
+- link to raw material / reusable note if the setup would distract from the proof.
+
+Lifecycle path:
 
 ```text
 empty environment / fresh repo / no service
 -> service running
 -> dependencies available
 -> test data created
--> proof section initial state reached
+-> proof initial state reached
 ```
 
-For Redis-like notes, this usually means preserving or linking to:
+For Redis-like notes, preserve inline or link to:
 
 - how Redis was started;
-- how the target port was chosen;
-- how connectivity was checked;
-- how test keys were cleaned;
-- how test data was seeded;
-- how to verify the initial key state before the proof command begins;
-- how to clean up afterward.
+- target port;
+- connectivity check;
+- test key cleanup;
+- seed data;
+- initial key-state verification;
+- cleanup.
 
-For application experiments, this usually means preserving or linking to:
+For application experiments, preserve inline or link to:
 
-- setup script or file tree creation;
-- dependency install command;
-- app start command;
-- workload or benchmark start command;
+- setup script or file tree;
+- dependency install;
+- app start;
+- workload or benchmark command;
 - health check;
-- cleanup command.
-
-If the lifecycle bootstrap is short and only used once, it may still be placed in raw material when it would distract from conclusion proof.
-
-Proof sections should link to this raw material or reusable lifecycle note when they assume that starting state.
+- cleanup.
 
 ## Reusable Lifecycle Material Rule
 
 Do not duplicate common lifecycle/bootstrap material across many notes.
 
-Before embedding lifecycle material, check whether the vault already has a suitable note for that reusable setup, such as:
+Before embedding lifecycle material, check whether the vault already has a suitable reusable note, for example:
 
 ```markdown
 [[Redis 本地实验环境]]
@@ -268,15 +267,13 @@ Before embedding lifecycle material, check whether the vault already has a suita
 [[FastAPI CPU-bound Benchmark 实验环境]]
 ```
 
-If a suitable note exists, link to it from the raw material section instead of copying the whole setup again.
+If a suitable note exists, link to it from the relevant proof section or raw material section instead of copying the setup again.
 
-If no suitable note exists and the setup is likely to be reused, do not create that reusable note immediately.
+If no suitable note exists and the setup is likely to be reused, finish the current Obsidian note first. Do not put the reusable-note proposal inside the Obsidian note body.
 
-First finish the current note with the available local material.
+After the note is complete, put the reusable-note proposal in the Codex/chat response only, and ask the user whether to create it and where it should live.
 
-Then ask the user in the Codex/ChatGPT response, outside the generated note body, whether to create the reusable note and where it should live in the vault.
-
-A separate reusable note is worth proposing when the material is:
+Propose a reusable note when the material is:
 
 - common across multiple notes;
 - likely to be referenced by 3 or more notes;
@@ -284,59 +281,29 @@ A separate reusable note is worth proposing when the material is:
 - about environment setup, service startup, dependency install, benchmark harness setup, or shared cleanup;
 - not specific to one conclusion.
 
-Embed the material directly in the current raw material archive when it is:
+Embed material directly in current raw material when it is:
 
 - one-off;
 - experiment-specific;
 - tightly coupled to this note's evidence;
 - unlikely to be reused;
-- short enough that a separate note would create navigation overhead.
-
-Good raw material reference inside the note:
-
-```markdown
-### 9.1 Raw - Lifecycle bootstrap
-
-Shared setup: [[Redis 本地实验环境]]
-
-This proof assumes:
-
-- Redis is running on `127.0.0.1:6380`;
-- `redis-cli` is available;
-- test keys use the `lab:*` namespace.
-
-Experiment-specific seed data is included below because it belongs only to this note.
-```
-
-Good assistant response after the note is complete:
-
-```markdown
-## 可复用笔记建议
-
-建议单独创建：`Redis 本地实验环境`
-
-原因：Redis 启动、端口、连通性检查、清理命令会被多篇 Redis 实验笔记复用。
-
-当前笔记已完成；是否要新开这篇可复用笔记？如果要，放在哪个目录？
-```
-
-Do not put the reusable note proposal inside the generated note.
-
-Do not make every raw material item an external note. Only extract stable, reusable lifecycle material.
+- short enough that a separate note would add navigation overhead.
 
 Do not create a new reusable note without explicit user confirmation.
 
+Do not put reusable-note proposals inside the generated Obsidian note body.
+
 ## Raw Material Rules
 
-The end of the note should include a raw material archive when the note has real raw material or when a non-trivial lifecycle bootstrap is required.
+The end of the note should include raw material only when the note has real raw material or non-trivial lifecycle bootstrap.
 
-For code or experiments, preserve enough to rerun or rebuild:
+For experiments, preserve enough to rerun or rebuild:
 
 - scripts;
 - file content or file tree;
 - parameters;
 - environment assumptions;
-- lifecycle bootstrap from zero to proof initial state, a link to an existing reusable lifecycle note, or local bootstrap material when no reusable note is confirmed;
+- lifecycle bootstrap, reusable note link, or local minimal bootstrap;
 - execution method;
 - key long outputs;
 - benchmark tables;
@@ -344,53 +311,44 @@ For code or experiments, preserve enough to rerun or rebuild:
 - pprof or trace text;
 - source snippets.
 
-For non-code notes, preserve:
-
-- source quotes or excerpts;
-- screenshots;
-- tables;
-- original observations;
-- conversation fragments;
-- decision records;
-- references.
-
-Prefer idempotent and single-shot reproduction materials.
-
-If a script is required, include the script or the exact path plus enough content to recreate it.
-
-Never keep only a vague note like `ran benchmark`, `see script`, or `see Redis setup` without either enough local detail or a concrete Obsidian link to the reusable note.
+Never write vague references like `ran benchmark`, `see script`, or `see Redis setup` without enough local detail or a concrete Obsidian link.
 
 ## Link Rules
 
-Use Obsidian heading links:
+Use Obsidian heading links.
+
+Correct link direction:
 
 ```markdown
 [[#4.1 Proof - Redis pipeline improves throughput]]
-[[#9.1 Raw - Redis benchmark harness]]
-[[#9.2 Raw - Lifecycle bootstrap]]
-[[Redis 本地实验环境]]
+```
+
+Then inside that proof section, only if needed:
+
+```markdown
+Raw material: [[#9.1 Raw - Redis benchmark harness]]
+Shared setup: [[Redis 本地实验环境]]
 ```
 
 Every important conclusion links to one proof section.
 
-Every proof section links to raw material only when raw material exists or when it assumes a lifecycle/bootstrap state.
+Proof sections link to raw material only when the proof needs extra context, reproduction material, or lifecycle setup.
 
-Raw material sections may link back to the proof section when useful.
+Raw material sections may link back to proof sections when useful.
+
+Do not make the conclusion index a raw-material map.
 
 ## Evidence Rule
-
-Preserve commands, outputs, screenshots, metrics, source snippets, tables, and profile text when they support a conclusion.
 
 Choose placement by size and reading flow:
 
 - short and proof-critical: proof section;
-- long, reusable, or lifecycle/bootstrap material: raw material archive or linked reusable note.
+- long, reusable, lifecycle/bootstrap, or context-heavy material: raw material archive or linked reusable note;
+- raw material link timing: from proof section at the moment the reader needs it.
 
-For proof sections, preserve copyability first. Add expected output and state annotations around the command block instead of replacing the command block with a table.
+Preserve copyability for proof commands.
 
-Do not fabricate missing evidence.
-
-Mark missing evidence explicitly.
+Do not fabricate missing evidence. Mark missing evidence explicitly.
 
 ## Output Policy
 
@@ -406,13 +364,13 @@ After creating or editing the note, respond with:
   - ...
 - 证据链：
   - `结论 -> proof -> raw material/reusable note/none`
+- 可复用笔记建议：
+  - 是否建议新开：是/否
+  - 建议标题：`...`
+  - 建议原因：...
+  - 需要用户确认目录：是/否
 - 不确定点：
   - ...
-
-## 可复用笔记建议
-
-- 是否建议新开：是/否
-- 建议标题：`...`
-- 建议原因：...
-- 需要用户确认目录：是/否
 ```
+
+Reusable-note proposals belong in this Codex/chat response only, not in the generated Obsidian note body.
