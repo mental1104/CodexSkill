@@ -46,6 +46,7 @@ Extract:
 
 - the main path;
 - attempts;
+- failed concrete attempts with original code, commands, configs, error output, or terminal output preserved verbatim;
 - observations;
 - turning points;
 - final result;
@@ -102,6 +103,47 @@ Do not begin with generic sections such as:
 - broad conceptual background.
 
 Only include such sections when they carry non-obvious constraints.
+
+## Failed Attempt Preservation Rule
+
+When the source material includes a failed concrete attempt, preserve the exact original material before summarizing or explaining it.
+
+Concrete attempts include:
+
+- code snippets;
+- shell commands;
+- SQL statements;
+- config fragments;
+- terminal output;
+- compiler/runtime errors;
+- benchmark commands and results;
+- tool prompts or generated patches when they materially affected the path.
+
+For each important failed attempt, prefer this local structure:
+
+```markdown
+### Attempt N: <short label>
+
+Original attempt:
+
+```<language-or-text>
+<verbatim code / command / output>
+```
+
+Observation:
+
+- <what failed or looked wrong>
+
+Adjustment:
+
+- <what changed next>
+```
+
+Do not paraphrase a failed command, code block, or error message when the exact text is available.
+
+Compress only when the raw material is huge. If compressed, keep the decisive lines verbatim and say what was omitted.
+
+If multiple failed attempts differ only trivially, preserve one representative verbatim attempt and summarize the repeated variants in a compact table.
 
 ## Default Structure
 
