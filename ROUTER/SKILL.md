@@ -25,6 +25,30 @@ It does not write the final note.
 - `obsidian-frontmatter-metadata`: `summary`, `aliases`, and `tags` only.
 - `source-walk`: source-code context snapshot report under `/tmp` for ChatGPT analysis.
 
+## Specialized Front-End Skills
+
+### `book-operation-manual-extract`
+
+Use before `note-operation-manual` when the source is a book chapter, reading note, tutorial note, or book-specific project context and the user wants reusable executable procedures.
+
+This skill decides what to extract, skip, deduplicate, merge, or backlink.
+
+Signals:
+
+- “从书籍笔记里提取操作手册”
+- “从阅读笔记里抽取可复用步骤”
+- “把这章整理成可执行操作手册”
+- “只提取未来能直接执行的命令和代码块”
+- “不适合抽离的跳过”
+- “先查已有笔记去重”
+- “能合并就合并，不要重复新建”
+- “如果已有同主题手册，就更新已有笔记”
+
+Default route:
+
+1. Use `book-operation-manual-extract` for extraction, skip decision, deduplication, and merge strategy.
+2. Use `note-operation-manual` for the final manual structure.
+
 ## Input Source
 
 ### `transform-mode`
@@ -80,6 +104,7 @@ Signals: fixed procedure, setup steps, commands, expected output, common errors,
 | Existing note | Linear achievement | `note-linear-achievement` | `transform-mode` |
 | Existing note | Conclusion evidence | `note-conclusion-evidence` | `transform-mode` |
 | Existing note | Operation manual | `note-operation-manual` | `transform-mode` |
+| Book or reading note | Operation manual extraction | `book-operation-manual-extract` → `note-operation-manual` | `transform-mode` |
 | Current context | Linear achievement | `note-linear-achievement` | `materialize-mode` |
 | Current context | Conclusion evidence | `note-conclusion-evidence` | `materialize-mode` |
 | Current context | Operation manual | `note-operation-manual` | `materialize-mode` |
@@ -109,5 +134,6 @@ When route confirmation is useful, output:
 1. Preserve process: choose `note-linear-achievement`.
 2. Preserve belief and proof: choose `note-conclusion-evidence`.
 3. Preserve repeatable action: choose `note-operation-manual`.
-4. If multiple shapes apply, choose the user's stated future reading intention.
-5. Do not combine note shapes unless the user explicitly asks.
+4. If the source is a book or reading note and the user asks for reusable executable steps, choose `book-operation-manual-extract` before `note-operation-manual`.
+5. If multiple shapes apply, choose the user's stated future reading intention.
+6. Do not combine note shapes unless the user explicitly asks.
