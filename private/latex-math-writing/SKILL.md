@@ -236,6 +236,10 @@ Use `\operatorname{}` for named functions: `\operatorname{rank}`, `\operatorname
 
 - Prefer `$...$` for inline math.
 - Prefer `$$...$$` for block math.
+- Do not use bare `[` and `]` lines as math delimiters; Obsidian does not treat them as display math.
+- Do not write `# [` before formulas; `#` is Markdown heading syntax, not LaTeX.
+- Do not use plain parentheses such as `(d_n)` or `(\Delta)` for formulas that should render; use `$d_n$` and `$\Delta$`.
+- When splitting equations across lines, keep relation operators such as `=`, `\approx`, `\propto`, or `\in`; do not leave the left-hand side and right-hand side as unrelated stacked lines.
 - Keep Mermaid diagrams and LaTeX formulas separate.
 - Avoid block formulas inside Markdown tables.
 - In tables, use short inline math such as `$O(n\log n)$`.

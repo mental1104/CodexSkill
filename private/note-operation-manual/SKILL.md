@@ -75,6 +75,12 @@ Prefer commands and checks over explanation.
 
 Do not explain theory unless it prevents a dangerous mistake.
 
+## Math Formatting Rule
+
+If the generated or transformed note contains LaTeX math, LaTeX formula blocks, or LaTeX code blocks, also use `latex-math-writing`.
+
+The note shape still follows `note-operation-manual`, but all inline math and block math must satisfy `latex-math-writing` so Obsidian renders it correctly.
+
 ## Quiet Command Rule
 
 Operation manuals should follow command-line ergonomics:

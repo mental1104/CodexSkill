@@ -402,6 +402,12 @@ Preserve copyability for proof commands.
 
 Do not fabricate missing evidence. Mark missing evidence explicitly.
 
+## Math Formatting Rule
+
+If the generated or transformed note contains LaTeX math, LaTeX formula blocks, or LaTeX code blocks, also use `latex-math-writing`.
+
+The note shape still follows `note-conclusion-evidence`, but all inline math and block math must satisfy `latex-math-writing` so Obsidian renders it correctly.
+
 ## Output Policy
 
 After creating or editing the note, respond with:
