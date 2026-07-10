@@ -120,10 +120,49 @@ video-editing
 - If existing frontmatter exists, edit only the target fields inside it.
 - If no frontmatter exists, insert a new block before the body.
 - Use `aliases` and `tags` as YAML lists.
+- Write YAML list items with two-space indentation under their key:
+  ```yaml
+  aliases:
+    - "Example alias"
+  tags:
+    - algorithms
+  ```
+- Keep every property key at the top level unless the field is intentionally nested. Do not accidentally indent `tags`, `summary`, `aliases`, or status fields under a previous list item.
+- Do not insert blank lines inside frontmatter unless there is a clear reason; blank lines make indentation mistakes harder to see in Obsidian Properties.
 - Quote `summary` and aliases with double quotes by default.
 - Escape double quotes inside quoted strings if needed.
 - Quote strings containing YAML-sensitive characters such as `:`, `"`, `#`, `[`, `]`, `{`, `}`.
 - Keep other existing frontmatter fields and ordering as stable as practical.
+
+## Obsidian Property Validity
+
+When Obsidian shows a frontmatter field as an invalid property, first check YAML structure, not only field names.
+
+Common cause:
+
+```yaml
+aliases:
+  - "Alias"
+    tags:
+  - algorithms
+```
+
+Here `tags` is incorrectly indented under the `aliases` list item. It must be top-level:
+
+```yaml
+aliases:
+  - "Alias"
+tags:
+  - algorithms
+```
+
+Validation checklist:
+
+- frontmatter starts with `---` on the first line and has a closing `---`;
+- `summary`, `aliases`, `tags`, and status metadata are top-level keys;
+- `aliases` and `tags` are YAML lists, not nested maps;
+- list items are consistently indented with two spaces;
+- YAML can be parsed by a standard parser before finishing.
 
 ## Dry-Run Output Shape
 

@@ -191,6 +191,12 @@ If the generated or transformed note contains LaTeX math, LaTeX formula blocks, 
 
 The note shape still follows `note-linear-achievement`, but all inline math and block math must satisfy `latex-math-writing` so Obsidian renders it correctly.
 
+## Frontmatter Metadata Check Rule
+
+Before finishing any generated or transformed Obsidian note, also use `obsidian-frontmatter-metadata` as a required check.
+
+The note shape still follows `note-linear-achievement`, but the YAML frontmatter must satisfy `obsidian-frontmatter-metadata`, especially valid top-level `summary`, `aliases`, and `tags` fields that Obsidian does not render as invalid properties.
+
 ## Output Policy
 
 After creating or editing the note, respond with:
