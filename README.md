@@ -27,6 +27,13 @@ The Obsidian note system is organized by future reading intention, not by "gener
 | `note-linear-achievement` | understand how a goal was reached step by step |
 | `note-conclusion-evidence` | read conclusions first, then drill down into verification and raw evidence |
 | `note-operation-manual` | follow the shortest repeatable procedure without reading theory |
+| `note-code-walkthrough` | understand a concrete class, module, or component from application usage through internals, lifecycle, state changes, and tests |
+
+`note-code-walkthrough` supports:
+
+- `repository-mode` for a local or GitHub repository, branch, tag, or commit;
+- `transform-mode` for rewriting an existing code note;
+- `materialize-mode` for turning current analysis or a source snapshot into a durable walkthrough.
 
 Helper skills:
 
