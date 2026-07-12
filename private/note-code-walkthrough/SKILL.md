@@ -1,30 +1,32 @@
 ---
 name: note-code-walkthrough
-description: Create or transform Obsidian source-code walkthrough notes that teach a class, module, or component from the reader's cognitive perspective: application context, real public usage, class design, constructor/destructor lifecycle, public and private implementation paths, state changes, complete scenarios, and test coverage. Use for repository-backed code reading, open-source walkthroughs, archived implementation notes, and existing code-note rewrites.
+description: Create or transform Obsidian source-code walkthrough notes that teach a concrete class, module, component, or tightly scoped mechanism from the reader's cognitive perspective: repository context, shared prerequisite infrastructure, application call chain, real public usage, construction and destruction, public/private implementation paths, member-state changes, complete scenarios, state machines, and behavioral tests. Use for repository-backed code reading, open-source walkthroughs, archived implementation notes, and existing code-note rewrites.
 ---
 
 # Note Code Walkthrough
 
 ## Role
 
-Create or transform a source-code walkthrough note that lets the user's future self understand a concrete class, module, component, or tightly scoped mechanism without having to rediscover the repository from scratch.
+Create or transform a source-code walkthrough note that lets the user's future self understand one concrete implementation subject without rediscovering the repository from scratch.
 
-The note must follow the reader's cognitive path, not the source file's physical order and not the chronological order in which the code was written.
+The note must follow the reader's cognitive path, not source-file order and not implementation chronology.
 
 Default reading direction:
 
 ```text
-why this component is relevant
+why this component matters
+→ which repository infrastructure must already be understood
 → how the application reaches it
 → how its public surface is actually used
 → how the object is created and destroyed
 → how public behavior is implemented
-→ how private responsibilities support that behavior
-→ how state changes across a complete lifecycle
+→ how private responsibilities support it
+→ how member state changes
+→ how a complete lifecycle recombines the pieces
 → how tests prove the model
 ```
 
-The main reader is the user's future self. Do not write a public tutorial, broad textbook chapter, or line-by-line translation of source code.
+The main reader is the user's future self. Do not write a broad textbook chapter, a repository-wide tour, or a line-by-line source translation.
 
 ## Modes
 
@@ -35,29 +37,32 @@ Use when the source of truth is a local checkout, GitHub repository, open-source
 Required actions:
 
 1. resolve the repository root;
-2. record branch, commit, and working-tree status when available;
+2. record branch, tag, commit, and working-tree status when available;
 3. inspect the target implementation, declarations, callers, dependencies, tests, and build entrypoints;
-4. use exact source paths and real code;
-5. run focused build or tests when the environment permits and the task includes verification;
-6. never invent missing source behavior or successful output.
+4. inspect the thin application-to-target path and every non-obvious type on that path;
+5. search existing notes before creating dependency or prerequisite notes;
+6. use exact source paths and real code;
+7. run focused build or tests when the environment permits and verification is in scope;
+8. never invent source behavior, resolved links, or successful output.
 
 ### `transform-mode`
 
 Use when an existing Markdown code note is being rewritten.
 
-Preserve useful source evidence, working examples, test records, and links, but reorganize the note into the cognitive order defined here. Do not preserve a poor section order merely because it already exists.
+Preserve useful evidence, working examples, test records, images, and valid links, but reorganize the note into the cognitive order defined here. Re-audit dependencies instead of assuming the old note explained them adequately.
 
 ### `materialize-mode`
 
-Use when current chat context, source snapshots, review notes, terminal output, or previous analysis is being archived into a new code walkthrough note.
+Use when current chat context, source snapshots, review notes, terminal output, or previous analysis is being archived into a new walkthrough.
 
-Verify important code claims against the repository whenever the repository is available. Chat summaries are not a substitute for current source evidence.
+Verify important claims against the repository whenever it is available. Chat summaries are not a substitute for current source evidence.
 
 ## Use When
 
 Use this skill when the future reader wants to understand:
 
 - where a class or component sits between the application and lower-level dependencies;
+- what repository-specific wrappers, adapters, schedulers, containers, or runtime objects make that path work;
 - how its public API is actually invoked;
 - how constructors and destructors establish and close the lifecycle;
 - why public and private methods are divided as they are;
@@ -76,6 +81,7 @@ Typical signals:
 - “分析 public / private 方法和成员状态”;
 - “把这个开源仓库的实现归档”;
 - “把测试用例也一起讲明白”;
+- “把仓库里的 socket / adapter / runtime 前置讲清楚”;
 - “重写这篇源码分析笔记”;
 - “按人的认知顺序读代码”.
 
@@ -89,7 +95,7 @@ Use another skill when the primary future-reading intention is different:
 - use `source-walk` when the only requested output is a temporary source snapshot under `/tmp`;
 - use a concept note when the subject is protocol or theory rather than one concrete implementation.
 
-A code walkthrough may contain historical failures, conclusions, or commands, but those are supporting material. Its center thesis is the implementation model of one concrete code subject.
+A walkthrough may contain history, conclusions, references, or commands, but those are supporting material. Its center thesis is the implementation model of one concrete code subject.
 
 ## Required Companion Skills
 
@@ -98,12 +104,12 @@ When writing into the Blue Espeon Obsidian vault:
 - use `blue-espeon-note-style` for placement, naming, backlinks, wikilinks, diagram conventions, and single-thesis boundaries;
 - use `obsidian-frontmatter-metadata` as a required final metadata check;
 - use `latex-math-writing` when mathematical notation appears;
-- use `source-walk` first only when a separate source snapshot is useful or direct repository inspection is unavailable.
+- use `source-walk` first only when a separate snapshot is useful or direct repository inspection is unavailable.
 
-Do not create dead wikilinks silently. If a necessary companion note does not exist:
+Do not create dead wikilinks silently. If a required note does not exist:
 
-1. create it when the user's scope permits;
-2. otherwise report the missing companion note explicitly instead of pretending the link resolves.
+1. create it when the approved scope permits;
+2. otherwise keep the minimum explanation inline and explicitly report the missing note.
 
 ## Evidence And Honesty Rules
 
@@ -122,55 +128,147 @@ Distinguish clearly between:
 
 - **source fact**: what the current code does;
 - **walkthrough interpretation**: the cognitive model derived from the code;
-- **design suggestion**: a possible refactor or alternative, not current behavior;
-- **external standard**: what an RFC, specification, or upstream reference requires.
+- **design suggestion**: a possible refactor or alternative;
+- **external standard**: what an RFC, specification, or upstream reference requires;
+- **historical evidence**: results from an older commit that have not been revalidated.
 
-Never present a suggested refactor as though it already exists.
-Never claim that code compiles or tests pass without actual verification evidence.
-Never replace a real usage example with pseudocode when the repository provides enough information to write compilable or repository-valid code.
+Never present a suggested refactor as current behavior. Never claim compilation or test success without actual evidence. Never replace a real usage example with pseudocode when repository-valid code is available.
 
-## Scope Boundary
+# Note Ecosystem And Companion Note Types
 
-Prefer one primary subject per note:
+A repository-backed walkthrough may produce or reuse several note kinds. They have different depth contracts.
+
+## 1. Primary Walkthrough Note
+
+The main note focuses on one class, module, component, or tightly coupled mechanism and performs the full outside-to-inside walkthrough.
+
+Examples:
+
+- `CS144 Lab4 TCP Connection`;
+- `Redis ae Event Loop`;
+- `Go net/http Transport Connection Pool`.
+
+## 2. Dedicated Dependency Walkthrough
+
+Use when an external dependency has substantial behavior, state, methods, or lifecycle and deserves its own complete walkthrough.
+
+Examples:
+
+- `TCPSegment structure and usage`;
+- `TCPSender walkthrough`;
+- `TCPReceiver walkthrough`.
+
+This note may itself use the full rules in this skill.
+
+## 3. Shared Repository Prerequisite Note
+
+Use for repository-specific infrastructure that appears across multiple walkthroughs, is necessary for understanding ownership or data flow, but does not deserve a full walkthrough for every type.
+
+Typical subjects:
+
+- socket wrappers;
+- adapter stacks;
+- event-loop ownership;
+- file-descriptor wrappers;
+- framework containers;
+- scheduler or callback glue;
+- repository-specific test/runtime abstractions;
+- template aliases or layered wrapper types whose names do not reveal their role.
+
+Example:
+
+```text
+CS144 Socket、Adapter 与运行时调用链
+├── TCPSpongeSocket
+├── FdAdapter
+├── TCPOverUDPSocketAdapter
+├── LossyTCPOverUDPSocketAdapter
+├── LossyTCPOverUDPSpongeSocket
+├── UDPSocket
+└── TunFD
+```
+
+Its center thesis is not “miscellaneous classes.” It must be a coherent shared mechanism such as:
+
+> How this repository connects application I/O, the core protocol component, adapters, and the operating system.
+
+## 4. Test Infrastructure Note
+
+Use when fixtures, harnesses, custom actions, expectations, builders, or state factories must be understood before individual tests can be read comfortably.
+
+Example:
+
+- `CS144 TCPConnection 测试基建与夹具`.
+
+## Companion Note Output Categories
+
+Keep companion outputs classified:
+
+```text
+primary walkthrough
+├── shared repository prerequisites
+├── dedicated dependency walkthroughs
+└── test infrastructure notes
+```
+
+Do not report all of them as an undifferentiated “伴随笔记” list.
+
+# Scope Boundary
+
+Prefer one primary subject per main note:
 
 - one class;
 - one module;
 - one component;
-- one tightly coupled mechanism;
-- one test infrastructure layer.
+- one tightly coupled mechanism.
 
 Do not turn a class note into a complete repository tour.
 
-External dependencies should be handled as follows:
+External material must be handled through progressive depth:
 
-- explain only the interface surface needed by the current note;
-- link to an existing dedicated note when deeper understanding is optional;
-- create a companion note when the dependency itself requires substantial explanation;
-- return to the current mainline after the dependency boundary is established.
+1. give the minimum current-context explanation inline;
+2. deep-link to an exact heading when optional detail exists elsewhere;
+3. use a shared prerequisite note for reusable repository glue;
+4. use a dedicated walkthrough when the dependency itself is complex;
+5. return to the current mainline after establishing the boundary.
 
 Good split:
 
 ```text
 TCPConnection walkthrough
-├── link: TCPSegment structure and usage
-├── link: TCPSender walkthrough
-├── link: TCPReceiver walkthrough
-└── link: TCPConnection test infrastructure
+├── shared prerequisite: Socket、Adapter 与运行时调用链
+│   ├── deep link: LossyTCPOverUDPSpongeSocket
+│   └── deep link: UDPSocket
+├── dependency walkthrough: TCPSegment
+├── dependency walkthrough: TCPSender
+├── dependency walkthrough: TCPReceiver
+└── test infrastructure: TCPConnection Harness
 ```
 
 Bad split:
 
 ```text
 TCPConnection walkthrough
-└── inline full explanations of TCPHeader, WrappingInt32, ByteStream,
-    EventLoop, TUN, UDP adapter, every sender algorithm, and every test fixture
+└── inline full explanations of UDP socket, EventLoop, adapters, TUN,
+    TCPHeader, WrappingInt32, sender algorithms, receiver algorithms,
+    and every test helper
 ```
 
-## Investigation Workflow
+Also bad:
 
-Before writing, inspect enough source to build a reliable cognitive model.
+```text
+CS144 杂项
+CS144 其他类
+CS144 辅助知识
+```
 
-### 1. Resolve The Exact Source Version
+These names have no center thesis and become link graveyards.
+
+# Investigation Workflow
+
+Before writing, inspect enough source and existing notes to build a reliable cognitive model.
+
+## 1. Resolve The Exact Source Version
 
 Capture:
 
@@ -179,31 +277,98 @@ Capture:
 - whether the worktree is dirty;
 - the exact target symbol or module.
 
-If an existing note names a source commit, compare it with the current requested source before rewriting.
+If an existing note names a source commit, compare it with the requested source before rewriting.
 
-### 2. Find The Thin End-To-End Calling Slice
+## 2. Find The Thin End-To-End Calling Slice
 
-Locate only enough upper-layer code to answer:
+Locate only enough upper- and lower-layer code to answer:
 
 - what the application or external caller does;
-- which immediate owner, adapter, framework, scheduler, or container invokes the target;
-- how application events become target public-method calls;
-- where the target's outputs go.
+- which immediate owner, adapter, framework, scheduler, or container translates the event;
+- which target public method is invoked;
+- where target output goes;
+- which object owns construction, polling, callbacks, and cleanup.
 
-Do not expand the full upper-layer implementation here.
+Do not expand all upper-layer internals in the main note.
 
-### 3. Inspect The Target Surface
+## 3. Run A Dependency Readiness Audit
+
+Inventory every non-obvious external type encountered in:
+
+- the thin application-to-target slice;
+- construction and ownership code;
+- public signatures;
+- important member state;
+- real usage examples;
+- complete lifecycle scenarios;
+- test setup and integration code.
+
+For every type, ask:
+
+1. Can a first-time reader infer its role from the name alone?
+2. Does the current paragraph explain why it exists?
+3. Is its upstream caller or owner clear?
+4. Is its downstream output or dependency clear?
+5. Is it reused by multiple walkthrough notes?
+6. Does it hide templates, inheritance, wrappers, adapters, callbacks, or layered ownership?
+7. Would omitting it break understanding of the call chain even if the target's own methods are explained perfectly?
+
+### Dependency Classification
+
+| Type condition | Required treatment |
+|---|---|
+| Standard or obvious, one sentence is enough | explain inline only |
+| Complex domain object with its own behavior/state | dedicated dependency walkthrough |
+| Reused repository glue between application and core components | shared repository prerequisite note |
+| Complex test-only support | test infrastructure note |
+| Role cannot be verified | mark uncertainty; do not pretend it is understood |
+
+### Shared Prerequisite Admission Rule
+
+A type should normally enter a shared repository prerequisite note when at least two of these are true:
+
+- it appears in two or more walkthrough notes;
+- its name does not reveal its responsibility;
+- it is built through templates, aliases, inheritance, or several wrappers;
+- it sits on the critical application-to-target or target-to-OS path;
+- ownership or data flow is unclear without it;
+- repeating its explanation in each main note would create duplication;
+- it has useful repository context but not enough depth for a full independent walkthrough.
+
+A single strongly critical condition may be sufficient when the reader cannot understand the primary call chain without the type.
+
+### Reuse Before Creation
+
+Before creating a prerequisite note:
+
+1. search the target directory and vault for an existing repository-level infrastructure note;
+2. search aliases and likely old names;
+3. inspect whether an existing note has a compatible center thesis;
+4. append a missing section and backlink when appropriate;
+5. create a new note only when no coherent reusable note exists.
+
+Do not create per-primary-note duplicates such as:
+
+```text
+TCPConnection 前置知识
+TCPReceiver 前置知识
+TCPSender 前置知识
+```
+
+when one shared runtime-infrastructure note can serve all three.
+
+## 4. Inspect The Target Surface
 
 Collect:
 
-- constructors, factory functions, and destructors;
+- constructors, factories, registration hooks, and destructors;
 - exported or public methods;
 - private helpers;
 - member variables or owned subcomponents;
 - external types appearing in signatures or state;
 - source-defined invariants and comments.
 
-### 4. Build Read/Write And Call Maps
+## 5. Build Read/Write And Call Maps
 
 For every important method, determine:
 
@@ -215,52 +380,85 @@ For every important method, determine:
 - early returns and skipped downstream work;
 - invariants maintained.
 
-### 5. Inspect Complete Runtime Scenarios
+## 6. Inspect Complete Runtime Scenarios
 
 Find the normal lifecycle and meaningful mutually exclusive or exceptional branches.
 
-For a stateful component, identify every important state transition and the event that triggers it.
+For a stateful component, identify every meaningful state transition and its trigger.
 
-### 6. Inspect Tests Before Writing The Test Chapter
+## 7. Inspect Tests Before Writing The Test Chapter
 
 Locate:
 
 - test framework;
 - fixtures;
-- test harnesses;
-- custom event or expectation types;
+- harnesses;
+- custom actions and expectations;
 - helper classes;
-- scenario builders;
-- individual test families;
-- assertion or oracle mechanisms;
+- scenario builders and state factories;
+- test families;
+- oracle mechanisms;
 - build and test commands.
 
-### 7. Inspect Existing Notes And References
+## 8. Inspect Existing Notes And References
 
 Search for:
 
-- existing dependency notes;
+- shared repository prerequisite notes;
+- dedicated dependency notes;
 - source-specific companion notes;
 - protocol or standard notes;
 - test-infrastructure notes;
 - authoritative external references.
 
-Reuse valid notes and links. Do not duplicate a mature dependency explanation inline.
+Reuse valid notes and precise headings. Do not duplicate mature explanations inline.
 
-## Core Cognitive Rules
+# Core Cognitive Rules
 
-### Rule 1: Start With A Short Goal
+## Rule 1: Start With A Short Goal
 
-The opening goal should normally be one to three sentences.
-
-It only needs to answer:
+The opening goal should normally be one to three sentences. Answer only:
 
 - what this subject is responsible for;
 - why the reader would open this note.
 
-Do not begin with broad history, generic motivation, or a large conceptual introduction. The future reader has already chosen to open the note.
+Do not begin with broad history or a large conceptual introduction.
 
-### Rule 2: Explain The Application Connection Before Internal APIs
+## Rule 2: Explain Repository Prerequisites Before They Become Obstacles
+
+Before the first real usage example, identify only the non-obvious repository-specific types required to understand that example and the application call chain.
+
+For each type, provide:
+
+- one sentence explaining its current role;
+- its position in the chain;
+- an exact deep link to a shared prerequisite or dedicated dependency note when available.
+
+The main note must remain understandable without opening the link. The link is for optional depth, not a replacement for local context.
+
+Good:
+
+```markdown
+`LossyTCPOverUDPSpongeSocket` is the application-facing Sponge socket instantiated with a lossy UDP adapter stack. It still exposes socket-style connect/listen/read/write behavior; packet loss is injected below `TCPConnection`.
+
+Details: [[CS144 Socket、Adapter 与运行时调用链#LossyTCPOverUDPSpongeSocket]]
+```
+
+Bad:
+
+```markdown
+See [[CS144 Socket、Adapter 与运行时调用链]].
+```
+
+Bad:
+
+```markdown
+LossyTCPOverUDPSpongeSocket starts the connection.
+```
+
+The second statement names the type but does not make it understandable.
+
+## Rule 3: Explain The Application Connection Before Internal APIs
 
 If the target is not directly called by application code, add a thin upper-layer slice before presenting its public API.
 
@@ -268,161 +466,151 @@ Explain:
 
 ```text
 application action
-→ immediate upper-layer component
+→ repository-specific wrapper / owner
 → target public method
 → target output
-→ lower layer or application-visible result
+→ adapter / lower layer / application-visible result
 ```
 
-Only explain how the upper layer produces the target's inputs and consumes its outputs. Link to the upper-layer walkthrough for implementation details.
+Only explain how the upper layer produces target inputs and consumes target outputs. Use precise links for infrastructure details.
 
-### Rule 3: Use Real Public-API Examples Before Explaining The Declaration
-
-Show how the public surface behaves before asking the reader to inspect its declaration.
+## Rule 4: Use Real Public-API Examples Before The Declaration
 
 Prefer several small, natural, repository-valid examples:
 
-- one connection or initialization example;
-- one input or write example;
-- one receive or callback example;
-- one shutdown or lifecycle example;
-- one state-observation example when useful.
+- construction or connection;
+- input or write;
+- receive or callback;
+- read produced data;
+- shutdown or lifecycle;
+- state observation when useful.
 
-A small example may cover two or three naturally related APIs. Do not force all public methods into one artificial “god example.”
+A small example may cover two or three naturally related APIs. Do not force all public methods into one artificial example.
 
-After the individual examples, later provide one complete lifecycle scenario that connects the main APIs.
+Examples must:
 
-Usage examples must:
-
-- use real types;
-- use plausible concrete values;
+- use real types and plausible values;
 - use real construction paths;
 - show real outputs or observable state;
 - compile or fit the repository's actual test/application environment when practical;
-- avoid pseudocode placeholders such as `do_something()` unless that call is explicitly marked as an omitted external boundary.
+- avoid unmarked pseudocode placeholders.
 
-### Rule 4: Treat Constructors And Destructors As Lifecycle Boundaries
+When another complex type appears, explain its minimum interface surface, add a precise link, and continue the current scenario.
 
-Constructors, factories, initialization methods, destructors, close methods, and cleanup hooks come before ordinary method implementation details.
+## Rule 5: Treat Construction And Destruction As Lifecycle Boundaries
 
-They answer:
+Constructors, factories, initialization/registration methods, destructors, close methods, and cleanup hooks come before ordinary implementation details.
+
+Explain:
 
 ```text
 how the object is born
+→ what owned objects are created
 → what initial invariants exist
 → what events it can accept
 → how it must leave
 ```
 
-Explain:
+Cover:
 
 - input configuration;
-- owned subobjects created;
+- owned subobjects;
 - initial member state;
 - post-construction invariants;
-- clean versus unclean destruction behavior;
+- clean versus unclean destruction;
 - externally visible cleanup effects.
 
-Use a decision diagram for nontrivial destruction behavior. Do not draw a diagram for obvious field assignment.
+Use a decision diagram only when cleanup has meaningful branches or protocol effects.
 
-### Rule 5: Explain Public Methods Twice, For Different Purposes
+## Rule 6: Explain Public Methods Twice
 
-The first pass is natural-language responsibility explanation after the class declaration.
+The first pass is a natural-language responsibility explanation after the declaration.
 
-For every public method, answer:
+For every important public method, answer:
 
 - who calls it;
 - when it is called;
 - what event it represents;
 - what external result it can produce;
-- how it affects the object's lifecycle.
+- how it affects the lifecycle.
 
-Do not merely restate parameter and return types.
+Do not merely restate types.
 
-The second pass is the implementation walkthrough later in the note.
+The second pass is the later implementation walkthrough.
 
-### Rule 6: Private Helpers Own Their Own Sections
+## Rule 7: Private Helpers Own Their Own Sections
 
-A private helper does not belong to whichever public method happens to be explained first.
+A private helper does not belong to whichever public method is explained first.
 
 In a public-method section:
 
-- describe each called private helper in one or two sentences;
+- describe each helper in one or two sentences;
 - state its role in the current path;
-- link to the helper's dedicated same-note section;
-- do not inline the helper's full implementation there.
+- deep-link to the helper's same-note section;
+- do not inline its full implementation.
 
-In the private-helper section:
+In the helper section:
 
-- group helpers by responsibility domain;
-- explain the implementation in detail;
-- list and link every meaningful caller;
-- provide a route back to the relevant public mainline.
+- group by responsibility domain;
+- explain implementation details;
+- list every meaningful caller;
+- provide links back to relevant public mainlines.
 
-This two-pass structure preserves a readable public mainline without duplicating shared helper explanations.
+## Rule 8: Member Variables Are Explained Through Behavior
 
-### Rule 7: Member Variables Are Explained Through Behavior
+Do not write a long standalone essay for every member.
 
-Do not create long standalone essays for every member variable.
-
-Provide only a compact state ledger that identifies:
+Provide a compact ledger containing:
 
 - role;
 - main readers;
 - main writers;
-- whether the value is authoritative state, derived state, cache, queue, timer, flag, or owned component.
+- state kind: authoritative, derived, cache, queue, timer, flag, or owned component.
 
-Then explain actual state changes inside the methods that cause them.
+Then explain state evolution inside modifying methods.
 
-Every important modifying method should show the relevant state difference.
+## Rule 9: Large Methods Are Split By Responsibility
 
-### Rule 8: Large Methods Are Split By Responsibility, Not By Line Number
-
-For a method of roughly tens of lines or more, first identify coherent responsibility blocks.
+For methods of roughly tens of lines or more, identify coherent responsibility blocks.
 
 A block should:
 
 - solve one local purpose;
 - have clear input conditions;
-- use a small local variable scope;
-- produce a describable state or control-flow result;
+- use a small local-variable scope;
+- produce a describable state or control result;
 - establish conditions for the next block.
 
-Blocks often happen to be around 5-12 lines, but fixed length is not the rule.
+Blocks often happen to be 5-12 lines, but length is not the rule.
 
-When discussing local variables:
+Explain local variables near first use and their lifetime. If source locality is poor, describe the factual layout and mark any refactor separately as a suggestion.
 
-- introduce them near first use;
-- explain their local lifetime;
-- do not front-load a list of variables that are used much later;
-- if the source itself has poor variable locality, describe the factual source layout and separately mark the readability suggestion.
+Do not translate every line. Explain responsibility, state transition, control guarantee, and skipped work after early returns.
 
-Do not explain a large method line by line. Explain each responsibility block using state transitions and control guarantees.
+## Rule 10: Complete Scenarios Follow Method-Level Understanding
 
-### Rule 9: Complete Scenarios Come After Method-Level Understanding
-
-After all important public and private methods have been explained, add a complete scenario that recombines them.
-
-Use:
+After important public and private methods are explained, add:
 
 - one realistic normal mainline;
-- several attached mutually exclusive or exceptional branches;
-- a coverage table mapping every meaningful state transition to a scenario;
-- one final complete state-machine diagram when the subject has a state machine.
+- attached mutually exclusive or exceptional branches;
+- a table mapping meaningful state transitions to scenarios;
+- one final complete state-machine diagram when applicable.
 
-Do not force active close, passive close, reset, timeout, success, and every error into one fake execution.
+Do not force active close, passive close, timeout, reset, success, and every error into one fake execution.
 
 The mainline provides continuity. Branches provide completeness. The final state machine compresses the model.
 
-### Rule 10: Tests Are Executable Behavioral Proof
+## Rule 11: Tests Are Executable Behavioral Proof
 
-The test chapter must first explain the language of the test suite, then the individual tests.
+Explain the language of the test suite before individual tests. Do not begin by pasting a random `TEST`, `TEST_F`, or custom Harness call.
 
-Do not begin by pasting a random `TEST`, `TEST_F`, or custom harness invocation.
+## Rule 12: References Follow The Topic
 
-## Default Note Architecture
+Place one authoritative reference near the exact nontrivial topic it supports. Use the final reference section only for broader optional reading.
 
-Use this order unless the source shape makes a section genuinely inapplicable. If omitted, state why it is not applicable.
+# Default Primary Note Architecture
+
+Use this order unless a section is genuinely inapplicable. If omitted, state why.
 
 ```markdown
 ## 目标
@@ -430,6 +618,8 @@ Use this order unless the source shape makes a section genuinely inapplicable. I
 ## 阅读边界与导航
 
 ## 从应用到当前组件
+
+## 理解本篇所需的外部类型
 
 ## Public API 的真实调用案例
 
@@ -444,7 +634,6 @@ Use this order unless the source shape makes a section genuinely inapplicable. I
 ## 成员状态账本
 
 ## 实现走读
-
 ### 构造与析构实现
 ### Public 方法实现
 ### Private helper 实现
@@ -468,34 +657,166 @@ Use this order unless the source shape makes a section genuinely inapplicable. I
 ## 扩展阅读
 ```
 
+`理解本篇所需的外部类型` must stay compact. It is not an excuse to repeat the shared prerequisite note.
+
 For non-class subjects:
 
 - “Public API” means exported functions, callbacks, handlers, commands, or protocol entrypoints;
-- constructor/destructor sections may become initialization/registration/cleanup;
-- member state may become module state, context, cache, tables, or owned resources.
+- constructor/destructor may become initialization/registration/cleanup;
+- member state may become module context, caches, tables, queues, or owned resources.
 
-## Opening And Navigation Rules
+# Shared Repository Prerequisite Note
 
-### Goal
+## Purpose
 
-Keep the goal short. Do not explain the whole topic before the walkthrough starts.
+A shared prerequisite note is a repository-level context layer. It gives readers enough infrastructure knowledge to follow many primary walkthroughs without repeating the same explanation.
 
-### Coverage Boundary
+It is not:
 
-State what the note covers and intentionally does not expand.
+- a full repository tour;
+- a glossary of every type;
+- a miscellaneous dump;
+- a substitute for dedicated complex dependency walkthroughs.
+
+## Naming And Center Thesis
+
+Name by the shared mechanism, not by “other” or “miscellaneous.”
+
+Good:
+
+- `CS144 Socket、Adapter 与运行时调用链`;
+- `Go net/http Transport 运行时组件`;
+- `Redis 事件循环与文件事件基础设施`.
+
+Bad:
+
+- `CS144 其他类`;
+- `CS144 杂记`;
+- `辅助类说明`.
+
+The title and opening must express one center thesis.
+
+## Default Architecture
+
+```markdown
+## 目标
+
+## 适用范围与引用方式
+
+## 共享运行时总览
+
+## 类型关系与包装层次
+
+## `<type A>`
+
+## `<type B>`
+
+## `<type C>`
+
+## 一个完整的跨层小场景
+
+## 在其他走读笔记中的入口
+
+## 需要独立走读的对象
+```
+
+## Per-Type Shallow Template
+
+Use this template for each infrastructure type:
+
+```markdown
+## `<type>`
+
+**一句话职责**
+
+**位于哪里**
+
+**谁创建或持有它**
+
+**上游输入**
+
+**下游输出**
+
+**当前仓库如何使用**
+
+**其他笔记需要记住什么**
+
+**需要深挖时跳到哪里**
+```
+
+Optional additions when genuinely useful:
+
+- one real declaration or construction expression;
+- a tiny ownership diagram;
+- a sequence fragment;
+- one non-obvious lifecycle note.
+
+Do not force a full Public/Private implementation walkthrough for every infrastructure type. If one type grows enough to require methods, state changes, lifecycle, and tests, split it into a dedicated dependency walkthrough and leave a summary plus link here.
+
+## Wrapper And Alias Explanation
+
+For layered aliases or templates, explicitly unfold the stack.
+
+Example:
+
+```text
+LossyTCPOverUDPSpongeSocket
+= TCPSpongeSocket<LossyTCPOverUDPSocketAdapter>
+  └── LossyTCPOverUDPSocketAdapter
+      └── TCPOverUDPSocketAdapter
+          └── UDPSocket
+```
+
+Then explain the responsibility added by each layer. Do not merely restate inheritance or template syntax.
+
+## Cross-Note Link Contract
+
+A primary note should link to a precise heading:
+
+```markdown
+[[CS144 Socket、Adapter 与运行时调用链#LossyTCPOverUDPSpongeSocket]]
+```
+
+The exact heading must exist.
+
+The primary note must also keep one local sentence explaining the type's current role. A reader who does not follow the link must still understand the current paragraph.
+
+The prerequisite section should backlink to important primary notes when useful, but avoid exhaustive backlink lists that duplicate Obsidian's backlinks pane.
+
+## Maintenance Contract
+
+When a later walkthrough encounters another qualifying shared type:
+
+1. update the existing prerequisite note;
+2. add the missing section in the correct responsibility area;
+3. add or repair precise deep links;
+4. avoid creating a second overlapping prerequisite note;
+5. split the note only when its center thesis has genuinely divided.
+
+# Opening And Navigation Rules
+
+## Goal
+
+Keep the goal short.
+
+## Coverage Boundary
+
+State what the note covers and intentionally leaves to dependencies or prerequisites.
 
 Example:
 
 ```text
 本文重点：TCPConnection 的调用链、内部职责、状态变化和测试覆盖。
-本文不展开：TCPHeader 编解码、WrappingInt32 原理、TUN 实现。
+本文不展开：UDP socket 与 adapter 栈、TCPHeader 编解码、WrappingInt32 原理。
+前置入口：[[CS144 Socket、Adapter 与运行时调用链#UDP 承载链]]。
 ```
 
-### Intent-Based Navigation
+## Intent-Based Navigation
 
 For a long note, add a compact reading-intent index:
 
 ```markdown
+- 想先理解仓库运行时前置：[[#理解本篇所需的外部类型]]
 - 想先知道怎么用：[[#Public API 的真实调用案例]]
 - 想看内部设计：[[#类内部责任划分]]
 - 想查某个方法：[[#实现走读]]
@@ -503,67 +824,54 @@ For a long note, add a compact reading-intent index:
 - 想排查测试：[[#测试覆盖矩阵与失败定位]]
 ```
 
-Do not duplicate a full table of contents when Obsidian already provides headings.
+Do not duplicate a full table of contents.
 
-## Thin Application-To-Component Slice
+# Thin Application-To-Component Slice
 
-This section is mandatory when the target is a middle-layer or framework-owned component.
+This section is mandatory for a middle-layer or framework-owned target.
 
-Answer only:
+Answer:
 
 1. what the application or external actor does;
-2. what immediate upper-layer owner translates that action;
+2. what immediate owner translates it;
 3. which target public method is invoked;
-4. how target output reaches the application or lower layer.
+4. where target output goes;
+5. which prerequisite types make this translation possible.
 
-A compact event translation table is often sufficient:
+A compact table is often sufficient:
 
-| External event | Immediate owner action | Target API | Output consumer |
-|---|---|---|---|
-| application write | event loop reads local socket | `write()` | sender / outbound queue |
-| network segment | adapter parses datagram | `segment_received()` | receiver / ACK path |
+| External event | Immediate owner | Target API | Output consumer | Prerequisite context |
+|---|---|---|---|---|
+| application write | socket/event loop | `write()` | sender/output queue | exact deep link |
+| network segment | adapter | `segment_received()` | receiver/ACK path | exact deep link |
 
-Link to the upper-layer note for implementation details.
+Do not expand full owner or adapter implementation here.
 
-## Real Usage Example Rules
+# Real Usage Example Rules
 
-### Multiple Small Examples First
+## Multiple Small Examples First
 
-Prefer scenario groups over one all-inclusive example.
+Prefer scenario groups over one all-inclusive example. Each example answers one concrete question and has an observable result.
 
-Each example should answer one concrete question and have an observable result.
+## Lifecycle APIs Versus Observation APIs
 
-Good example groups:
+Main lifecycle APIs should later appear in the complete scenario. Accessors, diagnostics, metrics, and test-only methods may appear as observations and need not be forced into the mainline.
 
-- construct and initiate;
-- provide input and collect output;
-- receive an external event;
-- read produced data;
-- close or destroy;
-- observe state.
+## Dependency Boundary In Examples
 
-### Main Lifecycle APIs Versus Observation APIs
+When an example uses another non-obvious type:
 
-Main lifecycle APIs should later appear in the complete scenario.
+1. provide one local sentence explaining it;
+2. show only fields/methods needed for the current call;
+3. add an exact heading link when deeper material exists;
+4. continue the scenario;
+5. do not send the reader away before the current example makes sense.
 
-Accessors, diagnostics, metrics, and test-only methods may appear as assertions or observations in small examples. They do not need to be forced into the mainline.
+# Declaration And Responsibility Explanation
 
-### Dependency Boundaries
+## Show The Real Declaration
 
-When an example needs another complex type:
-
-1. show only the fields or methods necessary for the current call;
-2. explain that minimum interface surface;
-3. link to the dependency note;
-4. continue the current scenario.
-
-Do not derail the main note into the dependency's full implementation.
-
-## Declaration And Responsibility Explanation
-
-### Show The Real Declaration
-
-Present the relevant real declaration with enough context to distinguish:
+Present enough real declaration context to distinguish:
 
 - construction and destruction;
 - public/exported interface;
@@ -571,11 +879,11 @@ Present the relevant real declaration with enough context to distinguish:
 - owned state;
 - external types.
 
-Omit irrelevant boilerplate only when the omission is clearly marked.
+Mark omitted boilerplate.
 
-### Public API Natural-Language Pass
+## Public API Natural-Language Pass
 
-For each public method, use concise natural language:
+For each important public method:
 
 ```markdown
 ### `method()`
@@ -587,13 +895,11 @@ For each public method, use concise natural language:
 - 生命周期作用：...
 ```
 
-Pure accessors may be grouped in a table.
+Pure accessors may be grouped.
 
-### Responsibility Map
+## Responsibility Map
 
-Do not force the class into a tree when helpers are shared.
-
-Use a directed responsibility graph:
+Do not force shared helpers into a tree. Use a directed responsibility graph:
 
 ```text
 external trigger
@@ -602,24 +908,18 @@ external trigger
 → state sources / external dependencies
 ```
 
-Recommended Mermaid structure:
+Recommended layers:
 
-- first layer: application, network, timer, framework, or test triggers;
-- second layer: public methods;
-- third layer: private responsibility domains;
-- fourth layer: owned state and external components.
+- application/network/timer/framework/test triggers;
+- public methods;
+- private responsibility domains;
+- owned state and external components.
 
-Use converging edges for shared helpers instead of duplicating helper nodes under multiple public methods.
+Use converging edges for shared helpers. Split spider-web diagrams. External dependencies should be visually distinguishable and accompanied by precise nearby links.
 
-Split the graph by responsibility domain when it becomes a spider web.
+# Constructor And Destructor Walkthrough
 
-External dependencies should be visually distinguishable and explained through wikilinks in nearby text.
-
-## Constructor And Destructor Walkthrough
-
-Explain construction before ordinary method internals.
-
-### Constructor Template
+## Constructor Template
 
 ```markdown
 ### 构造输入
@@ -636,7 +936,7 @@ Explain construction before ordinary method internals.
 ### 此时可以接受的事件
 ```
 
-### Destructor Or Cleanup Template
+## Destructor Or Cleanup Template
 
 ```markdown
 ### 正常退出条件
@@ -648,23 +948,18 @@ Explain construction before ordinary method internals.
 ### 资源和状态最终结果
 ```
 
-Use a decision diagram only when cleanup has meaningful branches or protocol effects.
+# Member State Ledger
 
-## Member State Ledger
-
-Keep this section compact.
-
-Recommended fields:
+Keep this section compact:
 
 | Member | Role | Main readers | Main writers | State kind |
 |---|---|---|---|---|
-| `_active` | connection liveness summary | adapter, state reporting | reset, active update | derived control flag |
 
-Do not fully explain state evolution here. Link readers to the methods that modify it.
+Do not fully explain state evolution here. Link to modifying methods.
 
-## Public Method Implementation Template
+# Public Method Implementation Template
 
-Use this template for important public methods:
+For important public methods:
 
 ```markdown
 ## `<public method>`：<behavior label>
@@ -692,13 +987,11 @@ Use this template for important public methods:
 ### 维护的不变量
 ```
 
-Simple entry methods may use a shorter version. Pure accessors normally belong in a table.
+Simple entries may use a shorter form. Pure accessors normally belong in a table.
 
-## Private Helper Implementation Template
+# Private Helper Implementation Template
 
-Group private helpers by responsibility domain, not by declaration order and not by the first public caller.
-
-For every important helper:
+Group helpers by responsibility domain, not declaration order or first caller.
 
 ```markdown
 ### `<private helper>`
@@ -706,7 +999,6 @@ For every important helper:
 **职责**
 
 **调用者**
-
 - [[#`public_a()`]]
 - [[#`public_b()`]]
 
@@ -721,61 +1013,34 @@ For every important helper:
 **维护的不变量**
 
 **返回主线**
-
 - 返回 [[#`public_a()`]]
 ```
 
-A reader who does not follow the link must still understand the public mainline. A reader who follows it must be able to return without searching manually.
+A reader who does not follow a helper link must understand the public mainline. A reader who follows it must have a return path.
 
-## Large Method Walkthrough
+# Large Method Walkthrough
 
-### Responsibility Blocks
-
-Before explaining code, write a compact block overview:
-
-```text
-1. reject events that cannot be processed
-2. update send-side acknowledgment state
-3. update receive-side stream state
-4. generate outbound work
-5. update lifecycle state
-```
+Before explaining code, list responsibility blocks.
 
 For each block, explain:
 
 1. local purpose;
-2. relevant real code excerpt;
-3. input or precondition;
-4. local variables and their lifetime;
+2. focused real code;
+3. precondition;
+4. local variables and lifetime;
 5. state before and after;
-6. what later blocks may now assume;
-7. what an early return prevents from running.
+6. what later blocks may assume;
+7. what early return prevents.
 
-This should let the reader mentally execute the block without running a debugger.
+This should allow mental execution without a debugger.
 
-### Do Not Translate Every Line
+If a block has a reusable boundary and significant complexity, mark it as a possible helper extraction **suggestion**, not current source fact.
 
-Do not write:
-
-```text
-line 1 checks X
-line 2 assigns Y
-line 3 calls Z
-```
-
-Instead explain the responsibility and resulting state transition.
-
-### Refactor Signals
-
-If a responsibility block has a clear reusable input/output boundary and significant complexity, note that it may be a private-helper extraction candidate.
-
-Mark this as a design suggestion, not current source fact.
-
-## State Change Presentation
+# State Change Presentation
 
 Choose the smallest useful representation.
 
-### Scalar, Boolean, Enum, Counter, Timer
+## Scalar, Boolean, Enum, Counter, Timer
 
 Use a one-line transition or small table:
 
@@ -783,11 +1048,9 @@ Use a one-line transition or small table:
 _time_since_last_segment_received: 120 ms → 0 ms
 ```
 
-Do not create a diagram for a trivial assignment.
+## Sequence, Queue, Array, List
 
-### Sequence, Queue, Array, List
-
-Use one to three snapshots that demonstrate insertion, modification, and removal:
+Use one to three snapshots demonstrating insertion, modification, or removal:
 
 ```text
 initial: []
@@ -795,9 +1058,9 @@ after connect(): [SYN]
 after adapter pop(): []
 ```
 
-### Map, Hash Table, Ledger
+## Map, Hash Table, Ledger
 
-Use one to three keys to demonstrate the rule:
+Use one to three keys:
 
 ```text
 {}
@@ -806,255 +1069,204 @@ Use one to three keys to demonstrate the rule:
 → {}
 ```
 
-Do not enumerate an unbounded container.
+Do not enumerate unbounded containers.
 
-### Owned Subobject State
+## Owned Subobject State
 
-Expose only the state surface relevant to the current method:
+Expose only the current method's relevant surface, such as bytes in flight, reassembled bytes, queue contents, current state, error, or EOF.
 
-- bytes in flight;
-- reassembled bytes;
-- pending tasks;
-- current state;
-- queue contents;
-- error or EOF flags.
+## Cross-Object Interaction
 
-### Cross-Object Interaction
+Use a sequence diagram when ownership and handoff matter.
 
-Use a sequence diagram when call ownership and event handoff matter.
+## State Transition Logic
 
-### State Transition Logic
+Use a state diagram when multiple events or conditions choose transitions.
 
-Use a state diagram when multiple events or conditions select different transitions.
+## Responsibility Ordering
 
-### Responsibility Ordering
+Use a flowchart when order cannot safely change.
 
-Use a flowchart when the order cannot be safely rearranged.
+# Diagram Admission Rule
 
-## Diagram Admission Rule
+A diagram is allowed only when it clarifies a nontrivial relationship that prose or a small table cannot show as clearly.
 
-A diagram is allowed only when it clarifies a nontrivial relationship that prose or a small table would not show as clearly.
+Prefer diagrams for:
 
-Prefer a diagram when it expresses at least two dimensions, such as:
-
-- caller plus callee plus state effect;
-- multiple conditions plus multiple transitions;
-- multiple public methods sharing helpers;
-- runtime events crossing object boundaries;
+- caller + callee + state effect;
+- multiple conditions + transitions;
+- public methods sharing helpers;
+- runtime events crossing objects;
+- layered wrapper/adapter ownership;
 - lifecycle branches;
-- test setup, stimulus, and oracle.
+- test setup + stimulus + oracle.
 
 Do not use diagrams for:
 
 - flat lists;
 - direct getters;
 - one obvious assignment;
-- `1 + 1 = 2`-level logic;
-- decorative summaries already expressed by code or a table.
+- `1 + 1 = 2` logic;
+- decorative summaries already expressed elsewhere.
 
 Additional rules:
 
 - one diagram answers one question;
 - keep 5-9 nodes by default;
 - split large diagrams;
-- use stable left-to-right or top-to-bottom orientation across the note;
-- keep application, target, and network positions consistent across diagrams;
-- add one sentence before the diagram saying what to observe;
-- add one sentence after the diagram stating the conclusion;
-- do not repeat the exact same information in code, table, and diagram.
+- keep orientation and terminology stable;
+- keep application, target, adapter, and network positions consistent;
+- explain what to observe before the diagram;
+- state the conclusion after it;
+- do not repeat the same fact in code, table, and diagram.
 
-## Complete Lifecycle And State-Machine Coverage
+# Complete Lifecycle And State-Machine Coverage
 
-### Normal Mainline
+## Normal Mainline
 
-Build one realistic, continuous scenario using the real APIs and real data types.
+Build one realistic continuous scenario using real APIs and types.
 
-For every important step, show:
+For each important step show:
 
-- triggering event;
-- public method called;
-- key private responsibility invoked;
-- input segment, request, object, or data;
+- trigger;
+- public method;
+- key private responsibility;
+- input data/object;
 - member-state difference;
 - external output;
-- current logical state;
-- links back to method details.
+- logical state;
+- links to method details.
 
-### Attached Branches
+## Attached Branches
 
-Attach branches at the exact point where behavior diverges:
+Attach branches where behavior diverges:
 
 - passive versus active close;
 - success versus timeout;
-- normal acknowledgment versus retransmission;
-- valid input versus reset or error;
+- acknowledgment versus retransmission;
+- valid input versus reset/error;
 - ordered versus out-of-order data;
 - open versus zero window.
 
-Do not destroy the mainline by repeatedly restarting it from the beginning.
-
-### State Transition Coverage Table
-
-For stateful subjects, include:
+## State Transition Coverage Table
 
 | Transition | Trigger | Scenario location | Main method | Test coverage |
 |---|---|---|---|---|
 
-Every meaningful state-machine edge should appear in this table or be explicitly marked outside the implementation's scope.
+Every meaningful edge must appear or be explicitly out of scope.
 
-### Final Complete State Machine
+## Final Complete State Machine
 
-Place the complete state-machine diagram after the reader has seen the scenarios and branches.
+Place it after scenarios and branches. It compresses understanding; it must not be the first explanation of unfamiliar states.
 
-The diagram compresses prior understanding; it must not be the first explanation of unfamiliar states.
+# Reference Placement
 
-Below the diagram, add a compact reading index for the major paths.
+## Local References
 
-## Reference Placement
+Insert authoritative references near the exact topic they support. Default to at most one primary reference per focused subsection.
 
-### Local References
-
-Insert authoritative references near the exact topic they support.
-
-Default: at most one primary reference per focused subsection.
-
-Prefer, in order:
+Prefer:
 
 1. current repository source or test;
-2. official specification, RFC, standard, or language documentation;
-3. upstream official documentation or source;
+2. official specification/RFC/language documentation;
+3. upstream official source;
 4. authoritative industrial implementation;
 5. high-quality explanatory material.
 
-Each local reference should state:
+State what it supports, the relevant section/symbol, and what to look for.
 
-- what claim or question it supports;
-- the exact relevant section or symbol when possible;
-- what the reader should look for.
+## Industry Comparison
 
-Example:
+When readers may ask whether production systems behave the same, add one authoritative comparison at that point and distinguish teaching from industrial implementation.
 
-```markdown
-> [!reference] 协议依据
-> RFC xxxx §x.x defines ...
-> 阅读重点：...
-```
+## End References
 
-Do not dump many links in the middle of a section.
+Use `扩展阅读` only for broader optional directions. Group by purpose and explain why each item is useful.
 
-### Industry Comparison
+# Build Verification
 
-When the note explains the repository's approach and the reader may reasonably ask whether production systems do the same, add one authoritative comparison entry at that point.
+Keep build coverage short:
 
-Clearly distinguish the teaching implementation from the industrial implementation.
-
-### End References
-
-Use the final `扩展阅读` section only for broader optional directions. Group them by purpose and add one sentence explaining why each is useful.
-
-Do not make the end of the note the only place where references appear.
-
-## Build Verification
-
-Keep build coverage short.
-
-Include:
-
-- exact working directory or repository root;
-- exact build command;
+- exact directory;
+- exact command;
 - actual result;
-- what the successful build proves;
+- what success proves;
 - what it does not prove.
 
-Do not expand this into an operation manual unless the build itself is the subject.
+If unavailable, write `未验证` and the blocker.
 
-If build verification cannot be run, write `未验证` and the concrete blocker.
+# Test Chapter
 
-## Test Chapter
+## 1. Explain Test Infrastructure First
 
-### 1. Explain Test Infrastructure First
-
-Before individual tests, identify the test language:
+Identify:
 
 - framework;
-- fixture classes;
-- harness objects;
-- scenario builders;
-- custom event types;
-- expectation types;
-- helper functions;
+- fixtures;
+- harnesses;
+- scenario builders and state factories;
+- custom actions/events;
+- expectations/oracles;
+- helpers;
 - time simulation;
-- outbound-input inspection helpers;
-- setup and teardown behavior.
+- input/output inspection;
+- setup and teardown.
 
-### 2. Split Nontrivial Test Infrastructure Into A Companion Note
+## 2. Split Nontrivial Test Infrastructure
 
-Create or reuse a companion test-infrastructure note when one or more of these is true:
+Create or reuse a test-infrastructure note when:
 
-- multiple test files reuse the same fixture or harness;
-- two or more nontrivial custom helper classes must be understood first;
-- the harness hides a long lifecycle or state machine;
-- explaining helpers inline would interrupt every test case;
-- the infrastructure itself has enough material for multiple sections.
+- multiple files reuse a fixture/harness;
+- two or more nontrivial custom helpers must be understood first;
+- the harness hides a lifecycle/state machine;
+- inline explanation would interrupt every test;
+- the infrastructure deserves several sections.
 
-The target walkthrough should still provide the minimum interface surface needed for the current test, then link to the companion note.
+Keep the minimum current interface inline, then deep-link. Do not split trivial helpers.
 
-Do not split a trivial two-line helper into a separate note.
+## 3. Group Tests By Behavioral Family
 
-### 3. Group Tests By Behavioral Family
+Do not default to file order. Possible families:
 
-Do not default to source-file order.
-
-Possible families:
-
-- construction and connection establishment;
-- normal data transfer;
-- ordering and buffering;
-- windows and flow control;
+- construction/connection;
+- data transfer;
+- ordering/buffering;
+- windows/flow control;
 - close paths;
-- timeout and retransmission;
-- reset and error handling;
-- integration and adapter behavior.
+- timeout/retransmission;
+- reset/error;
+- integration/adapter behavior.
 
-For each family, explain:
+For each family explain overall behavior, state edges, methods/invariants, and case differences.
 
-- the overall behavior protected;
-- state-machine nodes and edges involved;
-- methods and invariants involved;
-- how individual cases differ.
-
-### 4. Explain Test Intent Before Test Code
-
-For every important test, use this order:
+## 4. Explain Intent Before Code
 
 ```text
 what the test proves
 → initial state
 → injected events
-→ expected state transitions
-→ oracle / assertions
-→ actual test code
-→ likely implementation fault when it fails
+→ expected transitions
+→ oracle
+→ actual code
+→ likely implementation fault
 ```
 
-### 5. Test Oracle Rule
+## 5. Test Oracle Rule
 
-Every test explanation must state how correctness is observed.
-
-Possible oracles:
+Every important test must state how correctness is observed:
 
 - return value;
 - thrown error;
-- emitted segment or message;
+- emitted message/segment;
 - queue contents;
-- header fields;
+- fields;
 - output bytes;
 - state transition;
-- timer behavior;
-- final hash or integration result;
+- timer;
+- final hash/integration result;
 - absence of unexpected work.
 
-### 6. Test Case Template
+## 6. Test Case Template
 
 ```markdown
 ### `<test name>`：<intent>
@@ -1076,59 +1288,62 @@ Possible oracles:
 **失败通常意味着什么**
 ```
 
-### 7. Test Explanation Depth
+## 7. Explanation Depth
 
-Use three levels:
-
-- **index level**: one-line intent, stimulus, and assertion for repetitive cases;
-- **standard level**: initial state, events, state-difference table, oracle;
-- **deep level**: staged execution, diagrams, fixture expansion, multiple state snapshots, failure localization.
+- **index**: one-line intent, stimulus, assertion;
+- **standard**: initial state, events, state difference, oracle;
+- **deep**: staged execution, diagrams, fixture expansion, snapshots, failure localization.
 
 Do not give every test equal space.
 
-### 8. Complex Tests Are Staged Like Large Methods
-
-Split a long test into phases such as:
+## 8. Complex Tests Use Phases
 
 ```text
 setup
-→ establish initial state
+→ establish state
 → inject stimulus
-→ advance time or external events
+→ advance time/external events
 → assert intermediate state
-→ inject recovery or branch event
+→ inject recovery/branch
 → assert final state
 ```
 
-For each phase, show state changes and the assertion that closes the phase.
+Each phase should close with state changes and its assertion.
 
-### 9. Test Coverage Matrix
-
-End the test chapter with a matrix:
+## 9. Coverage Matrix
 
 | Behavior or invariant | Implementation method | Test family | Concrete test | Failure signal |
 |---|---|---|---|---|
 
-This matrix should reveal:
+Reveal tested claims, covered state transitions, methods lacking direct coverage, and likely fault locations.
 
-- which important implementation claims are tested;
-- which state transitions are covered;
-- which methods lack direct coverage;
-- what a failing test most likely implicates.
+# Reader Experience Rules
 
-## Reader Experience Rules
+## Support Sequential And Nonlinear Reading
 
-### Support Sequential And Nonlinear Reading
+The note must work from beginning to end and through direct heading links.
 
-The note must work both from beginning to end and through direct heading links.
+## Provide Return Paths
 
-### Provide Return Paths
+Deep helper, dependency, shared-prerequisite, and test-infrastructure sections should provide caller/context links back to the mainline when helpful.
 
-Every deep private-helper or dependency section should identify its callers and provide links back to relevant public mainlines.
+## Link Does Not Replace Explanation
 
-### Add Cognitive Checkpoints
+Every non-obvious external type must have a minimum local explanation before a link. No paragraph should become unintelligible when links are not opened.
 
-After long phases, add a short checkpoint:
+## Prefer Precise Heading Links
+
+Use the exact relevant heading, not only the note root:
+
+```markdown
+[[Repository Runtime Infrastructure#SpecificAdapter]]
+```
+
+Verify that the target heading exists. Avoid aliases inside Markdown table cells when they could break parsing.
+
+## Add Cognitive Checkpoints
+
+After long phases:
 
 ```markdown
 > [!summary] 读到这里应当明确
@@ -1136,155 +1351,147 @@ After long phases, add a short checkpoint:
 > - ...
 ```
 
-Useful locations:
+Useful after public usage, responsibility mapping, method implementation, lifecycle, and tests.
 
-- after public usage;
-- after responsibility mapping;
-- after method implementation;
-- after complete lifecycle;
-- after tests.
+## Preserve Stable Vocabulary
 
-Do not repeat the entire section.
+Choose one set of directional terms and keep it throughout, for example local/peer, application/network, inbound/outbound, sender/receiver, source/final queue.
 
-### Preserve Stable Vocabulary
+## Keep Code Context Just Large Enough
 
-Choose one stable set of directional terms and use it throughout, for example:
+Include containing method, relevant condition, local variables, and transition to the next block. Avoid isolated unexplained calls and huge files.
 
-- local / peer;
-- application side / network side;
-- inbound / outbound;
-- sender / receiver;
-- source queue / final output queue.
-
-Do not casually switch viewpoints between diagrams.
-
-### Keep Code Context Just Large Enough
-
-A code excerpt should include enough context to identify:
-
-- containing method;
-- relevant conditions;
-- local variables;
-- transition to the next responsibility block.
-
-Do not show a single unexplained call when context is required. Do not paste an entire huge file when ten focused lines are enough.
-
-### Use One Primary Representation Per Fact
+## Use One Primary Representation Per Fact
 
 - code proves implementation;
-- prose explains intent and reason;
-- a table shows comparison or state difference;
-- a flowchart shows ordered responsibility;
-- a sequence diagram shows object interaction;
-- a state diagram shows transitions.
+- prose explains intent/reason;
+- table shows comparison/state difference;
+- flowchart shows ordered responsibility;
+- sequence diagram shows object interaction;
+- state diagram shows transitions.
 
-Avoid repeating the same fact in all five forms.
+Avoid repeating one fact in every form.
 
-### Use Progressive Disclosure
+## Use Progressive Disclosure
 
-Keep raw logs, full declarations, repetitive tests, and secondary evidence in foldable callouts or appendices when they would interrupt the mainline.
+Keep raw logs, full declarations, repetitive tests, and secondary evidence in foldable callouts or appendices when they interrupt the mainline.
 
-### Make Omission Explicit
+## Make Omission Explicit
 
-If a method, branch, external dependency, state transition, build target, or test family is intentionally not covered, state why.
+If a method, branch, dependency, prerequisite type, transition, build target, or test family is omitted, state why and where the reader should go instead.
 
-## Mandatory Validation Checklist
+# Mandatory Validation Checklist
 
 Before finishing, verify all applicable items.
 
-### Source Grounding
+## Source Grounding
 
 - [ ] Repository, branch/tag, and commit are recorded when available.
 - [ ] Source and test paths are correct.
 - [ ] Important claims are grounded in current source.
-- [ ] Build and test outputs are real or explicitly marked unverified.
-- [ ] Current behavior is separated from design suggestions.
+- [ ] Build/test outputs are real or explicitly unverified/historical.
+- [ ] Current behavior is separated from suggestions and standards.
 
-### Cognitive Order
+## Dependency Readiness
+
+- [ ] Every non-obvious type in the application slice, examples, signatures, ownership, lifecycle, and tests was audited.
+- [ ] Every such type has a minimum local explanation.
+- [ ] Each type was classified as inline, dedicated walkthrough, shared prerequisite, test infrastructure, or unresolved.
+- [ ] Existing repository-level prerequisite notes were searched before creating new ones.
+- [ ] Shared infrastructure is not duplicated across per-component prerequisite notes.
+- [ ] Shared prerequisite notes have a coherent center thesis and non-miscellaneous name.
+- [ ] Wrapper/template/alias stacks are unfolded when names hide composition.
+- [ ] Exact deep-link headings exist.
+- [ ] Links supplement rather than replace local context.
+
+## Cognitive Order
 
 - [ ] Goal is short.
 - [ ] Coverage boundary is explicit.
-- [ ] A middle-layer component has a thin application-to-component slice.
+- [ ] A middle-layer target has a thin application-to-component slice.
+- [ ] Required external-type context appears before it blocks the reader.
 - [ ] Real public usage appears before internal implementation.
-- [ ] Examples use real types and values rather than pseudocode.
-- [ ] Multiple small examples are used instead of one artificial all-API example.
+- [ ] Examples use real types and values.
+- [ ] Multiple small examples replace an artificial all-API example.
 
-### Declaration And Lifecycle
+## Declaration And Lifecycle
 
-- [ ] Real declaration or exported surface is shown.
-- [ ] Construction and destruction/cleanup are explained before ordinary internals.
-- [ ] Every important public API has caller, timing, event meaning, result, and lifecycle role.
+- [ ] Real declaration/exported surface is shown.
+- [ ] Construction and destruction/cleanup precede ordinary internals.
+- [ ] Every important public API has caller, timing, event, result, and lifecycle role.
 - [ ] Private responsibilities are grouped by domain.
 - [ ] Shared helpers are not falsely owned by one public method.
 
-### Method Detail
+## Method Detail
 
-- [ ] Public mainlines explain helper roles without duplicating helper internals.
-- [ ] Every important private helper has a dedicated section and caller backlinks.
+- [ ] Public mainlines explain helper roles without duplicating internals.
+- [ ] Important private helpers have dedicated sections and caller backlinks.
 - [ ] Important methods show read set, write set, state difference, observable result, and invariants.
 - [ ] Large methods are divided into cohesive responsibility blocks.
-- [ ] Early returns state what later work is skipped.
-- [ ] Member-state behavior is explained through modifying methods.
-- [ ] Containers use only enough snapshots to explain insertion, update, and removal.
+- [ ] Early returns state skipped later work.
+- [ ] Member state is explained through modifying methods.
+- [ ] Containers use only enough snapshots to explain rules.
 
-### Diagrams And Links
+## Diagrams And Links
 
 - [ ] Every diagram answers a nontrivial question.
 - [ ] No obvious assignment or flat list receives a decorative diagram.
-- [ ] Diagram orientation and terminology are stable.
+- [ ] Orientation and terminology are stable.
 - [ ] Same-note deep links have return paths.
-- [ ] External dependency links resolve or are explicitly reported missing.
-- [ ] Code, prose, tables, and diagrams do not redundantly repeat the same fact.
+- [ ] External links resolve or missing notes are reported.
+- [ ] Primary notes link to precise prerequisite/dependency headings.
+- [ ] Code, prose, tables, and diagrams do not redundantly repeat facts.
 
-### Lifecycle Completeness
+## Lifecycle Completeness
 
 - [ ] One realistic normal lifecycle is complete.
-- [ ] Mutually exclusive and exceptional behaviors are attached as branches.
-- [ ] Every meaningful state transition appears in the coverage table or is marked out of scope.
-- [ ] A final complete state machine is included when applicable.
+- [ ] Mutually exclusive and exceptional behavior is attached as branches.
+- [ ] Every meaningful transition appears in the coverage table or is out of scope.
+- [ ] A final complete state machine exists when applicable.
 
-### References
+## References
 
-- [ ] Topic-specific authoritative references appear at the relevant sections.
+- [ ] Topic-specific authoritative references appear near relevant sections.
 - [ ] Local sections do not contain link dumps.
 - [ ] Teaching implementation, specification, and industrial comparison are distinguished.
 - [ ] Broader optional references are grouped at the end.
 
-### Build And Tests
+## Build And Tests
 
 - [ ] Build verification is short and factual.
-- [ ] Test infrastructure is explained before individual tests.
-- [ ] Nontrivial shared test infrastructure is split or linked appropriately.
+- [ ] Test infrastructure precedes individual tests.
+- [ ] Nontrivial test infrastructure is split or linked appropriately.
 - [ ] Tests are grouped by behavioral family.
 - [ ] Important tests explain intent before code.
 - [ ] Every important test names its oracle.
-- [ ] Complex tests are divided into execution phases with state changes.
-- [ ] A coverage and failure-localization matrix closes the test chapter.
+- [ ] Complex tests are divided into phases with state changes.
+- [ ] A coverage/failure-localization matrix closes the test chapter.
 
-### Reader Experience
+## Reader Experience
 
 - [ ] Long notes have intent-based navigation.
 - [ ] Long phases have concise cognitive checkpoints.
 - [ ] Vocabulary and visual orientation remain stable.
 - [ ] Secondary evidence uses progressive disclosure.
 - [ ] Omitted material is explicitly marked.
+- [ ] The mainline remains understandable without opening optional links.
 
-## Frontmatter Metadata Check Rule
+# Frontmatter Metadata Check Rule
 
 Before finishing any generated or transformed Obsidian note, use `obsidian-frontmatter-metadata` as a required check.
 
-The YAML frontmatter must preserve valid top-level metadata, especially:
+Preserve valid top-level metadata, especially:
 
 - `summary`;
 - `aliases`;
 - `tags`;
-- existing source metadata such as repository, branch, commit, source files, and test status when present.
+- repository, branch, commit, source files, and test status when present.
 
-Do not let `summary`, `aliases`, `tags`, or status fields become accidentally nested under a YAML list item.
+Do not accidentally nest metadata under YAML list items.
 
-## Output Policy
+# Output Policy
 
-After creating or editing the note, respond with:
+After creating or editing notes, respond with:
 
 ```markdown
 ## 完成情况
@@ -1292,14 +1499,19 @@ After creating or editing the note, respond with:
 - 类型：代码走读型
 - 模式：repository-mode / transform-mode / materialize-mode
 - 主笔记：`<path>`
-- 伴随笔记：
-  - `<path>` or `无`
+- 共享前置笔记：
+  - `<path>#<heading>` / 新建 / 更新 / 复用 / 无
+- 独立依赖走读：
+  - `<path>` / 新建 / 更新 / 复用 / 无
+- 测试基建笔记：
+  - `<path>` / 新建 / 更新 / 复用 / 无
 - 源码版本：`<repo>@<branch-or-tag>:<commit>`
 - 验证：
   - 编译：通过 / 失败 / 未运行
   - 测试：通过 / 部分通过 / 失败 / 未运行
 - 主要覆盖：
   - 应用到组件调用链
+  - 仓库级前置与外部类型
   - Public API 与构造/析构
   - Public/Private 实现和状态变化
   - 完整生命周期与状态机
