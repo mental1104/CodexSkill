@@ -1,6 +1,6 @@
 ---
 name: note-operation-manual
-description: Create or transform Obsidian operation manuals around one minimum complete operational loop: a clear trigger, applicable starting state, verified happy path, decisive checkpoints, symptom-indexed recovery branches, final acceptance state, and rollback or cleanup. Use for repeatable setup, configuration, maintenance, recovery, CLI, software, infrastructure, and practical ChatGPT-derived procedures where the future reader wants to complete the task rather than replay the exploration history.
+description: "Create or transform Obsidian operation manuals around one minimum complete operational loop: a clear trigger, applicable starting state, verified happy path, decisive checkpoints, symptom-indexed recovery branches, final acceptance state, and rollback or cleanup. Use for repeatable setup, configuration, maintenance, recovery, CLI, software, infrastructure, and practical ChatGPT-derived procedures where the future reader wants to complete the task rather than replay the exploration history."
 ---
 
 # Note Operation Manual
