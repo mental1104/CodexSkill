@@ -114,7 +114,7 @@ Adjust headings to the domain, but keep the final code block inside the note. Do
 After writing, verify:
 
 - The note starts with `---` and has a closing frontmatter delimiter.
-- `summary`, `aliases`, and `tags` exist and use the expected shapes.
+- `source`, `tags`, `summary`, and `read_status` exist and use the expected shapes.
 - No singular `alias:` or `tag:` fields were introduced.
 - The final `## 代码` block exists.
 - The embedded code block can be extracted and compared with the source, or parsed/compiled when feasible.

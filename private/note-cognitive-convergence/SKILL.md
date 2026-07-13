@@ -491,7 +491,7 @@ The note shape still follows `note-cognitive-convergence`, while all inline and 
 
 Before finishing any generated or transformed Obsidian note, also use `obsidian-frontmatter-metadata` as a required check.
 
-The YAML frontmatter must use valid top-level `summary`, `aliases`, and `tags` fields and follow the target vault's established template.
+The YAML frontmatter must use valid top-level `source`, `tags`, `summary`, and `read_status` fields and follow the target vault's established template.
 
 # Output Policy
 

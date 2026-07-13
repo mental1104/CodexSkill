@@ -553,7 +553,7 @@ If the note contains LaTeX math, also use `latex-math-writing`.
 
 # Frontmatter Metadata Check Rule
 
-Before finishing, use `obsidian-frontmatter-metadata` and follow the target vault template, especially valid top-level `summary`, `aliases`, and `tags` fields.
+Before finishing, use `obsidian-frontmatter-metadata` and follow the target vault template, especially valid top-level `source`, `tags`, `summary`, and `read_status` fields.
 
 # Output Policy
 

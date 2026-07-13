@@ -44,16 +44,29 @@ When paired with another skill, this skill supplies conventions only. The concre
 
 ### Default Note Template
 
-Every new Markdown content note in the Blue Espeon vault should follow `Templates/default-note.md` unless the target directory clearly uses another established pattern.
+Every new Markdown content note in the Blue Espeon vault may reuse the body structure from `Templates/default-note.md`, unless the target directory clearly uses another established pattern.
+
+The YAML frontmatter is stricter than the template and must contain exactly these four fields:
+
+```yaml
+---
+source: ""
+tags: []
+summary: ""
+read_status: unread
+---
+```
 
 Keep:
 
+- `source`;
+- `tags`;
+- `summary`;
 - `read_status`;
-- `read_depth`;
-- `read_at`;
-- `read_note`;
 - `## AI摘要`;
 - `## 正文`.
+
+Do not add convenience metadata such as `title`, `aliases`, `created`, `updated`, `related`, `repo`, `branch`, `source_commit`, `source_files`, `test_status`, `read_depth`, `read_at`, or `read_note`.
 
 Generated note content goes under `## 正文`.
 Fill `## AI摘要` only when a concise summary is available.

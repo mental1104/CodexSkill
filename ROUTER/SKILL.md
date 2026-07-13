@@ -101,7 +101,7 @@ Do not ask merely because more detail would be nice. Make a best-effort route fr
 The selected primary skill owns the final note. Apply helper skills as required:
 
 - `blue-espeon-note-style`: vault placement, naming, backlinks, wikilinks, Mermaid conventions, and single-thesis boundaries;
-- `obsidian-frontmatter-metadata`: valid `summary`, `aliases`, and `tags` metadata;
+- `obsidian-frontmatter-metadata`: valid `source`, `tags`, `summary`, and `read_status` metadata;
 - `latex-math-writing`: required when LaTeX mathematics appears;
 - `source-walk`: temporary repository evidence packet under `/tmp` when direct repository inspection is unavailable or a separate snapshot is explicitly useful.
 

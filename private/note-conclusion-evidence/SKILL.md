@@ -412,7 +412,7 @@ The note shape still follows `note-conclusion-evidence`, but all inline math and
 
 Before finishing any generated or transformed Obsidian note, also use `obsidian-frontmatter-metadata` as a required check.
 
-The note shape still follows `note-conclusion-evidence`, but the YAML frontmatter must satisfy `obsidian-frontmatter-metadata`, especially valid top-level `summary`, `aliases`, and `tags` fields that Obsidian does not render as invalid properties.
+The note shape still follows `note-conclusion-evidence`, but the YAML frontmatter must satisfy `obsidian-frontmatter-metadata`, especially valid top-level `source`, `tags`, `summary`, and `read_status` fields that Obsidian does not render as invalid properties.
 
 ## Output Policy
 
