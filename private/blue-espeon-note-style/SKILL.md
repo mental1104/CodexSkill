@@ -207,6 +207,8 @@ Every generated visual must satisfy all of these rules:
 10. Never fetch remote data or execute network requests from a generated visualization block.
 11. Do not use the same diagram family repeatedly merely because it is familiar.
 12. When two adjacent sections answer different reading questions, prefer different suitable diagram families.
+13. Treat contrast and legibility as correctness requirements, not optional decoration.
+14. A chart that becomes unreadable under the user's Obsidian theme has failed the renderability contract even if its syntax parses.
 
 For `note-conclusion-evidence`, preserve exact values in a compact Markdown table or raw evidence section. Treat the visual as a derived reading aid, not the only copy of the evidence.
 
@@ -218,6 +220,7 @@ Before emitting a plugin-backed visual, verify:
 - the Mermaid first-line declaration matches an allowed family;
 - indentation and punctuation are internally consistent;
 - labels, values, axes, dates, and series align where applicable;
+- foreground and background colors have obvious visual contrast;
 - no unverified field, option, template, icon, or API is invented;
 - any vault path, tag, property, note name, or Excalidraw asset actually exists or is explicitly provided;
 - a plain-text conclusion remains when rendering fails.
@@ -362,6 +365,97 @@ For `sankey-beta` in the current Obsidian Mermaid 11.13 baseline:
 - Keep each edge as one CSV-style line in the form `source,target,value`, with no header.
 - Mermaid's compact error excerpt may collapse line breaks, so text such as `sankey-beta...` in the error message is not proof that the source code lacks a newline after the declaration.
 - When Chinese labels are required, keep the Sankey node names in English and add a nearby bilingual legend or table. If the diagram itself must contain Chinese, use Flowchart and explicitly accept that edge width will no longer encode magnitude.
+
+## XY Chart Readability Contract
+
+`xychart-beta` must not inherit an unknown dark or low-contrast host theme. Every generated XY chart must declare a diagram-local white theme using Mermaid frontmatter.
+
+### Mandatory White-Canvas Theme
+
+Use this complete theme block unless the user explicitly requests another verified palette:
+
+````markdown
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    xyChart:
+      backgroundColor: "#FFFFFF"
+      titleColor: "#111827"
+      dataLabelColor: "#111827"
+      legendTextColor: "#111827"
+      xAxisLabelColor: "#374151"
+      xAxisTitleColor: "#111827"
+      xAxisTickColor: "#6B7280"
+      xAxisLineColor: "#4B5563"
+      yAxisLabelColor: "#374151"
+      yAxisTitleColor: "#111827"
+      yAxisTickColor: "#6B7280"
+      yAxisLineColor: "#4B5563"
+      plotColorPalette: "#2563EB, #D97706, #7C3AED, #059669, #DC2626, #0891B2"
+---
+xychart-beta
+    title "指数退避等待时间"
+    x-axis "退避档位 n" ["0", "1", "2", "3", "4", "5"]
+    y-axis "等待时间（ms）" 0 --> 1600
+    line [100, 200, 400, 800, 1600, 1600]
+```
+````
+
+This white canvas is intentional even when Obsidian itself is in dark mode. It creates a self-contained readable chart card instead of allowing dark canvas and dark plot colors to collide.
+
+### Default Colors
+
+The palette is ordered by plot declaration. The first `line` or `bar` uses the first color, the second plot uses the second color, and so on.
+
+| Plot order | Default color | Intended role |
+|---:|---|---|
+| 1 | `#2563EB` blue | primary series or main conclusion |
+| 2 | `#D97706` orange | baseline, comparator, or alternative |
+| 3 | `#7C3AED` purple | second comparator or percentile |
+| 4 | `#059669` teal-green | successful/healthy or another distinct series |
+| 5 | `#DC2626` red | failure, limit, or risk series |
+| 6 | `#0891B2` cyan | additional secondary series |
+
+For a single-series chart, the default line or bar color is always `#2563EB`.
+
+Do not reorder colors merely for decoration. Order plot declarations by semantic importance:
+
+1. primary result;
+2. baseline or closest comparator;
+3. remaining comparisons in the order used by the adjacent explanation.
+
+### Multiple-Series Rules
+
+- Prefer one to four plots in one XY chart.
+- Two or more plots require an adjacent Markdown legend or sentence mapping `Series 1`, `Series 2`, and so on to both color and meaning.
+- Keep the same semantic series order in the chart, raw table, prose, and legend.
+- Do not rely on color alone to preserve the conclusion. The adjacent text or raw table must identify every series.
+- Do not invent dashed lines, point shapes, line widths, opacity, per-point colors, or other styling that has not been verified for the Obsidian Mermaid baseline.
+- If more than four lines overlap heavily, use separate small XY charts, a `chart` plugin block with a verified legend, or a Markdown table instead.
+- If two series are nearly identical, state that overlap in prose; do not assume color separation will make the distinction obvious.
+
+Example legend beside a two-series chart:
+
+```markdown
+- Series 1 / blue `#2563EB`: 指数退避
+- Series 2 / orange `#D97706`: 固定间隔
+```
+
+### XY Chart Validation
+
+Before returning a note containing `xychart-beta`, verify:
+
+- `theme: base` is present;
+- `backgroundColor` is exactly `#FFFFFF` unless the user explicitly chose another verified background;
+- title, labels, ticks, and axis lines use dark colors;
+- `plotColorPalette` is present and uses hex colors;
+- every line or bar array has the same length as categorical x-axis labels;
+- y-axis range includes all values without clipping;
+- units appear in the title, axis title, nearby prose, or raw table;
+- multiple series have an adjacent non-color-only legend;
+- the chart remains understandable from prose and exact values when rendering fails.
 
 ## Mermaid Families Not Allowed At This Baseline
 
@@ -623,4 +717,4 @@ When this skill is used alone, return only a style decision packet:
 
 When paired with another skill, do not output a separate long report unless the user asks.
 
-The final note writer must silently apply the renderability checklist and Flowchart escape rules before returning the note.
+The final note writer must silently apply the renderability checklist, Flowchart escape rules, and XY Chart readability contract before returning the note.
