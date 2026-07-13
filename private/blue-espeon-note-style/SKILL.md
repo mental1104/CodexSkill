@@ -7,17 +7,17 @@ description: Blue Espeon Obsidian vault convention layer. Use only to decide not
 
 ## Role
 
-This skill defines **vault conventions** for the Blue Espeon Obsidian vault.
+This skill defines vault conventions for the Blue Espeon Obsidian vault.
 
 It answers:
 
 - where a note should live;
 - how a note should be named;
-- whether a new note should be a companion note or a reusable topic note;
+- whether a note should be a companion note or a reusable topic note;
 - what template shape the note should follow;
 - how backlinks and wikilinks should be placed;
 - whether a visual is useful;
-- which supported visualization syntax should be used;
+- which supported visualization syntax and subtype should be used;
 - whether the note has one center thesis or should be split.
 
 It does not perform full note rewrites by itself.
@@ -30,7 +30,7 @@ Use this skill when the task involves:
 - deciding note directory or naming;
 - adding companion-note backlinks;
 - checking whether a note violates the single-thesis rule;
-- deciding whether Mermaid, Charts, Dataview, Markmap, Infographic, or an existing Excalidraw asset should appear;
+- choosing among Mermaid, Charts, Dataview, Markmap, Infographic, or an existing Excalidraw asset;
 - applying vault-level style expectations to another Obsidian editing skill.
 
 ## Do Not Use As Primary Skill When
@@ -46,9 +46,9 @@ When paired with another skill, this skill supplies conventions only. The concre
 
 ## Default Note Template
 
-Every new Markdown content note in the Blue Espeon vault may reuse the body structure from `Templates/default-note.md`, unless the target directory clearly uses another established pattern.
+Every new Markdown content note may reuse `Templates/default-note.md`, unless the target directory clearly uses another established pattern.
 
-The YAML frontmatter is stricter than the template and must contain exactly these four fields:
+The YAML frontmatter must contain exactly these four fields:
 
 ```yaml
 ---
@@ -106,8 +106,8 @@ Good:
 
 Bad:
 
-- `FastAPI网关并发与CPU任务方案` when it mixes ContextVar, K8S memory, precomputation, static analysis, and experiments as peer topics.
-- `网关数据模型与分层设计` when it mixes application layers, Redis async, Serializer APIs, response envelopes, and domain table design.
+- `FastAPI网关并发与CPU任务方案` when it mixes unrelated mechanisms and experiments as peer topics.
+- `网关数据模型与分层设计` when it mixes application layers, Redis async, serializer APIs, response envelopes, and domain tables.
 
 If the thesis sentence needs "and" to join unrelated topics, split the note.
 
@@ -117,8 +117,8 @@ Choose by durable subject, not by where the question originated.
 
 - Project-specific design, requirements, incidents, or implementation decisions: `Archive/500-Project/<project>/...`.
 - Reusable programming language, framework, library, code pattern, tests, or runtime behavior: `Archive/200-Program/210-Code/<language>/...`.
-  - FastAPI, Starlette, ASGI, API middleware, response handling, concurrency, or app architecture: `Archive/200-Program/210-Code/Python/fastapi`.
-  - Python asyncio/event loop/concurrency concepts not tied to FastAPI: `Archive/200-Program/210-Code/Python/asyncio`.
+  - FastAPI, Starlette, ASGI, middleware, response handling, concurrency, or app architecture: `Archive/200-Program/210-Code/Python/fastapi`.
+  - Python asyncio/event loop/concurrency not tied to FastAPI: `Archive/200-Program/210-Code/Python/asyncio`.
   - SQLAlchemy: `Archive/200-Program/210-Code/Python/sqlalchemy`.
   - pytest/testing technique: `Archive/200-Program/210-Code/Python/pytest`.
   - Python standard library behavior: `Archive/200-Program/210-Code/Python/stdlib`.
@@ -146,20 +146,18 @@ Do not use Obsidian table cells with `[[#heading|alias]]`; the `|` can break Mar
 
 # Visualization Operating Model
 
-## Pilot Scope
-
-This is the v1 pilot visualization set:
+## Supported Set
 
 | Capability | Status | Rendering dependency |
 |---|---|---|
-| Mermaid | stable default | Obsidian built-in Mermaid support |
-| `chart` code blocks | stable default | Charts community plugin |
+| Mermaid, all 24 Obsidian-supported Mermaid 11.13 diagram families | stable target | Obsidian built-in Mermaid support |
+| `chart` code blocks | stable | Charts community plugin |
 | `dataview` / `dataviewjs` | stable when data is vault-derived | Dataview community plugin |
 | DataviewJS-rendered charts | stable with constraints | Dataview + Charts |
 | `markmap` code blocks | stable for outline views | Mindmap NextGen |
 | `infographic` code blocks | experimental | BRAT + `hcg1023/obsidian-infographic` |
 | Excalidraw embeds | existing assets only | Excalidraw community plugin |
-| Plotly, ECharts, Tracker, custom HTML/JS | disabled in v1 | do not generate by default |
+| Plotly, ECharts, Tracker, custom HTML/JS | disabled by default | do not generate without a later explicit rule |
 
 Do not invent another visualization syntax because it looks plausible.
 
@@ -169,14 +167,29 @@ Choose the lightest representation that answers the reader's question:
 
 1. prose or a Markdown list for a simple definition or flat set;
 2. Markdown table when exact values or side-by-side comparison matter;
-3. Mermaid for process, relationship, lifecycle, state, or control/data flow;
-4. Charts for numeric comparison, trend, distribution, or composition;
+3. the most semantically specific Mermaid family for relationships, mechanisms, structure, time, state, allocation, overlap, causality, or planning;
+4. Charts for static numeric comparison, trend, distribution, or composition when Mermaid's numeric diagrams are not a better fit;
 5. Dataview + Charts only when the source data should update from vault metadata;
-6. Markmap for a hierarchical overview of one note or one knowledge area;
+6. Markmap when a Markdown-derived hierarchy should remain independent from Mermaid;
 7. Infographic for a compact explanatory sequence or conclusion-first narrative;
 8. an existing Excalidraw asset for a manually curated explanatory drawing.
 
-A visual is optional. Do not add one merely to make the note look richer.
+A visual is optional, but high-density explanatory sections should actively evaluate whether one specialized visual can reduce reading cost.
+
+## Visual Opportunity Triggers
+
+Evaluate a visual when a section contains any of the following:
+
+- three or more ordered stages;
+- four or more named components with relationships;
+- several participants exchanging messages;
+- explicit states, transitions, ownership, or lifecycle rules;
+- a hierarchy with at least two levels;
+- a timeline, schedule, branch history, or progression;
+- overlap, allocation, dependency, root-cause, or multidimensional comparison;
+- a paragraph cluster whose meaning depends more on relationships than prose order.
+
+Do not force a visual when the information is still simpler as a list or table.
 
 ## General Visual Rules
 
@@ -186,77 +199,188 @@ Every generated visual must satisfy all of these rules:
 2. It appears next to the paragraph it supports.
 3. Add one sentence before it explaining what to inspect.
 4. Add one sentence after it stating the takeaway.
-5. Keep the underlying claim understandable without the plugin rendering.
+5. Keep the underlying claim understandable without rendering.
 6. Do not repeat the whole surrounding section inside the visual.
-7. Prefer zero to three visuals in a normal note.
-8. More than three visuals require an evidence-heavy note, a long code walkthrough, or a clear multi-stage explanation.
-9. Never use a chart to hide missing data, unclear units, or unsupported conclusions.
+7. Prefer zero to four visuals in a normal long note.
+8. More than four visuals require an evidence-heavy note, long code walkthrough, architecture note, or clear multi-stage explanation.
+9. Never use a visual to hide missing data, unclear units, or unsupported conclusions.
 10. Never fetch remote data or execute network requests from a generated visualization block.
+11. Do not use the same diagram family repeatedly merely because it is familiar.
+12. When two adjacent sections answer different reading questions, prefer different suitable diagram families.
 
-For `note-conclusion-evidence`, when exact values support the conclusion, preserve the source-of-truth values in a compact Markdown table or raw evidence section. Treat the chart as a derived reading aid, not the only copy of the data.
+For `note-conclusion-evidence`, preserve exact values in a compact Markdown table or raw evidence section. Treat the visual as a derived reading aid, not the only copy of the evidence.
 
 ## Renderability Contract
 
 Before emitting a plugin-backed visual, verify:
 
 - the fenced-code language is exactly supported;
-- indentation is internally consistent;
-- labels and numeric series align;
-- units are explained outside raw numeric arrays;
-- no unverified template name, option, field, or API is invented;
+- the Mermaid first-line declaration matches an allowed family;
+- indentation and punctuation are internally consistent;
+- labels, values, axes, dates, and series align where applicable;
+- no unverified field, option, template, icon, or API is invented;
 - any vault path, tag, property, note name, or Excalidraw asset actually exists or is explicitly provided;
 - a plain-text conclusion remains when rendering fails.
 
-If renderability cannot be established, use a Markdown table, list, or Mermaid instead.
+The target renderer for Mermaid is Obsidian's built-in Mermaid 11.13 support. Do not downgrade a semantically correct diagram to Flowchart solely because another chat client may not preview the subtype.
 
 # Mermaid Rules
 
-Mermaid is a navigation and mechanism aid, not decoration.
+## Core Policy
 
-Use Mermaid when the note explains:
+All 24 Mermaid diagram families available in Obsidian's Mermaid 11.13 baseline are allowed.
 
-- decision flow;
-- lifecycle;
-- runtime pipeline;
-- diagnosis workflow;
-- control/data flow;
-- state transition;
-- component or ownership relationship.
+Mermaid is not synonymous with Flowchart. Select the family from the reader's question before writing syntax.
 
-Default: 5-9 nodes.
+Use the fenced-code language `mermaid` for every Mermaid family:
 
-Split large diagrams.
+````markdown
+```mermaid
+<diagram declaration>
+<diagram body>
+```
+````
 
-Prefer short node labels. Put long explanations in prose, not inside nodes.
+Prefer stable, minimal syntax over decorative directives. Do not use remote icons, custom scripts, click callbacks, or configuration that weakens portability.
 
-Place the diagram near the paragraph it explains.
+## Mandatory Type Selection Matrix
 
-Do not use Mermaid for:
+| # | Mermaid family | Preferred declaration | Use when the reader asks | Prefer over Flowchart when |
+|---:|---|---|---|---|
+| 1 | Flowchart | `flowchart TD` / `flowchart LR` | What path, branch, pipeline, or decision leads where? | No more specific family models the semantics |
+| 2 | Sequence Diagram | `sequenceDiagram` | Who sends what to whom, and in what order? | Participants exchange calls, events, acknowledgements, retries, or responses |
+| 3 | Class Diagram | `classDiagram` | What are the types, members, inheritance, and dependencies? | The subject is static code structure rather than runtime movement |
+| 4 | State Diagram | `stateDiagram-v2` | What states exist and what triggers transitions? | Nodes represent states, lifecycle phases, or legal transitions |
+| 5 | Entity Relationship Diagram | `erDiagram` | What entities, fields, cardinalities, and relationships exist? | The subject is a database or durable data model |
+| 6 | User Journey | `journey` | What does a user experience across stages? | The explanation includes user actions, stages, and satisfaction or friction |
+| 7 | Gantt | `gantt` | What is scheduled, dependent, overlapping, or delayed? | Time duration and task dependency are central |
+| 8 | Pie | `pie` | How is one whole divided among a few categories? | The values form one meaningful total with no more than six slices |
+| 9 | Quadrant Chart | `quadrantChart` | Where do items fall across two dimensions? | The argument is a 2×2 prioritization, positioning, or trade-off matrix |
+| 10 | Requirement Diagram | `requirementDiagram` | Which requirements are satisfied, verified, derived, copied, or contained? | Traceability between requirements and implementation matters |
+| 11 | Git Graph | `gitGraph` | How did branches, commits, merges, and releases evolve? | The subject is repository history or branch strategy |
+| 12 | C4 Diagram | `C4Context` / `C4Container` / `C4Component` / `C4Dynamic` / `C4Deployment` | What system boundary or architecture level is being explained? | The subject is software architecture at a named C4 level |
+| 13 | Mindmap | `mindmap` | What is the conceptual hierarchy around one root? | The content is hierarchical rather than sequential |
+| 14 | Timeline | `timeline` | What happened across dates, eras, versions, or milestones? | Ordered events matter but task durations do not |
+| 15 | Sankey | `sankey-beta` | How does quantity flow, split, or combine? | Edge magnitude represents traffic, money, messages, energy, or allocation |
+| 16 | XY Chart | `xychart-beta` | How do numeric values change or compare on axes? | A compact line/bar plot is enough and the data is static in the note |
+| 17 | Block Diagram | `block-beta` | How are functional blocks arranged and connected? | Spatial grouping and modular composition matter more than process order |
+| 18 | Packet Diagram | `packet-beta` | How are bits or fields laid out in a protocol packet? | The subject is a binary/network header layout |
+| 19 | Kanban | `kanban` | What work sits in each status column? | The subject is work-in-progress state rather than lifecycle semantics |
+| 20 | Architecture Diagram | `architecture-beta` | How do services, groups, junctions, and directional connections compose? | A compact infrastructure/service topology is clearer than generic boxes |
+| 21 | Radar Chart | `radar-beta` | How do several entities compare across shared dimensions? | Multidimensional profiles matter more than exact tabular lookup |
+| 22 | Treemap | `treemap` | How is a hierarchy divided by relative size? | Nested part-to-whole allocation is central |
+| 23 | Venn Diagram | `venn-beta` | What overlaps and what remains unique? | Set membership and intersection are the actual argument |
+| 24 | Ishikawa Diagram | `ishikawa` | What categories of causes contribute to one effect? | Root-cause analysis has grouped causal branches |
 
-- flat lists;
-- simple definitions;
-- numeric trends;
-- dense benchmark data;
-- decorative summaries.
+## Flowchart Escape Rules
+
+Before generating `flowchart` or `graph`, test these substitutions in order:
+
+1. Calls or messages over time → `sequenceDiagram`.
+2. States and transitions → `stateDiagram-v2`.
+3. Database entities and cardinality → `erDiagram`.
+4. Types, inheritance, interfaces, ownership, or static dependencies → `classDiagram`.
+5. Dated events or version evolution → `timeline`.
+6. Tasks with duration and dependencies → `gantt`.
+7. Git branches and merges → `gitGraph`.
+8. System boundaries and architecture levels → C4 or `architecture-beta`.
+9. Functional modules with spatial composition → `block-beta`.
+10. Hierarchical concepts → `mindmap`.
+11. Two-axis positioning → `quadrantChart`.
+12. Quantitative flows → `sankey-beta`.
+13. Multidimensional comparison → `radar-beta`.
+14. Overlap → `venn-beta`.
+15. Root causes → `ishikawa`.
+16. Protocol field layout → `packet-beta`.
+17. Work-status columns → `kanban`.
+18. Nested allocation → `treemap`.
+19. Static numeric axes → `xychart-beta`.
+20. Requirement traceability → `requirementDiagram`.
+21. User stages and sentiment → `journey`.
+
+Use Flowchart only after no specialized family represents the central semantics better.
+
+## Mermaid Diversity Rules
+
+- A note may contain several Mermaid families when they answer different questions.
+- Do not use more than two Flowcharts in one normal note unless the note genuinely contains separate operational paths.
+- If a note contains three or more Mermaid diagrams, actively seek at least two diagram families when semantically justified.
+- Do not replace one good specialized diagram with several weak Flowcharts.
+- Do not choose an exotic family solely to satisfy diversity.
+- Prefer one diagram with a clear thesis over a visually impressive but overloaded diagram.
+- Keep most diagrams within roughly 5-12 primary items; split dense diagrams by reading question.
+- Keep labels short. Put caveats, evidence, and long explanations in prose.
+- Avoid duplicating the same facts in Flowchart, table, and another Mermaid diagram unless each view serves a distinct task.
+
+## Orientation And Density
+
+For Flowchart:
+
+- `TD` / `TB`: top-down lifecycle, decision, layered processing, or diagnosis;
+- `LR`: pipelines, transformations, request paths, and short causal chains;
+- `RL`: only when reverse flow is itself meaningful;
+- `BT`: rarely, for dependency buildup or bottom-up composition.
+
+For any Mermaid diagram:
+
+- split diagrams that require excessive scrolling or tiny text;
+- prefer meaningful grouping over crossing edges;
+- avoid paragraphs inside nodes;
+- do not encode every implementation detail;
+- put the visual near the section where it lowers cognitive load.
+
+## Experimental-Family Safeguards
+
+The following are supported by the Obsidian baseline but use newer or beta declarations and require conservative syntax:
+
+- `sankey-beta`;
+- `xychart-beta`;
+- `block-beta`;
+- `packet-beta`;
+- `architecture-beta`;
+- `radar-beta`;
+- `venn-beta`;
+- `ishikawa`;
+- `treemap`;
+- C4 diagrams.
+
+For these families:
+
+1. Generate only syntax known for the selected family.
+2. Avoid undocumented styling and layout directives.
+3. Include adjacent prose or a compact table that preserves the conclusion.
+4. If syntax confidence is low, fall back to a semantically adjacent stable family or Markdown rather than inventing syntax.
+5. Do not fall back automatically merely because the family is uncommon.
+
+## Mermaid Families Not Allowed At This Baseline
+
+Do not generate these as Mermaid for the current Obsidian 11.13 target:
+
+- Swimlanes;
+- Event Modeling;
+- Wardley Map;
+- Cynefin;
+- TreeView;
+- ZenUML.
+
+Re-evaluate only after the Obsidian Mermaid baseline is deliberately upgraded and verified.
 
 # Charts Rules
 
 ## When To Use
 
-Use a `chart` block for static numeric data embedded in the current note.
+Use a `chart` block for static numeric data embedded in the current note when Mermaid XY, Pie, Radar, Sankey, or Treemap is not the better semantic fit.
 
-Preferred chart types:
+Preferred Chart.js types:
 
 - `bar`: categorical comparison or ranking;
 - `line`: ordered progression or time series;
 - `pie` or `doughnut`: one meaningful whole with no more than six categories;
-- `radar`: only when several entities share the same small set of comparable dimensions.
+- `radar`: several entities sharing the same small set of comparable dimensions.
 
-Prefer a Markdown table over a pie chart when exact comparison matters.
+Prefer a Markdown table when exact comparison matters.
 
 ## Canonical Syntax
-
-Use the Charts plugin YAML-style code block:
 
 ````markdown
 ```chart
@@ -276,16 +400,13 @@ series:
 - `type`, `labels`, and `series` are required for the default generated form.
 - Every `series[*].data` array must have exactly the same length as `labels`.
 - Data values must be numbers, not strings containing units.
-- Put the unit in the series title, chart-adjacent sentence, heading, or source table.
-- Quote labels when they contain commas, colons, brackets, leading symbols, or other YAML-sensitive characters.
+- Put units in the title, series title, adjacent sentence, or source table.
+- Quote YAML-sensitive labels.
 - Keep one chart focused on one comparison.
-- Prefer one to three series.
-- Prefer 3-12 visible categories; split larger comparisons or use a table.
+- Prefer one to three series and 3-12 visible categories.
 - Keep category order meaningful and deterministic.
-- Do not hard-code decorative colors by default.
-- Do not emit undocumented Chart.js options merely to improve appearance.
-- Do not use 3D effects.
-- Do not create a chart when the data is incomplete or only verbally estimated unless the note clearly labels it as an estimate.
+- Do not hard-code decorative colors or undocumented options by default.
+- Do not chart incomplete or verbally estimated data unless clearly labeled as estimates.
 
 # Dataview And Dynamic Chart Rules
 
@@ -295,10 +416,10 @@ Use plain `dataview` when the reader needs a live table or list from existing no
 
 Use `dataviewjs` only when:
 
-- the data spans multiple notes;
+- data spans multiple notes;
 - filtering, transformation, aggregation, or chart rendering is required;
-- the relevant properties and query scope are verified;
-- static chart data would become stale or duplicate an existing vault dataset.
+- the properties and query scope are verified;
+- static chart data would become stale or duplicate a vault dataset.
 
 Do not introduce Dataview solely to avoid writing a short static table.
 
@@ -328,12 +449,7 @@ if (labels.length === 0) {
     type: "bar",
     data: {
       labels,
-      datasets: [
-        {
-          label: "Metric",
-          data: values,
-        },
-      ],
+      datasets: [{ label: "Metric", data: values }],
     },
   };
 
@@ -342,7 +458,7 @@ if (labels.length === 0) {
 ```
 ````
 
-Replace `VERIFIED/PATH`, `metric`, `date`, and labels with values verified from the target vault. Never leave placeholders in a final note.
+Replace `VERIFIED/PATH`, `metric`, `date`, and labels with verified values. Never leave placeholders in a final note.
 
 ## Dynamic Chart Constraints
 
@@ -351,17 +467,14 @@ Replace `VERIFIED/PATH`, `metric`, `date`, and labels with values verified from 
 - Do not use `fetch`, remote URLs, filesystem APIs, shell commands, or hidden side effects.
 - Filter null and non-numeric values before charting.
 - Convert numeric properties explicitly with `Number(...)` when needed.
-- Sort rows explicitly when order carries meaning.
+- Sort rows explicitly when order matters.
 - Provide an empty-state message.
-- Keep chart construction local to the block; do not depend on undeclared globals except `dv`, `this.container`, and `window.renderChart`.
-- Do not mutate notes or metadata from visualization code.
-- When a static snapshot is the actual evidence, prefer a static `chart` block plus the raw table.
+- Do not mutate notes or metadata.
+- When a static snapshot is the evidence, prefer a static visual plus the raw table.
 
 # Markmap Rules
 
-Use a `markmap` block for a compact hierarchical overview.
-
-Canonical syntax:
+Use a `markmap` block for a compact Markdown-derived hierarchical overview when it is preferable to keep the hierarchy outside Mermaid.
 
 ````markdown
 ```markmap
@@ -375,11 +488,6 @@ Canonical syntax:
 - int
 - embstr
 - raw
-
-## 转换条件
-- append
-- setrange
-- 长度超过阈值
 ```
 ````
 
@@ -387,30 +495,18 @@ Constraints:
 
 - Use the fenced-code language `markmap`.
 - Use exactly one `#` root.
-- Prefer two to four hierarchy levels.
-- Prefer three to seven major branches.
-- Keep node text short; avoid paragraph-length nodes.
-- Use headings and lists, not tables.
-- Do not copy the entire note into the markmap.
-- Place it near the beginning as a reading map, or near a section that needs a local hierarchy.
-- Do not add `markmap` plugin settings to YAML frontmatter; the vault frontmatter remains exactly four fields.
-- Use global plugin settings for appearance.
+- Prefer two to four levels and three to seven major branches.
+- Keep node text short.
+- Do not copy the entire note into the Markmap.
+- Do not add Markmap settings to YAML frontmatter.
 
 # Infographic Rules
 
-## Status
+`infographic` is experimental. Use at most one in a normal note, and only when it materially improves explanatory reading over Mermaid, a table, or Markmap.
 
-`infographic` is experimental in v1.
+Only use verified templates from this allowlist.
 
-Use at most one infographic in a normal note. It must materially improve explanatory reading over Mermaid, a table, or Markmap.
-
-Only use template names verified in this skill until the allowlist is deliberately expanded.
-
-## Allowed Templates
-
-### Sequential explanation
-
-Use `list-row-simple-horizontal-arrow` for a short ordered sequence:
+## Sequential Explanation
 
 ````markdown
 ```infographic
@@ -426,9 +522,7 @@ data
 ```
 ````
 
-### Narrative bar comparison
-
-Use `chart-bar-plain-text` for a small bar comparison with explanatory labels:
+## Narrative Bar Comparison
 
 ````markdown
 ```infographic
@@ -443,26 +537,19 @@ data
     - label 10ms
       value 11.4
       desc 基本随 RTT 线性增加
-    - label 20ms
-      value 21.8
-      desc 趋势保持
 ```
 ````
 
-## Infographic Constraints
+Constraints:
 
 - Use the fenced-code language `infographic`.
-- This syntax is an indentation-sensitive DSL, not YAML.
-- Preserve the `infographic <template>` line.
+- Treat the syntax as an indentation-sensitive DSL, not YAML.
 - Use two-space indentation consistently.
 - Do not add colons after `data`, `items`, `label`, `desc`, or `value`.
 - Do not invent template names.
-- Keep ordered sequences to roughly three to seven items.
-- Keep `label` concise and `desc` to one short explanatory sentence.
-- Use numeric `value` for chart templates.
+- Keep labels concise and descriptions short.
 - Do not rely on icons, themes, palettes, or advanced options by default.
-- Add a plain-text explanation before and after the block because this plugin is experimental.
-- If the syntax or template cannot be verified, fall back to Mermaid, Charts, Markmap, or a Markdown table.
+- Keep a plain-text explanation before and after the block.
 
 # Excalidraw Rules
 
@@ -472,20 +559,15 @@ A note-writing skill may embed an Excalidraw drawing only when:
 
 - the asset already exists;
 - its exact vault path is verified;
-- the drawing materially explains architecture, spatial relationships, annotations, or a complex mechanism.
+- it materially explains architecture, spatial relationships, annotations, or a complex mechanism.
 
-Do not:
+Do not invent an Excalidraw filename, path, fake code block, or claim that a drawing was created when only Markdown was generated.
 
-- invent an Excalidraw filename or path;
-- output a fake Excalidraw code block;
-- claim that a drawing was created when only Markdown was generated;
-- require Excalidraw for the note to remain understandable.
+The note must remain understandable without the asset.
 
-When no asset exists, describe the recommended drawing in prose only if the user asked for a future manual visual.
+# Disabled Visualization Forms
 
-# Disabled Visualization Forms In v1
-
-Do not generate the following by default:
+Do not generate these by default:
 
 - Plotly code;
 - ECharts code;
@@ -497,16 +579,14 @@ Do not generate the following by default:
 - hand-written SVG;
 - custom plugin APIs not documented in this skill.
 
-These may be added later after a real use case, verified syntax, mobile behavior, and export behavior have been tested.
-
 # Example Rules
 
-When the note teaches a library, package, framework, CLI, or API through examples:
+When a note teaches a library, package, framework, CLI, or API through examples:
 
 1. Prefer complete minimal examples that can compile or run.
 2. For Go examples, use a full `package main` program unless the user asks otherwise.
 3. Comment library-specific lines, not obvious language syntax.
-4. Keep workspace setup, file paste, dependency install, compile, and run steps separate when the reader must act between steps.
+4. Keep setup, file paste, dependency install, compile, and run steps separate when the reader must act between steps.
 5. If local verification is possible, paste actual build/run output.
 6. Do not replace executable examples with diagrams; visuals support the example rather than becoming the example.
 
@@ -522,7 +602,8 @@ When this skill is used alone, return only a style decision packet:
 - Naming rule: <rule>
 - Required backlinks: <yes/no + where>
 - Template: <default-note / existing local pattern / unknown>
-- Visualization: <none / Mermaid / Charts / Dataview / Dataview+Charts / Markmap / Infographic / existing Excalidraw>
+- Visualization: <none / Mermaid subtype / Charts / Dataview / Dataview+Charts / Markmap / Infographic / existing Excalidraw>
+- Mermaid selection reason: <why this subtype is better than Flowchart or why Flowchart is correct>
 - Rendering dependency: <built-in / plugin names / none>
 - Plain-text fallback: <how the note remains readable without rendering>
 - Split required: <yes/no + reason>
@@ -531,4 +612,4 @@ When this skill is used alone, return only a style decision packet:
 
 When paired with another skill, do not output a separate long report unless the user asks.
 
-The final note writer must silently apply the renderability checklist before returning the note.
+The final note writer must silently apply the renderability checklist and Flowchart escape rules before returning the note.
