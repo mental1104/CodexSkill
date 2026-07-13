@@ -352,6 +352,17 @@ For these families:
 4. If syntax confidence is low, fall back to a semantically adjacent stable family or Markdown rather than inventing syntax.
 5. Do not fall back automatically merely because the family is uncommon.
 
+### Sankey Label Compatibility
+
+For `sankey-beta` in the current Obsidian Mermaid 11.13 baseline:
+
+- Use ASCII or English source and target node names by default.
+- Chinese and other non-ASCII node names may fail with parser errors such as `NON_ESCAPED_TEXT` or `Expecting 'DQUOTE', got 'ESCAPED_TEXT'`.
+- Wrapping Chinese node names in double quotes does not reliably fix the parser failure.
+- Keep each edge as one CSV-style line in the form `source,target,value`, with no header.
+- Mermaid's compact error excerpt may collapse line breaks, so text such as `sankey-beta...` in the error message is not proof that the source code lacks a newline after the declaration.
+- When Chinese labels are required, keep the Sankey node names in English and add a nearby bilingual legend or table. If the diagram itself must contain Chinese, use Flowchart and explicitly accept that edge width will no longer encode magnitude.
+
 ## Mermaid Families Not Allowed At This Baseline
 
 Do not generate these as Mermaid for the current Obsidian 11.13 target:
