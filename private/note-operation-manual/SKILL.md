@@ -9,7 +9,7 @@ description: Create or transform Obsidian operation manuals around one minimum c
 
 Create or transform an operation manual that helps the user's future self complete one repeatable task with minimal rediscovery.
 
-The atomic unit is not one command, one tool, one technology, or one heading. It is one minimum complete operational loop:
+The atomic unit is not one command, tool, technology, or heading. It is one minimum complete operational loop:
 
 ```text
 one trigger scenario
@@ -19,9 +19,9 @@ one trigger scenario
 = one operation manual
 ```
 
-The mainline must preserve the successful path. Failed attempts may be retained only after they are converted into reusable troubleshooting knowledge.
+The successful path is the only mainline. Failed attempts may be retained only after they are converted into reusable troubleshooting knowledge.
 
-Default execution model:
+Default reading and execution model:
 
 ```text
 identify the current situation
@@ -47,19 +47,19 @@ Required actions:
 2. recover the final successful procedure;
 3. move exploration history out of the mainline;
 4. merge repeated or superseded commands;
-5. convert reusable failures into symptom-indexed troubleshooting branches;
-6. remove failed attempts that have no future operational value;
+5. convert reusable failures into symptom-indexed branches;
+6. remove failed attempts with no future operational value;
 7. add only decisive checkpoints;
-8. verify that the note has one trigger scenario and one final completion state;
-9. check both over-splitting and oversized scope before finishing.
+8. verify that the note has one trigger and one completion state;
+9. check both over-splitting and oversized scope.
 
-Do not force a process-history note into this shape. If the lasting value is how the result was discovered rather than how to repeat it, route to `note-linear-achievement`.
+Do not force a process-history note into this shape. If the lasting value is how the result was discovered, route to `note-linear-achievement`.
 
 ### `materialize-mode`
 
 Use when the source is current chat context, terminal output, screenshots, commands, configuration fragments, a solved support conversation, or a known working procedure.
 
-Required extraction order:
+Extract in this order:
 
 ```text
 operational goal
@@ -72,14 +72,14 @@ operational goal
 → rollback, cleanup, or recovery
 ```
 
-Do not preserve the conversation order by default. Reconstruct the manual around future execution.
+Do not preserve the conversation order by default. Reconstruct the note for future execution.
 
-When the source is a long troubleshooting conversation:
+For a long troubleshooting conversation:
 
 - treat the final working path as the only mainline;
 - retain a failure only when its symptom, cause, and recovery are useful later;
-- never claim that an unverified reconstruction is confirmed working;
-- mark environmental assumptions that were inferred rather than demonstrated;
+- never claim an unverified reconstruction is confirmed working;
+- mark inferred environmental assumptions;
 - remove repeated probes, typing mistakes, dead ends, and abandoned alternatives.
 
 ## Use When
@@ -91,8 +91,8 @@ Use this skill when the future reader wants to:
 - repeat a solved ChatGPT operation question without asking again;
 - restore a system after a known state change;
 - execute a small practical task such as sorting a Go slice, triggering a scheduled task, or checking a listening port;
-- diagnose a known operational symptom through a bounded recovery path;
-- perform a task whose success can be verified by a concrete final state.
+- diagnose a known symptom through a bounded recovery path;
+- complete a task whose success has a recognizable final state.
 
 The source should normally provide or support:
 
@@ -106,12 +106,12 @@ The source should normally provide or support:
 
 Use another primary skill when the future-reading intention is different:
 
-- use `note-linear-achievement` when the process, failed attempts, and turning points are themselves the main asset;
+- use `note-linear-achievement` when attempts, failures, observations, and turning points are the main asset;
 - use `note-conclusion-evidence` when the main value is a claim and its proof;
 - use `note-cognitive-convergence` when the reader mainly needs a correct conceptual model;
-- use `note-code-walkthrough` when the reader wants to understand how a concrete implementation works from callers through internals and tests.
+- use `note-code-walkthrough` when the reader wants one concrete implementation from callers through internals and tests.
 
-An operation manual may contain short explanations, conclusions, evidence, or implementation notes, but they must support execution. Do not turn the manual into a theory chapter, postmortem, benchmark report, or source walkthrough.
+An operation manual may contain short explanation, evidence, or implementation context, but it must remain subordinate to execution.
 
 ## Required Companion Skills
 
@@ -120,15 +120,13 @@ When writing into the Blue Espeon Obsidian vault:
 - use `blue-espeon-note-style` for placement, naming, backlinks, Mermaid conventions, and single-thesis boundaries;
 - use `obsidian-frontmatter-metadata` as a required final metadata check;
 - use `latex-math-writing` when mathematical notation appears;
-- use `book-operation-manual-extract` first when the source is a book or reading note and extraction, deduplication, or merge decisions are required before writing the final manual.
+- use `book-operation-manual-extract` first when the source is a book or reading note and extraction, deduplication, or merge decisions are needed.
 
 Do not create dead wikilinks. Inline small one-off procedures instead of inventing empty shared notes.
 
 # Core Operational Model
 
-## 1. Happy Path Is The Only Mainline
-
-The mainline contains only the final recommended procedure.
+## Happy Path Is The Only Mainline
 
 Good:
 
@@ -152,7 +150,7 @@ attempt A
 
 A failed historical path may appear only after it has been converted into future-facing troubleshooting knowledge.
 
-## 2. Checkpoints Are Decision Gates
+## Checkpoints Are Decision Gates
 
 A checkpoint exists only when it answers:
 
@@ -160,20 +158,18 @@ A checkpoint exists only when it answers:
 
 Use a checkpoint when:
 
-- the output determines the next branch;
-- a value must be copied into a later step;
+- output determines the next branch;
+- a value is copied into a later step;
 - an action is destructive, dangerous, or hard to undo;
 - the command commonly fails in a confusing way;
-- the result is the only practical evidence that the task worked;
-- continuing from the wrong state would make later errors harder to diagnose.
+- the result is the only practical evidence of success;
+- continuing from the wrong state would make later diagnosis harder.
 
 Do not add `Expected output` or `State after` after every quiet command.
 
-For ordinary setup or configuration, prefer a coherent block of copyable commands followed by one decisive verification.
+## Troubleshooting Is Symptom-Indexed
 
-## 3. Troubleshooting Is Symptom-Indexed
-
-Troubleshooting headings must normally use what the reader can observe:
+Headings should normally use what the reader can observe:
 
 ```markdown
 ### `Connection refused`
@@ -183,20 +179,20 @@ Troubleshooting headings must normally use what the reader can observe:
 ### 服务启动后没有监听端口
 ```
 
-Do not organize troubleshooting by the original order of failed attempts.
+Do not organize troubleshooting as “attempt 1 / attempt 2 / attempt 3”.
 
 Each meaningful branch should answer:
 
-1. What exact symptom enters this branch?
+1. What symptom enters this branch?
 2. What should be checked first?
-3. What known causes are supported by the source?
+3. What known causes are supported by evidence?
 4. What actions recover the system?
 5. How is recovery verified?
 6. Where does the reader return to the happy path?
 
 Preferred local shape:
 
-```markdown
+````markdown
 ### `<observable symptom>`
 
 优先检查：
@@ -221,19 +217,19 @@ Preferred local shape:
 <verification command>
 ```
 
-修复后返回：[[#5. 最终验证]]
-```
+修复后返回：[[#最终验证]]
+````
 
 Do not invent a cause when only a symptom is known. Mark unresolved uncertainty explicitly.
 
-## 4. Local Branches Stay Local
+## Local Branches Stay Local
 
 Keep a failure branch inside the current manual when:
 
 - it belongs specifically to the current operation;
 - recovery returns to the current happy path;
 - the diagnostic path is short;
-- the branch has no independent trigger outside this manual.
+- it has no independent trigger outside this manual.
 
 Create or reuse a separate troubleshooting manual only when the failure domain:
 
@@ -243,38 +239,38 @@ Create or reuse a separate troubleshooting manual only when the failure domain:
 - has an independent entry condition and recovery acceptance state;
 - is already reused by multiple manuals.
 
-The parent manual must keep enough context to tell the reader when to follow the link and where to return afterward.
+The parent manual must retain enough context to explain when to follow the link and where to return afterward.
 
 # Failure Preservation Rules
 
-Retain a failed path only when at least one of these is true:
+Retain a failed path only when at least one is true:
 
 - it is likely to recur;
 - the symptom is misleading;
 - the wrong action could damage the environment;
 - the visible symptom differs from the real cause;
 - recovery requires a special command or rollback;
-- environment or version differences produce a meaningful branch;
-- the failure helps identify the system's current state;
-- different observed output changes the next action.
+- environment or version differences create a meaningful branch;
+- the failure identifies the current system state;
+- different output changes the next action.
 
 Normally omit:
 
 - typing mistakes;
-- repeated probes that added no new information;
+- repeated probes with no new information;
 - tiny variations of the same failed command;
 - alternatives fully superseded by the final procedure;
 - one-off anomalies with no confirmed explanation or recovery;
 - chat narration and conversational transitions;
-- failures that are useful only for preserving history.
+- failures useful only for preserving history.
 
-If the exact failed command or output is essential for recognizing the symptom, preserve only the decisive lines. Keep full chronological evidence in a linear achievement note when needed.
+If exact failed output is needed to recognize a symptom, preserve only the decisive lines. Keep full chronology in a linear achievement note when needed.
 
 # Atomicity And Split Rules
 
 ## Minimum Complete Operational Loop
 
-One manual may contain several tools, phases, commands, checkpoints, and local failure branches when all of them serve the same completion state.
+One manual may contain several tools, phases, commands, checkpoints, and local failure branches when all serve the same completion state.
 
 Do not split merely because the procedure contains:
 
@@ -282,7 +278,7 @@ Do not split merely because the procedure contains:
 - Windows and Linux commands;
 - a service and a firewall;
 - several technical concepts;
-- multiple phases needed to complete one goal.
+- multiple phases required to complete one goal.
 
 ## Split Admission Rule
 
@@ -293,8 +289,8 @@ A candidate section should normally become a separate manual only when both are 
 
 Additional valid reasons:
 
-- it has become a complete shared subprocedure reused by multiple manuals;
-- its troubleshooting has become an independent diagnostic loop;
+- it is a complete shared subprocedure reused by multiple manuals;
+- its troubleshooting is an independent diagnostic loop;
 - it belongs to a different lifecycle such as initial setup versus recurring recovery, upgrade, migration, or removal.
 
 ## Anti-Fragmentation Rule
@@ -307,9 +303,9 @@ The parent manual must remain executable. Do not evacuate every command into lin
 
 When a small procedure appears for the first time, prefer inline explanation.
 
-When it appears again, check whether the reuse is real and whether the procedure has its own complete operational loop.
+When it appears again, check whether reuse is real and whether it has its own complete operational loop.
 
-Create a reusable submanual only when extraction reduces meaningful duplication without damaging the parent manuals' executability.
+Extract only when doing so reduces meaningful duplication without damaging parent-manual executability.
 
 ## Oversized Manual Warning Signs
 
@@ -318,11 +314,11 @@ Reconsider the boundary when a note contains:
 - several independent entry scenarios;
 - several unrelated success states;
 - initial setup, daily use, upgrade, migration, incident recovery, and removal as peer workflows;
-- multiple sections that each have their own prerequisites, steps, verification, and rollback;
+- multiple sections with their own prerequisites, steps, verification, and rollback;
 - a troubleshooting tree larger than the happy path;
-- a title equivalent to “complete guide,” “everything,” or several unrelated operations joined by “and.”
+- a title equivalent to “complete guide,” “everything,” or unrelated operations joined by “and.”
 
-Length alone is not a split rule. A long complete operational loop is better than several unusable fragments.
+Length alone is not a split rule. A long complete loop is better than several unusable fragments.
 
 # Investigation And Writing Workflow
 
@@ -341,16 +337,16 @@ If these cannot be stated coherently, the scope is not ready.
 
 ## 2. Recover The Final Working Path
 
-From the source material, identify:
+Identify:
 
-- the commands and settings that actually contributed to success;
+- commands and settings that actually contributed to success;
 - their required order;
 - environment-specific values;
 - required privileges and execution locations;
-- which earlier steps became obsolete;
+- obsolete earlier steps;
 - whether the final state was actually verified.
 
-Do not improve or generalize commands beyond the evidence without labeling the change.
+Do not generalize commands beyond evidence without labeling the change.
 
 ## 3. Build The Mainline
 
@@ -365,11 +361,11 @@ Each phase should contain:
 
 ## 4. Convert Failures Into Branches
 
-For each candidate failure, decide:
+For each candidate failure, choose one:
 
 - retain as a local branch;
 - link to an existing reusable troubleshooting manual;
-- create a separate troubleshooting manual when approved and justified;
+- create a separate troubleshooting manual when justified and in scope;
 - omit because it has no future value;
 - preserve only in a separate linear process record.
 
@@ -384,7 +380,7 @@ Ask:
 3. Can the happy path be followed without opening several other notes?
 4. Do local failures return to the mainline?
 5. Does any section have its own independent trigger and completion state?
-6. Would splitting improve independent reuse, or merely satisfy a superficial single-responsibility rule?
+6. Would splitting improve reuse, or merely satisfy a superficial single-responsibility rule?
 
 ## 6. Validate Execution Quality
 
@@ -393,10 +389,10 @@ Before finishing:
 - check command copyability;
 - distinguish shells and execution hosts;
 - preserve placeholders clearly;
-- verify destructive actions are marked;
+- mark destructive actions;
 - include rollback when realistic and useful;
-- ensure checkpoints are decisive rather than decorative;
-- ensure the stated acceptance state matches the procedure;
+- ensure checkpoints are decisive;
+- ensure acceptance matches the procedure;
 - never claim successful verification without evidence.
 
 # Default Note Shapes
@@ -405,7 +401,7 @@ Before finishing:
 
 Use for small operational questions and short repeatable tasks:
 
-```markdown
+````markdown
 ## 正文
 
 ### 适用场景
@@ -421,7 +417,7 @@ Use for small operational questions and short repeatable tasks:
 ### 验证或注意事项
 
 <only decisive verification or important caveat>
-```
+````
 
 Do not inflate a small manual with empty sections.
 
@@ -429,7 +425,7 @@ Do not inflate a small manual with empty sections.
 
 Use when the procedure has several phases or meaningful recovery branches:
 
-```markdown
+````markdown
 ## AI摘要
 
 <goal, environment, happy path, and decisive warning>
@@ -489,7 +485,7 @@ Use when the procedure has several phases or meaningful recovery branches:
 ### 相关原理与来源
 
 <optional; links or minimum explanation only>
-```
+````
 
 Omit sections that do not add operational value.
 
@@ -501,7 +497,7 @@ Operation manuals should follow command-line ergonomics:
 No response is often the best response.
 ```
 
-Do not add `Expected output` or `State after` after every command by default.
+For ordinary setup, prefer a coherent command block followed by one verification.
 
 Good:
 
@@ -511,7 +507,7 @@ git config --global user.email "mental1104@gmail.com"
 git config --global init.defaultBranch main
 ```
 
-Then one verification:
+Then:
 
 ```bash
 git config --global --list
@@ -536,32 +532,28 @@ Commands must be directly copyable.
 - use placeholders such as `<WSL_IP>` consistently;
 - add comments only when they prevent misuse;
 - do not wrap every command in repetitive prose;
-- for UI procedures, use exact menu labels and keep each step action-oriented;
-- do not mix several alternatives into the mainline; place supported alternatives in a clearly labeled branch.
+- for UI procedures, use exact menu labels and action-oriented steps;
+- keep alternatives outside the mainline in clearly labeled branches.
 
 # Evidence And Honesty Rules
 
-Distinguish clearly between:
+Distinguish:
 
-- **verified working step**: directly demonstrated in the source context;
-- **trusted reference step**: grounded in authoritative documentation but not executed in the current context;
+- **verified working step**: directly demonstrated in source context;
+- **trusted reference step**: grounded in authoritative documentation but not executed here;
 - **inferred reconstruction**: assembled from partial evidence;
 - **optional alternative**: not part of the recommended happy path;
 - **historical failed attempt**: retained only for troubleshooting recognition.
 
-Never claim that an inferred or reference-only sequence was locally verified.
+Never claim an inferred or reference-only sequence was locally verified.
 
 # Math Formatting Rule
 
-If the generated or transformed note contains LaTeX math, also use `latex-math-writing`.
-
-The note shape still follows `note-operation-manual`, while all inline and block math must satisfy the math-writing rules.
+If the note contains LaTeX math, also use `latex-math-writing`.
 
 # Frontmatter Metadata Check Rule
 
-Before finishing any generated or transformed Obsidian note, also use `obsidian-frontmatter-metadata` as a required check.
-
-The YAML frontmatter must use valid top-level `summary`, `aliases`, and `tags` fields and follow the target vault's established template.
+Before finishing, use `obsidian-frontmatter-metadata` and follow the target vault template, especially valid top-level `summary`, `aliases`, and `tags` fields.
 
 # Output Policy
 
