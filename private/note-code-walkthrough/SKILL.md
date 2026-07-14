@@ -385,9 +385,9 @@ state before
 
 ## 5. Implementation By Responsibility Phase
 
-For each important method:
+For each important method, use this pattern:
 
-```markdown
+````markdown
 #### `<method>`：<responsibility>
 
 <overall phase breakdown>
@@ -405,7 +405,7 @@ For each important method:
 - skipped later work;
 - resulting invariant;
 - concrete boundary example when needed.
-```
+````
 
 Do not paraphrase every line. Keep code snippets large enough to include the relevant condition, variables, and transition, but not entire unrelated files.
 
