@@ -17,6 +17,7 @@ These skills are currently written for ChatGPT chat-triggered workflows, not Cod
 |---|---|
 | `task-harvest` | turn the current conversation into a small JSON todo list |
 | `english-harvest` | extract reusable English expressions from the current conversation |
+| `leetcode-archive` | archive a completed LeetCode solving journey into the Obsidian repository, preserving every user code snapshot through the final AC version |
 
 ## Active Note Skills
 
