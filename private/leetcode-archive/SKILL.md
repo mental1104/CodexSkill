@@ -50,25 +50,47 @@ mental1104/Obsidian
 branch: main
 ```
 
-Default directory:
+Required directory:
 
 ```text
 Atlas/100-Computer Science/110-Algorithms/Leetcode/
 ```
 
-Default filename:
+The Obsidian document title is the filename without the `.md` suffix. Use this exact title format:
 
 ```text
-<problem number>. <Chinese problem title>.md
+<problem number>. <official Chinese problem title>
 ```
 
-Example:
+The resulting filename must therefore be:
 
 ```text
-Atlas/100-Computer Science/110-Algorithms/Leetcode/274. H 指数.md
+<problem number>. <official Chinese problem title>.md
 ```
 
-Use the official problem number and Chinese title when they can be resolved from the initial link, supplied题面, or conversation. Remove filename-invalid characters without otherwise rewriting the title.
+Do not add Chinese book-title brackets `《》` to the actual filename. They may appear in prose only when quoting the title.
+
+Example for:
+
+```text
+https://leetcode.cn/problems/insert-delete-getrandom-o1/?envType=study-plan-v2&envId=top-interview-150
+```
+
+The exact document title is:
+
+```text
+380. O(1) 时间插入、删除和获取随机元素
+```
+
+The exact repository path is:
+
+```text
+Atlas/100-Computer Science/110-Algorithms/Leetcode/380. O(1) 时间插入、删除和获取随机元素.md
+```
+
+Use the official problem number and official Chinese title resolved from the initial link, supplied题面, or conversation. Preserve punctuation and capitalization from the official Chinese title except characters that are invalid in a filename.
+
+The filename is the note title. Do not add a separate top-level `# <title>` heading by default unless an existing note being updated already follows that convention.
 
 If the target file already exists, fetch it first and update it in place. Merge useful existing content when practical; do not blindly discard an earlier independent solving history.
 
@@ -211,7 +233,7 @@ Do not add extra frontmatter fields unless the user later changes this template.
 
 Preferred body structure:
 
-```markdown
+````markdown
 ## 题目描述
 
 <faithful problem statement>
@@ -263,7 +285,7 @@ Preferred body structure:
 关键点：
 
 - ...
-```
+````
 
 Adapt the number and names of subsections to the actual conversation. Do not create empty headings or force every round into an identical visual shape.
 
@@ -300,20 +322,22 @@ The final code may be labeled AC only when acceptance is supported by the conver
 ## GitHub Write Workflow
 
 1. Resolve the earliest relevant LeetCode URL from the active conversation.
-2. Resolve the official problem number and Chinese title.
-3. Reconstruct all user code snapshots in chronological order.
-4. Assign every relevant user question, observation, and feeling to its correct round using the code-snapshot boundaries.
-5. Record submission outcomes, failed cases, diagnoses, and next steps without invention.
-6. Build the complete Markdown note using this skill's template.
-7. Check whether the target path already exists in `mental1104/Obsidian` on `main`.
-8. Create the file when absent; otherwise update the existing file after inspecting it.
-9. Use a concise commit message:
+2. Resolve the official problem number and official Chinese title.
+3. Construct the exact note title as `<problem number>. <official Chinese problem title>`.
+4. Construct the exact target path under `Atlas/100-Computer Science/110-Algorithms/Leetcode/` by appending `.md` to the note title.
+5. Reconstruct all user code snapshots in chronological order.
+6. Assign every relevant user question, observation, and feeling to its correct round using the code-snapshot boundaries.
+7. Record submission outcomes, failed cases, diagnoses, and next steps without invention.
+8. Build the complete Markdown note using this skill's template.
+9. Check whether the exact target path already exists in `mental1104/Obsidian` on `main`.
+10. Create the file when absent; otherwise update the existing file after inspecting it.
+11. Use a concise commit message:
 
 ```text
 Archive LeetCode <number> <title>
 ```
 
-10. Verify that the committed note contains the source URL, every available user code snapshot, round-scoped user questions, and a supported final AC version.
+12. Verify that the committed note has the exact title-derived filename, is inside the required LeetCode directory, contains the source URL, every available user code snapshot, round-scoped user questions, and a supported final AC version.
 
 ## Completion Report
 
