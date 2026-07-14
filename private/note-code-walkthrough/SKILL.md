@@ -1,6 +1,6 @@
 ---
 name: note-code-walkthrough
-description: Create or transform Obsidian source-code walkthrough notes that teach a concrete class, module, component, or tightly scoped mechanism from the reader's cognitive perspective: repository context, shared prerequisite infrastructure, application call chain, real public usage, construction and destruction, public/private implementation paths, member-state changes, complete scenarios, state machines, and repository-grounded behavioral tests. Use for repository-backed code reading, open-source walkthroughs, archived implementation notes, and existing code-note rewrites.
+description: Create or transform Obsidian source-code walkthrough notes for a concrete class, module, component, lab, or tightly scoped mechanism. Ground the note in a real repository version, teach the implementation through a problem-first and example-driven sequence, explain source by responsibility phase and state change, and use repository tests as behavioral contracts. Use for repository-backed code reading, open-source walkthroughs, implementation archives, and existing code-note rewrites.
 ---
 
 # Note Code Walkthrough
@@ -9,228 +9,178 @@ description: Create or transform Obsidian source-code walkthrough notes that tea
 
 Create or transform a source-code walkthrough note that lets the user's future self understand one concrete implementation subject without rediscovering the repository from scratch.
 
-The note must follow the reader's cognitive path, not source-file order and not implementation chronology.
-
-Default reading direction:
+The note must read like a guided source-reading session:
 
 ```text
-why this component matters
-→ which repository infrastructure must already be understood
-→ how the application reaches it
-→ how its public surface is actually used
-→ how the object is created and destroyed
-→ how public behavior is implemented
-→ how private responsibilities support it
-→ how member state changes
-→ how a complete lifecycle recombines the pieces
-→ how repository tests prove the model
+problem and responsibility
+→ plain-language mental model
+→ concrete object and state
+→ one complete example
+→ source implementation by responsibility phase
+→ tests as behavioral contracts
+→ actual verification
+→ results, boundaries, and questions
 ```
 
-The main reader is the user's future self. Do not write a broad textbook chapter, a repository-wide tour, or a line-by-line source translation.
+Do not default to a repository audit report, a broad architecture tour, implementation chronology, or line-by-line source translation.
+
+# Mandatory Generation Template
+
+Before generating or transforming a walkthrough, read and apply:
+
+```text
+templates/cs144-style-generation-template.md
+```
+
+That file is the default content architecture and quality standard for this skill.
+
+Its core requirements are mandatory unless genuinely inapplicable:
+
+- start from the concrete problem or task, not metadata;
+- give a compact version/evidence callout without letting it dominate;
+- explain the subject in plain language before declarations and internals;
+- show one complete state-evolution or input/output example early;
+- walk through large methods by responsibility phase;
+- keep real code close to the prose that explains it;
+- explain state before, input, branch, state after, and observable output;
+- treat tests as implementation contracts with setup, stimulus, oracle, and fault mapping;
+- put build logs, scores, and historical verification near the end;
+- preserve useful questions as Q&A in transform-mode;
+- make the final note feel like the strongest CS144 Lab walkthroughs, without hard-coding CS144-specific terminology.
+
+Do not silently revert to the older architecture-first sequence of:
+
+```text
+version matrix
+→ repository topology
+→ dependency inventory
+→ large architecture diagram
+→ implementation audit
+→ task explanation
+```
+
+Evidence and architecture remain required where relevant, but they support the teaching sequence instead of replacing it.
 
 # Modes
 
 ## `repository-mode`
 
-Use when the source of truth is a local checkout, GitHub repository, open-source repository, branch, tag, or commit.
+Use when the source of truth is a local checkout, GitHub repository, branch, tag, or commit.
 
 Required actions:
 
-1. resolve the repository root;
-2. record branch, tag, commit, and working-tree status when available;
-3. inspect the target implementation, declarations, callers, dependencies, ownership, tests, and build entrypoints;
-4. inspect the thin application-to-target path and every non-obvious type on that path;
-5. search existing notes before creating dependency or prerequisite notes;
-6. use exact source paths and real code;
-7. inspect the repository's build and test registration before defining the test scope;
-8. read the actual test bodies and shared fixtures/harnesses for every target-owned behavioral family;
-9. run focused build or tests when the environment permits and verification is in scope;
-10. never invent source behavior, resolved links, selected tests, or successful output.
-
-The test scope is not inferred from filenames. Resolve it through the repository's actual build graph and test runner configuration, such as:
-
-- `Makefile` targets;
-- CMake executable declarations and `add_test` registrations;
-- CTest regexes or labels;
-- Bazel targets;
-- Meson test definitions;
-- Gradle/Maven suites;
-- package scripts;
-- CI workflow commands;
-- custom shell runners.
-
-When a target selects tests indirectly, expand the selection and distinguish:
-
-- tests newly owned by the target component or lab;
-- inherited regression tests from dependencies or earlier stages;
-- integration/end-to-end tests that cross runtime or adapter boundaries;
-- optional, strict, extra-credit, disabled, skipped, or commented-out tests;
-- tests built but not selected;
-- tests selected by name regex, labels, dependencies, or aggregate targets.
+1. resolve the exact repository version;
+2. inspect the target declarations and implementation;
+3. find real callers, owners, dependencies, and outputs;
+4. inspect build and test registration rather than guessing from filenames;
+5. read actual target-owned test bodies and important fixtures;
+6. run focused build/tests when the environment permits and verification is in scope;
+7. never invent source behavior, test membership, output, or successful verification.
 
 ## `transform-mode`
 
 Use when an existing Markdown code note is being rewritten.
 
-Preserve useful evidence, working examples, test records, images, and valid links, but reorganize the note into the cognitive order defined here. Re-audit dependencies and tests instead of assuming the old note explained them adequately.
+Preserve useful original material:
 
-An existing generic test chapter is not evidence. Re-open the repository, resolve the current build/test boundary, read concrete cases, and replace vague statements with source-grounded test families and representative cases.
+- author observations;
+- concrete examples;
+- questions and confusing points;
+- real commands and outputs;
+- scores and benchmark records;
+- PR and commit links;
+- meaningful images and diagrams;
+- historical environment issues.
+
+Reorganize the material into the mandatory generation template. Re-audit current source and tests instead of assuming the old note is correct.
+
+When source screenshots are available as real code, prefer code blocks. When a hand-drawn relationship is clearer as Mermaid or a text range diagram, replace it and remove the duplicate image reference.
+
+Do not erase the original learning value merely to make the note visually uniform.
 
 ## `materialize-mode`
 
-Use when current chat context, source snapshots, review notes, terminal output, or previous analysis is being archived into a new walkthrough.
+Use when chat context, source snapshots, review notes, terminal output, or previous analysis is being archived into a new walkthrough.
 
-Verify important claims against the repository whenever it is available. Chat summaries are not a substitute for current source evidence.
-
-If repository access is unavailable, mark the implementation and test chapter as unverified or historical. Never synthesize test names, target membership, or case behavior from memory.
+Verify important claims against the repository whenever available. If repository access is unavailable, label source behavior and test results as historical or unverified.
 
 # Use When
 
-Use this skill when the future reader wants to understand:
+Use this skill when the future reader needs to understand:
 
-- where a class or component sits between the application and lower-level dependencies;
-- what repository-specific wrappers, adapters, schedulers, containers, or runtime objects make that path work;
-- how its public API is actually invoked;
-- how constructors and destructors establish and close the lifecycle;
-- why public and private methods are divided as they are;
-- how methods read and modify member state;
-- how large methods divide into responsibility blocks;
-- how a complete runtime scenario crosses the component;
-- how state-machine branches are covered;
-- which tests actually belong to the component's responsibility boundary;
-- how concrete test cases construct scenarios and decide correctness.
+- what problem a class, module, component, lab, or mechanism solves;
+- how an application or external caller reaches it;
+- how its public/exported surface is used;
+- how state changes across calls;
+- how large methods divide into responsibility phases;
+- why helpers and member fields exist;
+- how a complete runtime scenario recombines the pieces;
+- which tests belong to its responsibility boundary;
+- how concrete tests prove behavior;
+- where a failing case likely maps back into the implementation.
 
 Typical signals:
 
 - “代码走读”;
 - “源码走读笔记”;
-- “把这个类 / 模块 / 组件梳理成笔记”;
-- “从应用调用到内部实现讲清楚”;
-- “分析 public / private 方法和成员状态”;
-- “把这个开源仓库的实现归档”;
-- “把测试用例也一起讲明白”;
-- “按用例性质划分测试群”;
-- “确认哪些测试属于这个 Lab / 模块的责任田”;
-- “把仓库里的 socket / adapter / runtime 前置讲清楚”;
+- “把这个类 / 模块 / Lab 梳理成笔记”;
+- “从真实调用到内部实现讲清楚”;
+- “把测试用例一起讲明白”;
 - “重写这篇源码分析笔记”;
 - “按人的认知顺序读代码”.
 
 # Avoid
 
-Use another skill when the primary future-reading intention is different:
+Use another skill when the primary reading intention is different:
 
-- use `note-linear-achievement` to preserve an exploration, debugging, or implementation journey;
-- use `note-conclusion-evidence` when the main value is a conclusion and its proof;
-- use `note-operation-manual` when the reader only needs repeatable commands;
-- use `source-walk` when the only requested output is a temporary source snapshot under `/tmp`;
-- use a concept note when the subject is protocol or theory rather than one concrete implementation.
+- `note-linear-achievement`: preserve an exploration, debugging, or implementation journey;
+- `note-conclusion-evidence`: preserve a conclusion and its proof;
+- `note-operation-manual`: provide repeatable commands and procedures;
+- `source-walk`: create only a temporary source snapshot;
+- a concept-note skill: explain protocol or theory without centering one implementation.
 
-A walkthrough may contain history, conclusions, references, or commands, but those are supporting material. Its center thesis is the implementation model of one concrete code subject.
+A walkthrough may contain history, theory, commands, and conclusions, but its center is the implementation model of one concrete subject.
 
 # Required Companion Skills
 
 When writing into the Blue Espeon Obsidian vault:
 
-- use `blue-espeon-note-style` for placement, naming, backlinks, wikilinks, diagram conventions, and single-thesis boundaries;
-- use `obsidian-frontmatter-metadata` as a required final metadata check;
+- use `blue-espeon-note-style` for placement, naming, links, diagrams, and single-thesis boundaries;
+- use `obsidian-frontmatter-metadata` as the required final metadata check;
 - use `latex-math-writing` when mathematical notation appears;
-- use `source-walk` first only when a separate snapshot is useful or direct repository inspection is unavailable.
+- use `source-walk` only when a separate source snapshot is useful or direct inspection is unavailable.
 
-Do not create dead wikilinks silently. If a required note does not exist:
-
-1. create it when the approved scope permits;
-2. otherwise keep the minimum explanation inline and explicitly report the missing note.
+Do not create dead wikilinks silently. Keep the minimum explanation inline even when a deeper note exists.
 
 # Evidence And Honesty Rules
 
-Every important implementation and test claim must be grounded in current source evidence.
+Every important implementation and test claim must be grounded in source evidence.
 
 Record when available:
 
 - repository;
-- branch or tag;
-- commit;
+- branch, tag, or commit;
 - working-tree status;
-- relevant source files;
-- relevant test files;
+- implementation commit when different from current HEAD;
+- relevant source and test files;
 - build entrypoints;
 - exact test command or target;
 - test selection rule;
-- build and test status.
+- current and historical build/test status.
 
 Distinguish clearly between:
 
-- **source fact**: what the current code does;
+- **source fact**: what the inspected code does;
 - **test fact**: what a concrete test sets up, stimulates, and asserts;
-- **build-selection fact**: which tests a target actually builds or runs;
-- **walkthrough interpretation**: the cognitive model derived from the code;
+- **build-selection fact**: which tests a command actually selects;
+- **walkthrough interpretation**: the mental model derived from source;
 - **design suggestion**: a possible refactor or alternative;
-- **external standard**: what a specification or upstream reference requires;
-- **historical evidence**: results from an older commit that have not been revalidated.
+- **external standard**: what a specification requires;
+- **historical evidence**: older results not revalidated against current source.
 
-Never present a suggested refactor as current behavior. Never claim compilation or test success without actual evidence. Never replace a real usage or test case with pseudocode when repository-valid code is available.
+Never present a suggested refactor as current behavior. Never claim build or test success without actual evidence.
 
-A test filename, suite name, comment, or README list is not enough to claim coverage. The claim must be supported by the actual test body and its oracle.
-
-# Note Ecosystem And Companion Note Types
-
-## 1. Primary Walkthrough Note
-
-The main note focuses on one class, module, component, or tightly coupled mechanism and performs the full outside-to-inside walkthrough.
-
-Examples:
-
-- `CS144 Lab4 TCP Connection`;
-- `Redis ae Event Loop`;
-- `Go net/http Transport Connection Pool`.
-
-## 2. Dedicated Dependency Walkthrough
-
-Use when an external dependency has substantial behavior, state, methods, or lifecycle and deserves its own complete walkthrough.
-
-Examples:
-
-- `TCPSegment structure and usage`;
-- `TCPSender walkthrough`;
-- `TCPReceiver walkthrough`.
-
-## 3. Shared Repository Prerequisite Note
-
-Use for repository-specific infrastructure that appears across multiple walkthroughs, is necessary for understanding ownership or data flow, but does not deserve a full walkthrough for every type.
-
-Typical subjects:
-
-- socket wrappers;
-- adapter stacks;
-- event-loop ownership;
-- file-descriptor wrappers;
-- framework containers;
-- scheduler or callback glue;
-- repository-specific runtime abstractions;
-- template aliases or layered wrapper types whose names do not reveal their role.
-
-Its center thesis must be a coherent shared mechanism, not “miscellaneous classes.”
-
-## 4. Test Infrastructure Note
-
-Use when fixtures, harnesses, custom actions, expectations, builders, state factories, fake clocks, transport mocks, or output collectors must be understood before individual tests can be read comfortably.
-
-Example:
-
-- `CS144 TCPConnection 测试基建与夹具`.
-
-A test-infrastructure note explains the testing language. It does not replace the primary note's responsibility boundary, family map, representative concrete cases, or coverage matrix.
-
-## Companion Note Output Categories
-
-```text
-primary walkthrough
-├── shared repository prerequisites
-├── dedicated dependency walkthroughs
-└── test infrastructure notes
-```
-
-Do not report them as an undifferentiated companion-note list.
+A filename, suite name, README list, screenshot, or score alone is not enough to claim behavioral coverage.
 
 # Scope Boundary
 
@@ -239,28 +189,27 @@ Prefer one primary subject per main note:
 - one class;
 - one module;
 - one component;
+- one lab task group;
 - one tightly coupled mechanism.
 
-Do not turn a class note into a complete repository tour.
+Do not turn a component walkthrough into a complete repository tour.
 
-External material must use progressive depth:
+Use progressive depth for dependencies:
 
-1. give the minimum current-context explanation inline;
-2. deep-link to an exact heading when optional detail exists elsewhere;
-3. use a shared prerequisite note for reusable repository glue;
-4. use a dedicated walkthrough when the dependency itself is complex;
-5. return to the current mainline after establishing the boundary.
+1. explain the minimum role inline;
+2. deep-link to an exact heading when optional detail exists;
+3. reuse or create a shared repository prerequisite for recurring glue;
+4. use a dedicated dependency walkthrough when the dependency has substantial behavior and state;
+5. return to the current mainline.
 
-For tests, keep the same boundary discipline:
+For tests:
 
-- explain component-owned tests deeply in the primary note;
-- summarize inherited dependency regressions and link to their own walkthroughs;
-- explain cross-layer integration tests at the boundary relevant to the component;
-- do not absorb every repository test into one note merely because an aggregate target runs it.
+- explain target-owned tests deeply;
+- classify inherited regression tests without falsely attributing them to the target;
+- explain representative integration tests at the relevant boundary;
+- do not absorb every aggregate-target test into the main note.
 
 # Investigation Workflow
-
-Before writing, inspect enough source and existing notes to build a reliable cognitive model.
 
 ## 1. Resolve The Exact Source Version
 
@@ -268,788 +217,435 @@ Capture:
 
 - repository root or GitHub repository;
 - branch, tag, or commit;
-- whether the worktree is dirty;
-- the exact target symbol or module.
+- dirty/clean status when available;
+- exact target symbol, module, or lab;
+- implementation commit and later compatibility commits when distinct.
 
-If an existing note names a source commit, compare it with the requested source before rewriting. Keep historical implementation evidence separate from newly audited test evidence when they come from different revisions.
+When an existing note names an older revision, separate historical evidence from the newly inspected source.
 
-## 2. Find The Thin End-To-End Calling Slice
+## 2. Translate The Task Into Observable Responsibilities
 
-Locate only enough upper- and lower-layer code to answer:
+Before reading implementation order, answer:
 
-- what the application or external caller does;
-- which immediate owner, adapter, framework, scheduler, or container translates the event;
-- which target public method is invoked;
-- where target output goes;
-- which object owns construction, polling, callbacks, and cleanup.
+- What input or event arrives?
+- Why can it not be handled trivially?
+- What output or effect is expected?
+- What state must persist between calls?
+- What condition defines completion, failure, or cleanup?
 
-Do not expand all upper-layer internals in the main note.
+This becomes the opening “实验要求 / 要解决的问题” section.
 
-## 3. Run A Dependency Readiness Audit
+## 3. Find The Thin End-To-End Calling Slice
 
-Inventory every non-obvious external type encountered in:
+Locate only enough code to answer:
 
-- the thin application-to-target slice;
-- construction and ownership code;
-- public signatures;
+```text
+external action
+→ immediate owner / wrapper / generated stub
+→ target entrypoint
+→ important internal state or helper
+→ output consumer / user-visible result
+```
+
+Do not expand every upper- or lower-layer implementation in the main note.
+
+## 4. Audit Non-Obvious Types And Infrastructure
+
+Inspect non-obvious types encountered in:
+
+- the thin calling slice;
+- declarations and signatures;
+- ownership and lifecycle;
 - important member state;
-- real usage examples;
-- complete lifecycle scenarios;
-- test setup and integration code.
+- real examples;
+- test setup and oracle paths.
 
-Classify each type as:
+Classify each as:
 
-| Type condition | Required treatment |
+| Condition | Treatment |
 |---|---|
-| Standard or obvious, one sentence is enough | explain inline only |
-| Complex domain object with its own behavior/state | dedicated dependency walkthrough |
-| Reused repository glue between application and core components | shared repository prerequisite note |
-| Complex test-only support | test infrastructure note |
-| Role cannot be verified | mark uncertainty; do not pretend it is understood |
+| obvious or standard | one-sentence inline explanation |
+| complex domain object | dedicated dependency walkthrough |
+| recurring repository glue | shared prerequisite note |
+| complex test-only support | test infrastructure note |
+| role cannot be verified | mark uncertainty |
 
-Search existing notes before creating new prerequisite or dependency notes.
+Do not front-load all of this as a giant dependency inventory. Introduce each prerequisite before it becomes an obstacle.
 
-## 4. Inspect The Target Surface
+## 5. Inspect The Target Surface
 
 Collect:
 
-- constructors, factories, registration hooks, and destructors;
-- exported or public methods;
+- constructors, factories, registration hooks, and cleanup;
+- public/exported methods or commands;
 - private helpers;
-- member variables or owned subcomponents;
-- external types appearing in signatures or state;
-- source-defined invariants and comments.
+- member variables or module state;
+- source-defined invariants;
+- error and early-return paths.
 
-## 5. Build Read/Write And Call Maps
+## 6. Build Read/Write And State Maps
 
-For every important method, determine:
+For each important method or responsibility phase, determine:
 
-- callers;
+- caller;
+- input and precondition;
 - direct callees;
-- member state read;
-- member state modified;
-- external observable effects;
-- early returns and skipped downstream work;
-- invariants maintained.
+- state read;
+- state written;
+- observable effect;
+- early returns and skipped work;
+- invariant established.
 
-## 6. Inspect Complete Runtime Scenarios
+## 7. Find One Complete Concrete Example
 
-Find the normal lifecycle and meaningful mutually exclusive or exceptional branches.
+Select a real API/test scenario that demonstrates the central mechanism through several calls or phases.
 
-For a stateful component, identify every meaningful state transition and its trigger.
+The example should have representative values and visible state evolution. It will appear before the detailed implementation walkthrough and serve as the note's mainline.
 
-## 7. Establish The Test Responsibility Boundary
+## 8. Establish The Test Responsibility Boundary
 
-This step is mandatory before writing the test chapter.
-
-### 7.1 Read Build And Test Registration
-
-Inspect the repository's actual build and test entrypoints. Resolve:
+Inspect real build and test registration:
 
 ```text
 source test file
-→ built executable or test artifact
+→ built executable or artifact
 → registered test name
 → aggregate target / runner selection
-→ exact command, regex, label, or dependency that includes it
+→ exact command, regex, label, or dependency
 ```
 
-Do not assume that:
-
-- a file in `tests/` is executed;
-- a test executable is registered;
-- a registered test belongs to the requested component;
-- a target named after a lab runs only that lab;
-- every strict or extra-credit test is part of the default target;
-- every test selected by an aggregate target is newly owned by the current component.
-
-### 7.2 Classify Selected Tests
-
-Create an internal inventory with at least these classes:
+Classify selected tests:
 
 | Classification | Meaning |
 |---|---|
-| target-owned direct tests | directly instantiate or drive the target and assert its behavior |
-| integration/end-to-end tests | cross owners, adapters, processes, storage, network, UI, or runtime layers |
-| inherited regression tests | verify dependencies or earlier stages were not broken |
-| optional/strict/extra tests | not in the default required target, or selected only by another mode |
-| built but unselected | compiled but absent from the requested test command |
-| disabled/skipped/commented | present as source or registration but not active |
+| target-owned direct | directly drives the target and asserts its behavior |
+| integration/end-to-end | crosses owners or runtime boundaries |
+| inherited regression | verifies dependencies or earlier stages |
+| optional/strict/extra | outside the default required target |
+| built but unselected | compiled but absent from the requested command |
+| disabled/skipped | present but inactive |
 
-The final note must make this distinction explicit whenever aggregate targets blur responsibility.
+Read actual test bodies and important fixtures for every target-owned behavioral family.
 
-### 7.3 Read Actual Test Code
-
-For every important target-owned family, read:
-
-- actual test bodies;
-- fixtures and shared setup;
-- harness/action/expectation implementations;
-- state factories;
-- fake clocks or time advancement;
-- input builders;
-- output collectors;
-- helper assertions;
-- teardown and cleanup where behaviorally relevant.
-
-Do not classify a family solely from filenames or comments. Verify the stimuli and assertions in code.
-
-### 7.4 Group By Behavioral Semantics
-
-Group tests by what they prove, not by directory order or filename order.
-
-Possible families:
-
-- construction/connection;
-- data transfer;
-- ordering/buffering;
-- windows/flow control;
-- close paths;
-- timeout/retransmission;
-- reset/error;
-- persistence/recovery;
-- concurrency/ownership;
-- integration/adapter/runtime behavior.
-
-A family may include cases from several files. A single file may contain several behavioral families.
-
-### 7.5 Select Representative Concrete Cases
-
-Every important family must have at least one concrete source-backed case in the note. High-risk state, time, window, retry, ownership, or error behavior normally requires a deep case.
-
-For each representative case extract:
-
-```text
-test intent
-→ exact initial state/setup
-→ injected event or input
-→ intermediate state changes
-→ oracle(s)
-→ absence-of-work assertions
-→ covered methods/invariants
-→ likely fault location
-```
-
-Generic statements such as “the connect tests verify the handshake” or “the close tests verify linger” are insufficient without concrete cases.
-
-## 8. Inspect Existing Notes And References
+## 9. Inspect Existing Notes And References
 
 Search for:
 
-- shared repository prerequisite notes;
-- dedicated dependency notes;
-- source-specific companion notes;
-- protocol or standard notes;
+- prerequisite notes;
+- dependency walkthroughs;
 - test-infrastructure notes;
+- protocol/concept notes;
 - authoritative external references.
 
-Reuse valid notes and precise headings. Do not duplicate mature explanations inline.
+Reuse exact headings. Links supplement local explanation; they do not replace it.
 
-# Core Cognitive Rules
+# Generation Contract
 
-## Rule 1: Start With A Short Goal
+The detailed standard is in `templates/cs144-style-generation-template.md`. The following rules summarize what must appear in the generated note.
 
-The opening goal should normally be one to three sentences. Answer only:
+## 1. Opening
 
-- what this subject is responsible for;
-- why the reader would open this note.
+Begin with:
 
-## Rule 2: Explain Repository Prerequisites Before They Become Obstacles
+1. title;
+2. one summary callout explaining problem, responsibility, strategy, and boundary;
+3. one compact version/evidence callout;
+4. the concrete task or runtime problem.
 
-Before the first real usage example, identify only the non-obvious repository-specific types required to understand that example and the application call chain.
+Do not begin with a large evidence table, repository map, audit findings, or build log.
 
-For each type, provide:
+## 2. Plain-Language Model
 
-- one sentence explaining its current role;
-- its position in the chain;
-- an exact deep link when available.
+Explain the subject in ordinary language before deep source details.
 
-The main note must remain understandable without opening the link.
+The model must map to real state or invariants. A metaphor without a source mapping is insufficient.
 
-## Rule 3: Explain The Application Connection Before Internal APIs
+## 3. Concrete Structure
 
-For a middle-layer or framework-owned target, show:
+Show only the structure needed to understand the current subject:
+
+- one small ownership/data-flow/state diagram when useful;
+- a reading-sized real declaration or exported surface;
+- a compact role table for important interfaces and state.
+
+## 4. Complete Example Before Deep Implementation
+
+Provide one real, mentally executable example using actual API names and representative values.
+
+Show:
 
 ```text
-application action
-→ repository-specific wrapper / owner
-→ target public method
-→ target output
-→ adapter / lower layer / application-visible result
+state before
+→ call/input
+→ pending or intermediate state
+→ next call/event
+→ state after
+→ observable output
 ```
 
-## Rule 4: Use Real Public-API Examples Before The Declaration
+## 5. Implementation By Responsibility Phase
 
-Prefer several small, natural, repository-valid examples. They must use real types, plausible values, real construction paths, and observable results.
+For each important method:
 
-## Rule 5: Treat Construction And Destruction As Lifecycle Boundaries
+```markdown
+#### `<method>`：<responsibility>
 
-Explain:
+<overall phase breakdown>
 
-```text
-how the object is born
-→ what owned objects are created
-→ what initial invariants exist
-→ what events it can accept
-→ how it must leave
+##### Phase N: <purpose>
+
+```<language>
+<real source snapshot>
 ```
 
-Cover clean versus unclean destruction and externally visible cleanup effects.
+- input/precondition;
+- state read;
+- state written;
+- branch/early-return meaning;
+- skipped later work;
+- resulting invariant;
+- concrete boundary example when needed.
+```
 
-## Rule 6: Explain Public Methods Twice
+Do not paraphrase every line. Keep code snippets large enough to include the relevant condition, variables, and transition, but not entire unrelated files.
 
-First pass: natural-language responsibility, caller, timing, event, result, lifecycle role.
+## 6. Ranges, Windows, And Arithmetic
 
-Second pass: implementation walkthrough with read set, write set, state difference, observable result, branches, and invariants.
+Use exact interval notation and small text diagrams for:
 
-## Rule 7: Private Helpers Own Their Own Sections
+- offsets;
+- indexes;
+- capacity windows;
+- sequence-number ranges;
+- memory ranges;
+- cursor boundaries;
+- one-past-end completion indexes.
 
-Group helpers by responsibility domain, list meaningful callers, explain implementation once, and provide return paths to public mainlines.
+Explain the exact before/after boundary. Do not use vague phrases such as “trim invalid data” when arithmetic determines correctness.
 
-## Rule 8: Member Variables Are Explained Through Behavior
+## 7. Tests As Contracts
 
-Provide a compact ledger, then explain state evolution inside modifying methods.
-
-## Rule 9: Large Methods Are Split By Responsibility
-
-Identify cohesive blocks by purpose, precondition, local variables, state effect, control guarantee, and skipped work after early returns. Do not translate every line.
-
-## Rule 10: Complete Scenarios Follow Method-Level Understanding
-
-After methods, add one realistic mainline, attached branches, a transition coverage table, and a final state-machine diagram when applicable.
-
-## Rule 11: Tests Are Executable Behavioral Proof
-
-Explain the test language before cases, but do not stop at the harness.
-
-A complete test chapter must contain:
+The test chapter should contain:
 
 ```text
-build/test selection boundary
-→ responsibility classification
-→ test infrastructure language
-→ behavioral family map
+exact build/test selection
+→ minimum fixture/harness vocabulary
+→ behavior-based test families
 → representative concrete cases
-→ coverage and failure-localization matrix
+→ oracle and negative assertions
+→ implementation contract
+→ likely fault location
 ```
 
-The following is not acceptable:
+For each important case:
 
-```text
-connect tests verify connection
-close tests verify close
-retransmission tests verify retransmission
+```markdown
+### `<test/case>`：<intent>
+
+**Initial state**
+**Injected event**
+**Intermediate transition**
+**Oracle**
+**Negative oracle**
+**Implementation contract**
+**Failure usually points to**
 ```
 
-The note must show what a real case starts with, what it injects, what changes, how correctness is observed, what must not happen, and which implementation fault would explain failure.
+Do not stop at “all tests passed” or a score.
 
-## Rule 12: References Follow The Topic
+## 8. Verification Near The End
 
-Place authoritative references near the exact topic they support. Use the final reference section only for broader optional reading.
+Record actual commands, outputs, compatibility failures, focused tests, and full test results after the implementation and test model.
+
+State what each result proves and does not prove. Keep current and historical results separate.
+
+## 9. Results, Alternatives, And Q&A
+
+Preserve meaningful:
+
+- implementation commit and PR;
+- final score or behavior;
+- benchmarks;
+- alternative implementations and tradeoffs;
+- questions that expose non-obvious behavior;
+- suggested refactors, clearly labeled as suggestions.
 
 # Default Primary Note Architecture
 
 Use this order unless a section is genuinely inapplicable:
 
 ```markdown
-## 目标
+## AI摘要
 
-## 阅读边界与证据版本
+## 正文
 
-## 从应用到当前组件
+# <Title>
 
-## 理解本篇所需的外部类型
+> [!summary]
+> ...
 
-## Public API 的真实调用案例
+> [!note] 版本与归档范围
+> ...
 
-## 类 / 模块声明
+## 实验要求 / 要解决的问题
 
-## 构造、初始化与析构
+## 先用白话理解 <subject>
 
-## Public API 职责说明
+## 一探 <subject>
+### Mermaid 结构解析
+### 代码声明一览与概要解释
+### 函数调用输入、输出、返回案例
 
-## 类内部责任划分
+## 逐小节分析代码实现
+### <state/declaration/constructor>
+### <main method responsibility phases>
+### <helpers/error/cleanup>
 
-## 成员状态账本
+## 测试用例与实现契约
 
-## 实现走读
-### 构造与析构实现
-### Public 方法实现
-### Private helper 实现
+## 实际构建、运行与输出记录
 
-## 完整生命周期与状态分支
+## 结果
 
-## 状态转换覆盖表
+## 性能 / 设计边界
 
-## 完整状态机
-
-## 编译验证
-
-## 测试责任边界：构建目标与实际选择
-
-## 测试基建与前置依赖
-
-## 测试族与覆盖地图
-
-## 重点测试用例走读
-
-## 测试覆盖矩阵与失败定位
-
-## 扩展阅读
+## Q&A
 ```
 
-For non-class subjects:
+Adapt labels for non-class subjects:
 
-- “Public API” means exported functions, callbacks, handlers, commands, or protocol entrypoints;
-- constructor/destructor may become initialization/registration/cleanup;
-- member state may become module context, caches, tables, queues, or owned resources.
+- Public API may mean commands, handlers, callbacks, generated stubs, or protocol entrypoints;
+- member state may mean module tables, queues, process fields, caches, or resources;
+- construction/destruction may mean registration/startup and cleanup/shutdown;
+- “实验要求” may become feature requirements or runtime problem.
 
-# Thin Application-To-Component Slice
+# Transform-Mode Preservation Rules
 
-This section is mandatory for a middle-layer or framework-owned target.
+When rewriting an existing note:
 
-A compact table is often sufficient:
+- preserve useful original observations and explanations;
+- preserve real code, commands, outputs, scores, benchmarks, PRs, and links;
+- preserve meaningful historical context but label it historical;
+- preserve questions and convert them into Q&A when useful;
+- preserve source images only when they add information unavailable in code/text;
+- remove duplicate image references after conversion;
+- move long raw files and secondary logs into appendices or foldable callouts;
+- keep the original note's intellectual value while improving the teaching order.
 
-| External event | Immediate owner | Target API | Output consumer | Prerequisite context |
-|---|---|---|---|---|
+Do not place metadata migration notes, image-conversion notes, or source-audit caveats at the center of the opening.
 
-Do not expand the full owner or adapter implementation here.
+# Diagram Rules
 
-# Constructor And Destructor Walkthrough
+Use a diagram only when it answers a nontrivial question better than code, prose, or a small table.
 
-## Constructor Template
+Good uses:
 
-```markdown
-### 构造输入
-### 创建的子对象
-### 初始状态
-### 构造后不变量
-### 此时可以接受的事件
-```
+- object composition;
+- cross-owner interaction;
+- responsibility phases;
+- state transitions;
+- index/window movement;
+- test setup, stimulus, and oracle.
 
-## Destructor Or Cleanup Template
-
-```markdown
-### 正常退出条件
-### 未正常收尾时的处理
-### 外部可观察效果
-### 资源和状态最终结果
-```
-
-# Member State Ledger
-
-Use a compact table:
-
-| Member | Role | Main readers | Main writers | State kind |
-|---|---|---|---|---|
-
-State kind may be authoritative, derived, cache, queue, timer, flag, or owned component.
-
-# Public Method Implementation Template
-
-```markdown
-## `<public method>`：<behavior label>
-
-### 谁在什么时候调用
-### 一个真实场景
-### 调用前关键状态
-### 主执行路径
-### 读取与修改的状态
-### 状态差分
-### 外部可观察结果
-### 调用的内部责任单元
-### 关键分支与早返回
-### 维护的不变量
-```
-
-# Private Helper Implementation Template
-
-```markdown
-### `<private helper>`
-
-**职责**
-
-**调用者**
-
-**读取状态**
-
-**修改状态**
-
-**实现与职责块**
-
-**为什么独立存在**
-
-**维护的不变量**
-
-**返回主线**
-```
-
-# State Change Presentation
-
-Choose the smallest useful representation.
-
-- scalar/boolean/enum/counter/timer: one-line transition or small table;
-- queue/list: one to three snapshots;
-- map/ledger: one to three representative keys;
-- owned subobject: expose only the relevant surface;
-- cross-object interaction: sequence diagram;
-- transition logic: state diagram;
-- responsibility order: flowchart.
-
-Do not enumerate unbounded containers.
-
-# Diagram Admission Rule
-
-Use a diagram only when it clarifies a nontrivial relationship better than prose or a small table.
-
-Prefer diagrams for:
-
-- caller + callee + state effect;
-- multiple conditions + transitions;
-- public methods sharing helpers;
-- runtime events crossing objects;
-- layered wrapper/adapter ownership;
-- lifecycle branches;
-- test setup + stimulus + oracle.
-
-Do not use diagrams for flat lists, direct getters, obvious assignments, or decorative summaries.
-
-Additional rules:
+Rules:
 
 - one diagram answers one question;
-- keep 5–9 nodes by default;
-- split large diagrams;
-- keep orientation and terminology stable;
+- keep terminology and orientation stable;
+- normally use 5–9 nodes;
 - explain what to observe before it;
 - state the conclusion after it;
-- do not repeat the same fact in code, table, and diagram.
-
-# Complete Lifecycle And State-Machine Coverage
-
-Build one realistic normal scenario using real APIs and types. Attach meaningful branches such as:
-
-- passive versus active close;
-- success versus timeout;
-- acknowledgment versus retransmission;
-- valid input versus reset/error;
-- ordered versus out-of-order data;
-- open versus zero window.
-
-Use a transition coverage table:
-
-| Transition | Trigger | Scenario location | Main method | Test coverage |
-|---|---|---|---|---|
-
-Every meaningful edge must appear or be explicitly out of scope.
-
-# Build Verification
-
-Keep build coverage short and factual:
-
-- exact directory;
-- exact command;
-- actual result;
-- what success proves;
-- what it does not prove.
-
-If unavailable, write `未验证` and the blocker.
-
-# Test Chapter
-
-## 0. Establish Test Responsibility Boundary
-
-Begin with the actual build/test selection, not a semantic guess.
-
-Required output:
-
-| Test layer | Exact target/files | Selected by | Ownership | Treatment in note |
-|---|---|---|---|---|
-| direct target tests | ... | ... | component-owned | deep |
-| integration tests | ... | ... | shared boundary | representative deep/standard |
-| regression tests | ... | ... | dependencies/earlier stages | index/link |
-| optional/strict tests | ... | ... | outside default target | explicit comparison |
-| unselected/disabled | ... | ... | not executed | note only if relevant |
-
-State the exact runner command or target and any regex/label/dependency expansion.
-
-## 1. Explain Test Infrastructure First
-
-Identify:
-
-- framework;
-- fixtures;
-- harnesses;
-- scenario builders and state factories;
-- custom actions/events;
-- expectations/oracles;
-- helpers;
-- time simulation;
-- input/output inspection;
-- setup and teardown.
-
-Explain how output from the target reaches the oracle. A test harness that silently drains queues, advances clocks, retries work, or transforms outputs must be made explicit.
-
-## 2. Split Nontrivial Test Infrastructure
-
-Create or reuse a test-infrastructure note when multiple files reuse a nontrivial harness or when inline explanation would interrupt every case.
-
-Keep the minimum current interface inline, then deep-link. The primary note must still explain responsibility boundary, test families, representative cases, and coverage.
-
-## 3. Group Tests By Behavioral Family
-
-Do not default to file order.
-
-For each family explain:
-
-- overall behavior;
-- state edges;
-- implementation methods/invariants;
-- differences among cases;
-- exact member tests;
-- why the family belongs to the target rather than only a dependency.
-
-## 4. Explain Intent Before Code
-
-Use this order:
-
-```text
-what the test proves
-→ initial state
-→ injected events
-→ expected transitions
-→ oracle
-→ relevant actual code
-→ likely implementation fault
-```
-
-## 5. Test Oracle Rule
-
-Every important test must state how correctness is observed:
-
-- return value;
-- thrown error;
-- emitted message/segment;
-- queue contents;
-- fields;
-- output bytes;
-- state transition;
-- timer;
-- final hash/integration result;
-- absence of unexpected work.
-
-Negative assertions such as “no extra output,” “not yet retransmitted,” or “state unchanged” are first-class oracles and must not be omitted.
-
-## 6. Concrete Test Case Template
-
-```markdown
-### `<file / test name / case number>`：<intent>
-
-**测试意图**
-
-**为什么属于当前组件的责任**
-
-**初始状态**
-
-**注入事件**
-
-**阶段与状态变化**
-
-**测试预言机**
-
-**实际测试代码**
-
-**覆盖的方法与不变量**
-
-**失败通常意味着什么**
-```
-
-## 7. Explanation Depth
-
-- **index**: one-line intent, stimulus, assertion;
-- **standard**: initial state, events, state difference, oracle, fault area;
-- **deep**: staged execution, fixture expansion, snapshots, timing/window boundaries, negative assertions, failure localization.
-
-Do not give every test equal space.
-
-At minimum:
-
-- every important behavioral family gets one concrete case;
-- every high-risk state/time/window/retry/error family gets a deep case;
-- integration suites get at least one decoded command or parameterized scenario and its final oracle;
-- inherited regression suites are classified rather than falsely attributed to the target.
-
-## 8. Complex Tests Use Phases
-
-```text
-setup
-→ establish state
-→ inject stimulus
-→ advance time/external events
-→ assert intermediate state
-→ inject recovery/branch
-→ assert final state
-```
-
-Each phase should close with state changes and its assertion.
-
-## 9. Coverage Matrix
-
-Close the chapter with:
-
-| Behavior or invariant | Implementation method | Test family | Concrete test | Oracle | Failure signal |
-|---|---|---|---|---|---|
-
-Reveal:
-
-- tested claims;
-- covered state transitions;
-- target-owned versus dependency-owned coverage;
-- methods or branches lacking direct coverage;
-- likely fault locations;
-- integration failures that cannot be localized by the test alone.
+- do not repeat the same fact in code, prose, table, and Mermaid;
+- prefer text range diagrams for precise arithmetic;
+- do not use decorative repository-wide architecture diagrams.
 
 # Reader Experience Rules
 
-## Support Sequential And Nonlinear Reading
-
-The note must work from beginning to end and through direct heading links.
-
-## Provide Return Paths
-
-Deep helper, dependency, prerequisite, and test-infrastructure sections should provide paths back to the mainline when useful.
-
-## Link Does Not Replace Explanation
-
-Every non-obvious external type or harness must have a minimum local explanation before a link.
-
-## Prefer Precise Heading Links
-
-Use exact relevant headings and verify they exist.
-
-## Add Cognitive Checkpoints
-
-After long phases, use concise summaries when helpful:
-
-```markdown
-> [!summary] 读到这里应当明确
-> - ...
-```
-
-## Preserve Stable Vocabulary
-
-Choose one set of directional terms and keep it throughout.
-
-## Keep Code Context Just Large Enough
-
-Include the containing method/test, relevant conditions, local variables, and transition to the next block. Avoid isolated calls and huge raw files.
-
-## Use One Primary Representation Per Fact
-
-- code proves implementation/test behavior;
-- prose explains intent/reason;
-- table compares state or coverage;
-- flowchart shows ordered responsibility;
-- sequence diagram shows interaction;
-- state diagram shows transitions.
-
-## Use Progressive Disclosure
-
-Keep raw logs, full declarations, repetitive tests, and secondary evidence in foldable callouts or appendices when they interrupt the mainline.
-
-## Make Omission Explicit
-
-If a method, branch, dependency, build target, test family, or concrete case is omitted, state why and where the reader should go instead.
+- The note must support sequential reading and direct heading links.
+- The mainline must remain understandable without opening optional links.
+- Use stable vocabulary for directions, state, and lifecycle.
+- Add concise cognitive checkpoints after long phases when useful.
+- Keep raw logs and secondary evidence out of the main conceptual path.
+- State omissions and scope boundaries explicitly.
+- Use one primary representation per fact:
+  - code proves behavior;
+  - prose explains intent and reason;
+  - tables compare roles, states, or coverage;
+  - flowcharts show ordered responsibility;
+  - sequence diagrams show interactions;
+  - state diagrams show transitions;
+  - text diagrams show precise ranges.
 
 # Mandatory Validation Checklist
 
-Before finishing, verify all applicable items.
-
 ## Source Grounding
 
-- [ ] Repository, branch/tag, and commit are recorded when available.
-- [ ] Source and test paths are correct.
-- [ ] Important claims are grounded in current source.
-- [ ] Build/test outputs are real or explicitly unverified/historical.
-- [ ] Current behavior is separated from suggestions and standards.
+- [ ] Repository, revision, and target are recorded.
+- [ ] Important source and test paths are correct.
+- [ ] Current behavior is separated from history, standards, and suggestions.
+- [ ] Build/test output is real or explicitly unverified.
 
-## Dependency Readiness
+## Narrative Quality
 
-- [ ] Every non-obvious type in the application slice, signatures, ownership, lifecycle, and tests was audited.
-- [ ] Every such type has a minimum local explanation.
-- [ ] Existing repository-level prerequisite notes were searched before creating new ones.
+- [ ] The note starts with the problem, not metadata.
+- [ ] A plain-language mental model appears before deep implementation.
+- [ ] One complete concrete example appears early.
+- [ ] The note follows the CS144-style generation template unless a section is inapplicable.
+- [ ] The result reads like guided source reading, not an audit report.
+
+## Source Explanation
+
+- [ ] Real declarations and implementation snapshots are shown.
+- [ ] Large methods are split by responsibility phase.
+- [ ] Important phases state input, state read/write, branches, skipped work, and invariant.
+- [ ] Non-obvious ranges and arithmetic use concrete examples.
+- [ ] State changes and observable effects are explicit.
+
+## Dependencies And Links
+
+- [ ] Non-obvious types have a minimum inline explanation.
+- [ ] Existing prerequisite/dependency notes were searched.
 - [ ] Exact deep-link headings exist.
-- [ ] Links supplement rather than replace local context.
+- [ ] Links supplement rather than replace local explanation.
 
-## Cognitive Order
+## Tests
 
-- [ ] Goal is short.
-- [ ] Coverage boundary is explicit.
-- [ ] A middle-layer target has a thin application-to-component slice.
-- [ ] Real public usage appears before internal implementation.
-- [ ] Examples use real types and values.
+- [ ] Exact test command/target and selection rules were inspected.
+- [ ] Target-owned, integration, regression, optional, unselected, and disabled tests are distinguished when relevant.
+- [ ] Tests are grouped by behavior rather than filename order.
+- [ ] Every important family has a concrete source-backed case.
+- [ ] Oracles and negative assertions are explicit.
+- [ ] Failures are mapped to likely implementation responsibility phases.
 
-## Declaration And Lifecycle
+## Transform Preservation
 
-- [ ] Real declaration/exported surface is shown.
-- [ ] Construction and destruction/cleanup precede ordinary internals.
-- [ ] Every important public API has caller, timing, event, result, and lifecycle role.
-- [ ] Private responsibilities are grouped by domain.
-
-## Method Detail
-
-- [ ] Important methods show read set, write set, state difference, observable result, and invariants.
-- [ ] Large methods are divided into cohesive responsibility blocks.
-- [ ] Early returns state skipped later work.
-- [ ] Member state is explained through modifying methods.
-
-## Diagrams And Links
-
-- [ ] Every diagram answers a nontrivial question.
-- [ ] Orientation and terminology are stable.
-- [ ] Code, prose, tables, and diagrams do not redundantly repeat facts.
-
-## Lifecycle Completeness
-
-- [ ] One realistic normal lifecycle is complete.
-- [ ] Mutually exclusive and exceptional behavior is attached as branches.
-- [ ] Every meaningful transition appears in the coverage table or is out of scope.
-- [ ] A final complete state machine exists when applicable.
-
-## Build And Test Responsibility
-
-- [ ] The exact build/test target or command was inspected.
-- [ ] Test registration and selection rules were read, including regexes, labels, or aggregate dependencies.
-- [ ] The selected test set was expanded rather than guessed from filenames.
-- [ ] Target-owned direct tests are separated from integration tests, inherited regressions, optional/strict tests, built-but-unselected tests, and disabled tests.
-- [ ] Actual test bodies were read for every important target-owned family.
-- [ ] Shared fixtures, harnesses, state factories, fake clocks, and oracle paths were inspected where relevant.
-- [ ] Tests are grouped by behavioral semantics rather than file order.
-- [ ] Every important family has at least one concrete source-backed case.
-- [ ] High-risk state/time/window/retry/error behavior has a deep case.
-- [ ] Every important case names its positive and negative oracles.
-- [ ] Generic coverage claims are backed by specific test steps and assertions.
-- [ ] Integration tests state what they prove and why they cannot localize all failures.
-- [ ] A coverage/failure-localization matrix closes the test chapter.
+- [ ] Useful original observations, questions, commands, outputs, and evidence survive.
+- [ ] Replaced screenshots no longer remain as duplicate embeds.
+- [ ] Historical evidence is labeled rather than silently upgraded to current verification.
+- [ ] Metadata or image migration commentary does not dominate the note.
 
 ## Reader Experience
 
-- [ ] Long notes have intent-based navigation.
-- [ ] Long phases have concise cognitive checkpoints.
-- [ ] Vocabulary and visual orientation remain stable.
+- [ ] Every diagram has a clear cognitive purpose.
+- [ ] Code appears near the explanation it supports.
 - [ ] Secondary evidence uses progressive disclosure.
-- [ ] Omitted material is explicitly marked.
-- [ ] The mainline remains understandable without opening optional links.
+- [ ] Vocabulary and visual orientation are stable.
+- [ ] The mainline is understandable without optional links.
 
 # Frontmatter Metadata Check Rule
 
-Before finishing any generated or transformed Obsidian note, use `obsidian-frontmatter-metadata` as a required check.
+Before finishing any generated or transformed Obsidian note, run the `obsidian-frontmatter-metadata` check.
 
-Preserve valid top-level metadata, especially:
+When the Blue Espeon vault's current convention requires exactly four top-level keys, use:
 
-- `summary`;
-- `aliases`;
-- `tags`;
-- repository, branch, commit, source files, and test status when present.
+```yaml
+source: ...
+tags:
+  - ...
+summary: ...
+read_status: unread
+```
+
+Preserve additional metadata semantically in the body only when the active vault convention requires removing it from frontmatter.
 
 # Output Policy
 
@@ -1061,24 +657,21 @@ After creating or editing notes, respond with:
 - 类型：代码走读型
 - 模式：repository-mode / transform-mode / materialize-mode
 - 主笔记：`<path>`
-- 共享前置笔记：
-  - `<path>#<heading>` / 新建 / 更新 / 复用 / 无
-- 独立依赖走读：
-  - `<path>` / 新建 / 更新 / 复用 / 无
-- 测试基建笔记：
-  - `<path>` / 新建 / 更新 / 复用 / 无
+- 生成模板：CS144-style / adapted with reason
+- 共享前置笔记：`<path>#<heading>` / 新建 / 更新 / 复用 / 无
+- 独立依赖走读：`<path>` / 新建 / 更新 / 复用 / 无
+- 测试基建笔记：`<path>` / 新建 / 更新 / 复用 / 无
 - 源码版本：`<repo>@<branch-or-tag>:<commit>`
 - 验证：
   - 编译：通过 / 失败 / 未运行
   - 测试：通过 / 部分通过 / 失败 / 未运行
 - 主要覆盖：
-  - 应用到组件调用链
-  - 仓库级前置与外部类型
-  - Public API 与构造/析构
-  - Public/Private 实现和状态变化
-  - 完整生命周期与状态机
-  - 测试构建边界与责任分类
-  - 测试基建、行为族、具体用例和覆盖矩阵
+  - 问题与白话模型
+  - 具体对象、状态与完整调用案例
+  - 分责任阶段源码走读
+  - 测试契约与具体用例
+  - 实际构建、运行和结果边界
+  - Q&A / 性能 / 设计边界
 - 未覆盖或不确定点：
   - ...
 ```
