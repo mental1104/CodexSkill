@@ -402,6 +402,44 @@ Preserve copyability for proof commands.
 
 Do not fabricate missing evidence. Mark missing evidence explicitly.
 
+## Missing Evidence Task Rule
+
+When a conclusion is useful enough to preserve but its primary source, proof path, experiment, or raw material is still missing:
+
+- keep the conclusion visible and mark its confidence or boundary as pending evidence;
+- add exactly one open Markdown task for that conclusion inside the corresponding proof section;
+- the task must begin with `- [ ]` and describe the single evidence-closure target needed to make the conclusion trustworthy;
+- do not create several speculative subtasks for one conclusion merely because several evidence sources could be consulted;
+- do not use one vague shared task to cover several independent conclusions;
+- add no task when the existing evidence already closes the conclusion.
+
+Invariant:
+
+```text
+one conclusion -> zero or one evidence-closure task
+```
+
+Good:
+
+```markdown
+## 3. Proof - TIME_WAIT protects against stale segments
+
+Current conclusion: ...
+
+- [ ] Add the RFC section and one packet-capture example that jointly close this conclusion.
+```
+
+Bad:
+
+```markdown
+- [ ] Read RFC.
+- [ ] Search kernel code.
+- [ ] Run tcpdump.
+- [ ] Write explanation.
+```
+
+The task tracks closure of the conclusion, not every possible research action.
+
 ## Math Formatting Rule
 
 If the generated or transformed note contains LaTeX math, LaTeX formula blocks, or LaTeX code blocks, also use `latex-math-writing`.
