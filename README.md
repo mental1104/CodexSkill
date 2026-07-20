@@ -21,6 +21,12 @@ These skills are currently written for ChatGPT chat-triggered workflows, not Cod
 | `github-issue-harvest` | turn a discussion or repository problem into a focused, testable Chinese GitHub Issue |
 | `github-pr-harvest` | draft or submit a repository-grounded Chinese PR covering implementation, verification, impact, review focus, and related items |
 
+## Engineering Workflow Skills
+
+| Skill | Use when the user wants to... |
+|---|---|
+| `dsa-refactor-lifecycle` | refactor an educational data structure or algorithm through compatibility audit, reusable algorithm extraction, teaching adaptation, industrial implementation, integration testing, readability cleanup, and draft PR delivery |
+
 ## Active Note Skills
 
 The Obsidian note system is organized by future reading intention, not by "general vs technical" topic category.
