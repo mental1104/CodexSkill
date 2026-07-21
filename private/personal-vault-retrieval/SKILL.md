@@ -283,9 +283,9 @@ Atlas/300-Database/Redis/主从复制实验.md
 
 - 用户要求查询已有笔记：使用本 Skill；
 - 用户要求把当前内容写回 Vault：使用归档 Router；
-- 用户先查询旧结论，再要求更新归档：先使用本 Skill获取证据，再进入归档 Router；
-- 查询代码实验后要求修改代码：本 Skill负责检索历史证据，编码任务同时加载 `code-comment-writing`；
-- 查询笔记后要求生成 Issue 或 PR：本 Skill提供历史背景，最终产物继续加载对应 GitHub Skill。
+- 用户先查询旧结论，再要求更新归档：先使用本 Skill 获取证据，再进入归档 Router；
+- 查询代码实验后要求修改代码：本 Skill 负责检索历史证据，编码任务同时加载 `code-comment-writing`；
+- 查询笔记后要求生成 Issue 或 PR：本 Skill 提供历史背景，最终产物继续加载对应 GitHub Skill。
 
 # 九、交付前检查
 
