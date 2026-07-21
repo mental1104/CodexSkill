@@ -28,11 +28,14 @@ The following skills are primarily written for ChatGPT chat-triggered workflows 
 
 | Skill | Use when the user wants to... |
 |---|---|
+| `personal-vault-retrieval` | retrieve personal notes, archived conclusions, previous experiments, project documents, technical routes, tasks, or roadmaps from `mental1104/Obsidian` |
 | `task-harvest` | turn the current conversation into a small JSON todo list |
 | `english-harvest` | extract reusable English expressions from the current conversation |
 | `leetcode-archive` | archive a completed LeetCode solving journey into the Obsidian repository, preserving every user code snapshot through the final AC version |
 | `github-issue-harvest` | turn a discussion or repository problem into a focused, testable Chinese GitHub Issue |
 | `github-pr-harvest` | draft or submit a repository-grounded Chinese PR covering implementation, verification, impact, review focus, and related items |
+
+`personal-vault-retrieval` treats the private `mental1104/Obsidian` repository on `main` as the source of truth for the user's archived experiments, benchmarks, profiling results, project documents, learning records, technical routes, tasks, and roadmaps. It searches exact terms before broader variants, cites real paths, preserves privacy, and distinguishes vault conclusions from inference and assistant suggestions.
 
 ## Active Note Skills
 
