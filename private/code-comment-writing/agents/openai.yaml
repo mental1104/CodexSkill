@@ -1,0 +1,7 @@
+interface:
+  display_name: "中文代码注释"
+  short_description: "为所有新增和修改代码补齐中文接口与关键路径注释"
+  default_prompt: "Use $code-comment-writing before creating or modifying code in any language. Document every class, function, method, parameter, return value, error contract, and important control-flow path with Chinese-first comments that explain responsibilities, constraints, side effects, and design reasons without mechanically restating the code."
+
+policy:
+  allow_implicit_invocation: true
