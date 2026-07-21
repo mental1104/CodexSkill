@@ -9,9 +9,22 @@ Personal Codex skill collection with a split between first-party skills and publ
 - `public/obsidian-skills/`: public upstream skills from `kepano/obsidian-skills`, tracked as a git submodule.
 - `scripts/install.sh`: links the optional `ROUTER` and every discovered skill into `${CODEX_HOME:-$HOME/.codex}/skills`.
 
+## Mandatory Coding Skill
+
+`code-comment-writing` is a mandatory companion skill for both ChatGPT and Codex whenever a request creates, modifies, refactors, fixes, or outputs executable code.
+
+It requires:
+
+- Chinese-first documentation for every class, function, method, parameter, and return value;
+- explicit comments for short-circuit, mainline, failure, state, concurrency, and performance-sensitive paths;
+- language-appropriate docstrings or documentation comments;
+- a final comment-quality review before code is considered complete.
+
+The skill enables implicit invocation through `private/code-comment-writing/agents/openai.yaml`. It should be loaded alongside repository-specific and task-specific coding skills rather than replacing them.
+
 ## ChatGPT Chat Skills
 
-These skills are currently written for ChatGPT chat-triggered workflows, not Codex coding or shell-execution workflows.
+The following skills are primarily written for ChatGPT chat-triggered workflows rather than general Codex coding or shell-execution workflows.
 
 | Skill | Use when the user wants to... |
 |---|---|
@@ -42,6 +55,7 @@ Helper skills:
 
 | Skill | Narrow responsibility |
 |---|---|
+| `code-comment-writing` | mandatory Chinese-first documentation and critical-path comments for code creation and modification |
 | `blue-espeon-note-style` | vault style, directory placement, naming, backlinks, Mermaid convention, single-thesis boundary |
 | `latex-math-writing` | LaTeX math notation for calculus, linear algebra, probability/statistics, discrete math, and algorithms |
 | `obsidian-frontmatter-metadata` | `source`, `tags`, `summary`, and `read_status` only |
