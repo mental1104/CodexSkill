@@ -37,6 +37,14 @@ The following skills are primarily written for ChatGPT chat-triggered workflows 
 
 `personal-vault-retrieval` treats the private `mental1104/Obsidian` repository on `main` as the source of truth for the user's archived experiments, benchmarks, profiling results, project documents, learning records, technical routes, tasks, and roadmaps. It searches exact terms before broader variants, cites real paths, preserves privacy, and distinguishes vault conclusions from inference and assistant suggestions.
 
+## Workflow Skills
+
+| Skill | Use when the user wants to... |
+|---|---|
+| `note-work-delivery` | advance unchecked work from one Obsidian note through GitHub issues and PRs when frontmatter `source` names a GitHub repository, or directly in ChatGPT when it does not |
+
+`note-work-delivery` is invoked directly by requests such as “推进这篇笔记里的待办”. It keeps execution orchestration separate from the archive `ROUTER`; once work is accepted, final source-note refresh is handed back through `ROUTER` and the selected transform-mode note skill.
+
 ## Active Note Skills
 
 The Obsidian note system is organized by future reading intention, not by "general vs technical" topic category.
