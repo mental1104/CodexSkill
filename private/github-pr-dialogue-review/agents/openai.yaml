@@ -1,0 +1,7 @@
+interface:
+  display_name: "PR 对话式审阅"
+  short_description: "在 ChatGPT 中逐问逐审 PR，并把问题精确发布到对应代码行"
+  default_prompt: "Use $github-pr-dialogue-review whenever the user provides or refers to a GitHub pull request and asks to review, inspect, explain, question, challenge, recheck, or comment on its code. Bind the PR and current head SHA, ground every answer in repository evidence, answer the user quickly in ChatGPT, and when the active session authorizes publication, turn each question into one focused inline review comment, multi-line review comment, existing-thread reply, or PR-level comment at the safest precise target. Refresh anchors after new commits, avoid duplicate threads, distinguish confirmed defects from questions and suggestions, and never approve, request changes, resolve threads, edit code, or merge without an explicit user instruction."
+
+policy:
+  allow_implicit_invocation: true
