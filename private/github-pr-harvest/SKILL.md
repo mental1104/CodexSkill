@@ -73,6 +73,21 @@ If local repository access is unavailable, use GitHub branch, commit, diff, and 
 
 Do not invent implementation details, test commands, assertions, passing results, observable phenomena, Issue numbers, PR numbers, or review conclusions.
 
+## Markdown File Protection
+
+Treat repository Markdown documents as protected files by default so PR work does not silently expand into documentation work.
+
+- Unless the user explicitly authorizes it in the current request, do not create, modify, delete, rename, move, format, stage, commit, or otherwise include any Markdown document in the PR.
+- This protection applies case-insensitively to every path ending in `.md` or `.markdown`, regardless of directory or filename. It includes `README.md` and model-invented files such as `SUMMARY.md`, `PLAN.md`, `NOTES.md`, `IMPLEMENTATION.md`, and `TESTING.md`.
+- Requests to implement code, fix tests, handle CI, address review feedback, complete an Issue, draft a PR, or submit a PR do not implicitly authorize Markdown changes.
+- A vague request such as “更新文档” does not authorize inventing a new filename. Modify only a document explicitly named by the user or uniquely identified by the request.
+- Authorization is local to the named file or clearly bounded set of files. Permission to modify one Markdown file does not extend to any other Markdown file.
+- Do not infer authorization from repository conventions, best practices, stale documentation, code changes that appear to need documentation, or an Issue requirement that the user did not explicitly ask to implement as documentation.
+- Put explanations, plans, verification steps, migration notes, and summaries in the Issue, PR body, PR comments, or final response instead of creating a repository Markdown file.
+- If a repository policy appears to require a Markdown update that the user did not authorize, report the conflict instead of changing the file.
+- Pre-existing Markdown worktree changes must not be staged into the current PR and must not be reverted, overwritten, or deleted without explicit user authorization.
+- Before publishing or updating the PR, inspect the complete diff and verify that every Markdown change has explicit user authorization. Remove unauthorized Markdown changes from the PR scope and report them.
+
 ## Contextless Submission Workflow
 
 When the user only says something like “提交完成 PR”:
@@ -80,15 +95,16 @@ When the user only says something like “提交完成 PR”:
 1. resolve the current repository and branch;
 2. determine the target base branch;
 3. inspect `base...HEAD` instead of relying on chat memory;
-4. summarize the actual implementation from the diff;
-5. inspect unit-test changes and extract their core assertions;
-6. identify a precise CLI regression path when the behavior is directly observable;
-7. inspect executed checks and CI evidence;
-8. run the most relevant feasible checks if they have not been run;
-9. build a reviewer-oriented reading order from interfaces to implementation and tests;
-10. validate related Issue or PR references;
-11. generate the title and body using this skill;
-12. only then create or update the PR.
+4. verify that every Markdown change in the full diff is explicitly authorized by the user;
+5. summarize the actual implementation from the diff;
+6. inspect unit-test changes and extract their core assertions;
+7. identify a precise CLI regression path when the behavior is directly observable;
+8. inspect executed checks and CI evidence;
+9. run the most relevant feasible checks if they have not been run;
+10. build a reviewer-oriented reading order from interfaces to implementation and tests;
+11. validate related Issue or PR references;
+12. generate the title and body using this skill;
+13. only then create or update the PR.
 
 If evidence for a mandatory section is genuinely insufficient, stop before submission and report the evidence gap. If an optional section has no useful content, omit it.
 
@@ -432,6 +448,7 @@ This skill owns PR content quality. The publish workflow owns repository mutatio
 When a PR already exists for the branch:
 
 - inspect the current full diff, not only the newest commit;
+- verify that every Markdown change in the full diff is explicitly authorized by the user;
 - normalize the body to the six high-signal information areas in this skill;
 - preserve still-correct evidence, exact commands, useful observations, and review guidance;
 - remove filler, stale claims, invalidated results, and duplicate standalone sections;
@@ -449,5 +466,6 @@ This skill does not:
 - merge the PR;
 - close unrelated Issues;
 - hide failed checks;
+- create, modify, delete, rename, move, format, stage, or commit Markdown files without explicit user authorization;
 - stage unrelated local changes;
 - replace code review with a prose summary.
