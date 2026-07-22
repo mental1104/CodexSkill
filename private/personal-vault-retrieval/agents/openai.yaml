@@ -1,0 +1,7 @@
+interface:
+  display_name: "私人知识库检索"
+  short_description: "从 mental1104/Obsidian 中检索个人笔记、实验和归档结论"
+  default_prompt: "Use $personal-vault-retrieval whenever the user asks about their personal Obsidian vault, archived conclusions, previous experiments, learning records, project documents, source-reading notes, technical routes, tasks, or roadmaps. Search the private mental1104/Obsidian repository on main with GitHub tools, prefer exact terms before broader variants, preserve privacy, cite real paths, distinguish vault conclusions from inference and new suggestions, and never invent unavailable note content."
+
+policy:
+  allow_implicit_invocation: true
