@@ -16,7 +16,7 @@ The Issue should be suitable for:
 - verifying whether the work is actually complete;
 - preventing accidental scope expansion.
 
-This skill may inspect repository context when available, but it must not invent files, symbols, commands, test results, or existing behavior.
+This skill may inspect repository context when available, but it must not invent files, symbols, commands, test results, existing behavior, or repository labels.
 
 ## Triggers
 
@@ -36,21 +36,25 @@ The trigger phrase itself is not part of the Issue content.
 
 ## Goal
 
-Generate one Issue that answers:
+Generate one classified Issue that answers:
 
-1. What final state should be achieved?
-2. What is the current state or problem?
-3. What work is included?
-4. What work is explicitly excluded?
-5. What constraints must remain true?
-6. How will completion be accepted?
-7. How will the result be verified?
+1. What is the primary Issue type?
+2. What final state should be achieved?
+3. What is the current state or problem?
+4. What work is included?
+5. What work is explicitly excluded?
+6. What constraints must remain true?
+7. How will completion be accepted?
+8. How will the result be verified?
+
+Issue classification is part of Issue creation, not an optional cleanup step after the Issue has been written.
 
 Prefer one focused Issue over a broad project plan.
 
 Split the content only when several parts:
 
 - can be implemented independently;
+- have different primary types;
 - have different acceptance criteria;
 - require different verification paths;
 - would make one Issue too broad to complete safely.
@@ -62,24 +66,41 @@ Split the content only when several parts:
 - 不要为了中文化而翻译函数名、类名、配置项、错误信息或命令输出。
 - 只有用户明确要求其他语言时，才允许改变主要语言。
 
-## Issue Type
+## Issue Classification
 
-Infer one primary type:
+Infer exactly one primary type before drafting the title and body:
 
-- `bug`: existing behavior is incorrect;
-- `feature`: a new user-visible or system capability;
+- `bug`: existing promised or expected behavior is incorrect, broken, or regressed;
+- `feature`: a new user-visible or system capability is required;
 - `refactor`: internal structure changes without intended behavior changes;
-- `experiment`: a hypothesis must be tested with evidence;
-- `performance`: latency, throughput, memory, CPU, I/O, or scalability work;
-- `docs`: documentation or durable explanation;
-- `chore`: maintenance, configuration, dependency, CI, or repository housekeeping.
+- `experiment`: a hypothesis must be tested and concluded with recorded evidence;
+- `performance`: latency, throughput, memory, CPU, I/O, or scalability is the primary outcome;
+- `docs`: documentation or durable explanation is the primary deliverable;
+- `chore`: maintenance, configuration, dependency, CI, tooling, or repository housekeeping.
 
-Do not force the user to choose when the type is clear from context.
+Classification rules:
 
-## Output Format
+1. Classify by the primary acceptance outcome, not by incidental implementation work.
+2. Do not force the user to choose when the type is clear from context.
+3. Use only one primary type. Secondary concerns belong in area or concern labels.
+4. A missing capability is usually `feature`; behavior that previously should have worked is usually `bug`.
+5. A performance problem is `performance` when measurable performance is the main acceptance target, even if code changes also refactor internals.
+6. An investigation is `experiment` only when the deliverable is evidence and a conclusion. If the expected deliverable is a fix, classify the resulting Issue by that fix instead.
+7. When the type is materially ambiguous, state the chosen type and the deciding reason in one concise sentence rather than leaving the Issue unclassified.
+
+## Draft Output Format
+
+Return classification metadata separately from the Issue body so it can be used when creating the Issue:
+
+```text
+Issue type: feature
+Labels: type/feature, area/shell, priority/medium
+```
+
+Then return the Issue title and body:
 
 ```markdown
-# <type>: <concise outcome-oriented title>
+# feat: <concise outcome-oriented title>
 
 ## 目标
 
@@ -132,7 +153,7 @@ Omit empty optional sections instead of filling them with “无”.
 
 ## Type-Specific Sections
 
-Add only the sections required by the selected Issue type.
+Add only the sections required by the selected primary type.
 
 ### Bug
 
@@ -204,13 +225,24 @@ Do not use vague acceptance criteria such as “性能有所提升”.
 
 ## Title Rules
 
-Use an outcome-oriented title.
+Use an outcome-oriented title and align its conventional prefix with the primary Issue type:
+
+| Issue type | Preferred title prefix |
+| --- | --- |
+| `bug` | `fix:` |
+| `feature` | `feat:` |
+| `refactor` | `refactor:` |
+| `experiment` | `experiment:` |
+| `performance` | `perf:` |
+| `docs` | `docs:` |
+| `chore` | `chore:` |
 
 Prefer:
 
 ```text
 perf: 批量拉取 MinIO artifacts 后写入 ClickHouse
 fix: 避免 Redis 副本不可用时读取过期结果
+feat: 为 xv6 shell 增加命令历史导航
 refactor: 将文件识别能力收敛到稳定的 C ABI
 ```
 
@@ -262,39 +294,89 @@ Common non-goals include:
 
 When implementation reveals additional work, prefer creating a follow-up Issue instead of silently expanding the current one.
 
-## Labels
+## Label Strategy
 
-Suggest labels only when useful.
+Use labels as part of Issue classification and routing. Do not treat them as optional decoration.
 
-Output labels separately from the Issue body:
+Apply labels in layers:
+
+1. **Type label — required:** exactly one label representing the primary Issue type.
+2. **Area labels — normally required:** one or two labels identifying the affected subsystem, module, or domain.
+3. **Priority label — conditional:** add only when priority is known from user intent, project policy, severity, deadline, or blocking impact.
+4. **Status or concern labels — conditional:** add only when they change routing or handling, such as `needs-design`, `breaking-change`, `good-first-issue`, or `blocked`.
+
+Preferred semantic mappings are:
+
+| Primary type | Canonical label | Common repository equivalent |
+| --- | --- | --- |
+| `bug` | `type/bug` | `bug` |
+| `feature` | `type/feature` | `enhancement`, `feature` |
+| `refactor` | `type/refactor` | `refactor` |
+| `experiment` | `type/experiment` | `research`, `experiment` |
+| `performance` | `type/performance` | `performance`, `perf` |
+| `docs` | `type/docs` | `documentation`, `docs` |
+| `chore` | `type/chore` | `maintenance`, `chore` |
+
+Rules:
+
+- Always output the selected primary type and proposed labels during the draft stage.
+- When a repository is known, inspect its existing labels before selecting or applying labels.
+- Prefer the repository's existing naming convention over the canonical names above.
+- Do not assume a canonical label exists merely because it appears in this skill.
+- Do not invent, silently create, or rename repository labels unless the user explicitly requests label management.
+- When no equivalent type label exists, keep the Issue explicitly classified in the draft output and report that the repository lacks a matching type label.
+- Avoid redundant labels such as applying both `type/bug` and `bug` for the same meaning.
+- Avoid speculative priority. Do not label every Issue `priority/high`.
+- Keep the normal label set small: one type, one or two areas, and only justified routing labels.
+
+Example draft metadata:
 
 ```text
-Suggested labels: type/performance, area/storage, priority/medium
+Issue type: performance
+Labels: type/performance, area/storage, priority/medium
+Label status: unverified until repository labels are inspected
 ```
 
-Do not assume these labels exist in the repository.
+Example metadata after repository inspection:
 
-Inspect existing labels before applying them.
+```text
+Issue type: feature
+Labels to apply: enhancement, area/shell
+Label status: verified against existing repository labels
+```
 
 ## Execution Policy
 
-Default behavior:
+Default draft behavior:
 
-1. generate the proposed title;
-2. generate the complete Issue body;
-3. suggest labels when useful;
-4. do not create the Issue.
+1. infer exactly one primary Issue type;
+2. resolve the title prefix from that type;
+3. inspect repository context and existing labels when a repository is available;
+4. generate the proposed title;
+5. generate the complete Issue body;
+6. output the primary type and proposed labels;
+7. do not create the Issue.
 
 Create the GitHub Issue only when the user explicitly asks to submit, publish, or create it in a specified repository.
 
 Before creating it, confirm from available context:
 
 - repository;
+- primary Issue type;
 - final title;
 - Issue body;
-- labels to apply, if any.
+- existing repository labels;
+- exact labels to apply.
 
-Do not create milestones, assign users, or link projects unless explicitly requested.
+When creating the Issue:
+
+1. apply exactly one existing type label when an equivalent exists;
+2. apply relevant existing area labels;
+3. apply priority, status, or concern labels only when justified;
+4. do not substitute title prefixes for labels or labels for a clear title;
+5. report any requested classification that could not be represented by existing repository labels.
+
+Do not create milestones, assign users, link projects, create labels, or change repository taxonomy unless explicitly requested.
 
 ## Boundary
 
@@ -303,8 +385,8 @@ This skill drafts or creates GitHub Issues.
 It does not:
 
 - implement the Issue;
-- modify repository files;
-- create branches or commits;
+- modify repository files unrelated to this Skill;
+- create branches or commits beyond the direct Skill update requested by the user;
 - open pull requests;
 - claim tests have passed without evidence;
 - turn an Issue into a multi-week project plan unless explicitly requested.
