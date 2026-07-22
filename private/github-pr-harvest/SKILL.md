@@ -141,7 +141,7 @@ The title must summarize the full PR diff rather than one incidental commit.
 
 Use only the sections that carry meaningful evidence:
 
-```markdown
+````markdown
 ## PR 提交信息
 
 - 关联 Issue：Closes #<issue>
@@ -194,7 +194,7 @@ Use only the sections that carry meaningful evidence:
    - 再检查 <核心控制流、状态变化或关键算法>。
 3. `<path/to/boundary-or-test>`
    - 最后结合 <边界处理、回归测试或调用方> 验证实现闭环。
-```
+````
 
 ### Required And Optional Sections
 
