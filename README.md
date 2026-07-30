@@ -30,6 +30,7 @@ The following skills are primarily written for ChatGPT chat-triggered workflows 
 |---|---|
 | `personal-vault-retrieval` | retrieve personal notes, archived conclusions, previous experiments, project documents, technical routes, tasks, or roadmaps from `mental1104/Obsidian` |
 | `task-harvest` | turn the current conversation into a small JSON todo list |
+| `calendar-harvest` | turn a short natural-language schedule request into a deterministic five-field calendar-event JSON array |
 | `english-harvest` | extract reusable English expressions from the current conversation |
 | `leetcode-archive` | archive a completed LeetCode solving journey into the Obsidian repository, preserving every user code snapshot through the final AC version |
 | `github-issue-harvest` | turn a discussion or repository problem into a focused, testable Chinese GitHub Issue |
