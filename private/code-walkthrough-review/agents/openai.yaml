@@ -1,0 +1,7 @@
+interface:
+  display_name: "对话式代码走读"
+  short_description: "沿业务闭环建立源码上下文，并按可维护性门禁一次讨论一个问题"
+  default_prompt: "Use $code-walkthrough-review when the user wants to understand a repository, branch, pull request, directory, microservice, feature path, lifecycle, or pasted code fragment through a conversational walkthrough. Build a scoped evidence-grounded context map first, use the user journey as the boundary, auto-locate pasted fragments when possible, answer the exact current question without unsolicited expansion, evaluate maintainability and design concerns against explicit gates and exceptions, and manage concerns as a one-item-at-a-time queue. Remain read-only unless the user explicitly authorizes review publication, Issue creation, code changes, tests, or other writes."
+
+policy:
+  allow_implicit_invocation: true

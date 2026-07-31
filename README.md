@@ -36,10 +36,13 @@ The following skills are primarily written for ChatGPT chat-triggered workflows 
 | `github-issue-harvest` | turn a discussion or repository problem into a focused, testable Chinese GitHub Issue |
 | `github-pr-harvest` | draft or submit a repository-grounded Chinese PR covering implementation, verification, impact, review focus, and related items |
 | `github-pr-dialogue-review` | review an existing PR conversationally in ChatGPT, answer each question from repository evidence, and publish focused concerns to precise diff lines or review threads |
+| `code-walkthrough-review` | build a scoped source context from a business journey, answer walkthrough questions without unsolicited expansion, and review maintainability concerns one item at a time |
 
 `personal-vault-retrieval` treats the private `mental1104/Obsidian` repository on `main` as the source of truth for the user's archived experiments, benchmarks, profiling results, project documents, learning records, technical routes, tasks, and roadmaps. It searches exact terms before broader variants, cites real paths, preserves privacy, and distinguishes vault conclusions from inference and assistant suggestions.
 
 `github-pr-dialogue-review` binds a PR and current head SHA as a chat review session, reuses inline threads, refreshes anchors after new commits, and keeps formal review states, thread resolution, code edits, and merge actions behind explicit user instructions.
+
+`code-walkthrough-review` uses a business request, message, task, or lifecycle as the reading boundary. It establishes a compact context map, automatically anchors pasted fragments when repository evidence permits, applies maintainability gates with explicit exceptions, and keeps candidate concerns in a version-bound one-item dialogue queue. The included `references/chatgpt-project-prompt.md` can be copied into an XDLP ChatGPT Project.
 
 ## Workflow Skills
 
