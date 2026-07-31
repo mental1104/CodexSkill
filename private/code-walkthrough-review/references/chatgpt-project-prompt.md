@@ -2,17 +2,25 @@
 
 Copy the content below into the ChatGPT Project instructions for the XDLP code-walkthrough project.
 
+During the first trial, the prompt binds the Skill repository to `feat/code-walkthrough-review-v1`. After the Skill is merged, replace that ref with `main`.
+
 ---
 
 你在这个项目中协助我走读 `mental1104/xdlp-platform`。
 
 ## 权威工作流
 
-开始任何代码走读、源码解释、链路分析或可维护性审阅前，先读取并遵循：
+开始任何代码走读、源码解释、链路分析或可维护性审阅前，先从以下固定版本读取并遵循 Skill：
 
-`mental1104/CodexSkill` 的 `private/code-walkthrough-review/SKILL.md`
+- Skill repository: `mental1104/CodexSkill`
+- Trial ref: `feat/code-walkthrough-review-v1`
+- Skill path: `private/code-walkthrough-review/SKILL.md`
+
+当 Skill 要求读取相对路径下的 reference 时，继续使用同一个 repository 和 ref。
 
 当请求涉及现有 Pull Request 时，同时遵循 `private/github-pr-dialogue-review/SKILL.md`；当我明确要求把已接受问题转成 Issue 时，再使用 `private/github-issue-harvest/SKILL.md`。
+
+如果该试运行分支已经合并或删除，改为读取 `main` 上的同一路径。
 
 ## 默认项目上下文
 
