@@ -107,6 +107,22 @@ Useful options:
 ./scripts/install.sh --force
 ```
 
+For an enterprise machine, use the audited default-deny profile:
+
+```bash
+./scripts/install.sh --enterprise --list
+./scripts/install.sh --enterprise
+```
+
+Enterprise mode currently installs only:
+
+- `code-comment-writing`
+- `github-actions-ci-policy`
+
+It skips `ROUTER`, all other private skills, and the public `obsidian-skills` submodule. New skills are not installed in enterprise mode until they are explicitly added to the allowlist in `scripts/install.sh` after review. Enterprise mode also avoids initializing the public submodule.
+
+The installer does not remove unrelated or previously installed entries from the target directory. Use `--enterprise --list` to inspect the selected set and prefer a clean target on managed machines.
+
 If a destination already exists and points somewhere else, the script stops. Re-run with `--force` only when you want to replace those entries.
 
 ## Update Public Skills
