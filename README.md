@@ -114,12 +114,29 @@ For an enterprise machine, use the audited default-deny profile:
 ./scripts/install.sh --enterprise
 ```
 
-Enterprise mode currently installs only:
+Enterprise mode uses a default-deny allowlist. It currently excludes:
 
-- `code-comment-writing`
-- `github-actions-ci-policy`
+- `ROUTER`
+- `github-issue-harvest`
+- `github-pr-dialogue-review`
+- `github-pr-harvest`
+- `home-lan-device-ops`
+- `leetcode-archive`
+- `note-work-delivery`
+- `personal-vault-retrieval`
 
-It skips `ROUTER`, all other private skills, and the public `obsidian-skills` submodule. New skills are not installed in enterprise mode until they are explicitly added to the allowlist in `scripts/install.sh` after review. Enterprise mode also avoids initializing the public submodule.
+The remaining currently reviewed private skills are allowed, including `source-walk`, `code-walkthrough-review`, note/harvest helpers, and coding policy skills.
+
+The currently reviewed public `kepano/obsidian-skills` skills are also allowlisted:
+
+- `defuddle`
+- `json-canvas`
+- `knap`
+- `obsidian-bases`
+- `obsidian-cli`
+- `obsidian-markdown`
+
+New private or public skills are not installed in enterprise mode until they are explicitly added to the allowlist in `scripts/install.sh` after review. Public submodule initialization may perform Git fetch/update operations, but the reviewed enterprise allowlist contains no `git push` workflow.
 
 The installer does not remove unrelated or previously installed entries from the target directory. Use `--enterprise --list` to inspect the selected set and prefer a clean target on managed machines.
 
