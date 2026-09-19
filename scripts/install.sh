@@ -7,19 +7,22 @@ target="${CODEX_HOME:-$HOME/.codex}/skills"
 force=0
 dry_run=0
 list_only=0
+enterprise=0
 router_root="$repo_root/ROUTER"
 private_root="$repo_root/private"
 public_root="$repo_root/public/obsidian-skills/skills"
 
+# 打印安装脚本帮助；企业模式只安装经过显式审计的 allowlist Skill。
 usage() {
   cat <<'USAGE'
 Usage: scripts/install.sh [options]
 
-Link the optional repository ROUTER and every skill into ${CODEX_HOME:-$HOME/.codex}/skills.
+Link the optional repository ROUTER and discovered skills into ${CODEX_HOME:-$HOME/.codex}/skills.
 
 Options:
   --target DIR   Link into DIR instead of the default skills directory.
-  --list         List discovered skills without changing files.
+  --list         List skills selected by the current install mode without changing files.
+  --enterprise   Install only the audited enterprise-safe Skill allowlist.
   --force        Replace existing destination entries.
   --dry-run      Print actions without changing files.
   -h, --help     Show this help.
@@ -101,13 +104,45 @@ link_skill() {
   log "Linked $name ($label)"
 }
 
+# 判断一个 Skill 是否进入企业安全 allowlist。
+#
+# 参数：
+#   $1: Skill 来源标签，例如 private、public 或 router。
+#   $2: Skill 目录名。
+# 返回：
+#   0 表示允许企业模式安装；非 0 表示跳过。
+#
+# 新增 Skill 默认不进入企业环境，必须经过单独安全审计后显式加入此处。
+is_enterprise_safe_skill() {
+  local label="$1"
+  local name="$2"
+
+  [ "$label" = "private" ] || return 1
+
+  case "$name" in
+    code-comment-writing|github-actions-ci-policy)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+# 遍历当前安装模式允许的 Skill，并把目录与来源标签交给回调函数。
+#
+# 参数：
+#   $1: 回调函数名；回调接收 source_dir 和 label 两个参数。
+# 副作用：
+#   普通模式遍历 ROUTER、private 和 public；企业模式只遍历 allowlist 中的 private Skill。
 for_each_skill() {
   local callback="$1"
   local root
   local label
   local dir
+  local name
 
-  if [ -f "$router_root/SKILL.md" ]; then
+  if [ "$enterprise" -eq 0 ] && [ -f "$router_root/SKILL.md" ]; then
     "$callback" "$router_root" router
   fi
 
@@ -120,9 +155,19 @@ for_each_skill() {
       label="public"
     fi
 
+    # 企业模式不扫描 public 上游目录，避免未审计第三方 Skill 进入候选集合。
+    if [ "$enterprise" -eq 1 ] && [ "$label" = "public" ]; then
+      continue
+    fi
+
     for dir in "$root"/*; do
       [ -d "$dir" ] || continue
       [ -f "$dir/SKILL.md" ] || continue
+
+      name="$(basename "$dir")"
+      if [ "$enterprise" -eq 1 ] && ! is_enterprise_safe_skill "$label" "$name"; then
+        continue
+      fi
 
       "$callback" "$dir" "$label"
     done
@@ -136,7 +181,14 @@ list_skill() {
   printf '%-8s %s\n' "$label" "$(basename "$source_dir")"
 }
 
+# 确保普通模式需要的 public Skill 子模块存在。
+#
+# 企业模式直接返回，不访问第三方 GitHub 子模块；普通模式保持原有自动初始化行为。
 ensure_public_skills() {
+  if [ "$enterprise" -eq 1 ]; then
+    return
+  fi
+
   if [ -d "$public_root" ]; then
     return
   fi
@@ -164,6 +216,10 @@ while [ "$#" -gt 0 ]; do
       ;;
     --list)
       list_only=1
+      shift
+      ;;
+    --enterprise)
+      enterprise=1
       shift
       ;;
     --force)
