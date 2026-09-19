@@ -117,16 +117,24 @@ is_enterprise_safe_skill() {
   local label="$1"
   local name="$2"
 
-  [ "$label" = "private" ] || return 1
-
-  case "$name" in
-    code-comment-writing|github-actions-ci-policy)
-      return 0
+  case "$label" in
+    private)
+      case "$name" in
+        archive-code-demand-note|blue-espeon-note-style|book-operation-manual-extract|calendar-harvest|code-comment-writing|code-walkthrough-review|english-harvest|github-actions-ci-policy|latex-math-writing|note-code-walkthrough|note-cognitive-convergence|note-conclusion-evidence|note-linear-achievement|note-operation-manual|obsidian-frontmatter-metadata|source-walk|task-harvest)
+          return 0
+          ;;
+      esac
       ;;
-    *)
-      return 1
+    public)
+      case "$name" in
+        defuddle|json-canvas|knap|obsidian-bases|obsidian-cli|obsidian-markdown)
+          return 0
+          ;;
+      esac
       ;;
   esac
+
+  return 1
 }
 
 # 遍历当前安装模式允许的 Skill，并把目录与来源标签交给回调函数。
@@ -134,7 +142,7 @@ is_enterprise_safe_skill() {
 # 参数：
 #   $1: 回调函数名；回调接收 source_dir 和 label 两个参数。
 # 副作用：
-#   普通模式遍历 ROUTER、private 和 public；企业模式只遍历 allowlist 中的 private Skill。
+#   普通模式遍历 ROUTER、private 和 public；企业模式遍历 private/public 中显式 allowlist 的 Skill。
 for_each_skill() {
   local callback="$1"
   local root
@@ -153,11 +161,6 @@ for_each_skill() {
       label="private"
     else
       label="public"
-    fi
-
-    # 企业模式不扫描 public 上游目录，避免未审计第三方 Skill 进入候选集合。
-    if [ "$enterprise" -eq 1 ] && [ "$label" = "public" ]; then
-      continue
     fi
 
     for dir in "$root"/*; do
@@ -181,14 +184,10 @@ list_skill() {
   printf '%-8s %s\n' "$label" "$(basename "$source_dir")"
 }
 
-# 确保普通模式需要的 public Skill 子模块存在。
+# 确保需要的 public Skill 子模块存在。
 #
-# 企业模式直接返回，不访问第三方 GitHub 子模块；普通模式保持原有自动初始化行为。
+# 普通模式和企业模式都可能安装 public Skill；企业模式仍会在遍历阶段应用显式 allowlist。
 ensure_public_skills() {
-  if [ "$enterprise" -eq 1 ]; then
-    return
-  fi
-
   if [ -d "$public_root" ]; then
     return
   fi
