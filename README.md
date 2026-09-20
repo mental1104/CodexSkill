@@ -33,16 +33,19 @@ The following skills are primarily written for ChatGPT chat-triggered workflows 
 | `calendar-harvest` | turn a short natural-language schedule request into a deterministic five-field calendar-event JSON array |
 | `english-harvest` | extract reusable English expressions from the current conversation |
 | `leetcode-archive` | archive a completed LeetCode solving journey into the Obsidian repository, preserving every user code snapshot through the final AC version |
-| `github-issue-harvest` | turn a discussion or repository problem into a focused, testable Chinese GitHub Issue |
-| `github-pr-harvest` | draft or submit a repository-grounded Chinese PR covering implementation, verification, impact, review focus, and related items |
-| `github-pr-dialogue-review` | review an existing PR conversationally in ChatGPT, answer each question from repository evidence, and publish focused concerns to precise diff lines or review threads |
+| `github-operations` | act as the single gateway for GitHub remote reads/writes, Issue/PR mutations, review publication, and push |
+| `github-issue-harvest` | turn a discussion or repository problem into a focused, testable Chinese GitHub Issue payload |
+| `github-pr-harvest` | draft repository-grounded Chinese PR content covering implementation, verification, impact, review focus, and related items |
+| `github-pr-dialogue-review` | define conversational PR review semantics, anchors, thread reuse, and comment payloads |
 | `code-walkthrough-review` | build a scoped source context from a business journey, answer walkthrough questions without unsolicited expansion, and review maintainability concerns one item at a time |
 
 `personal-vault-retrieval` treats the private `mental1104/Obsidian` repository on `main` as the source of truth for the user's archived experiments, benchmarks, profiling results, project documents, learning records, technical routes, tasks, and roadmaps. It searches exact terms before broader variants, cites real paths, preserves privacy, and distinguishes vault conclusions from inference and assistant suggestions.
 
-`github-pr-dialogue-review` binds a PR and current head SHA as a chat review session, reuses inline threads, refreshes anchors after new commits, and keeps formal review states, thread resolution, code edits, and merge actions behind explicit user instructions.
+`github-operations` is the only GitHub execution boundary. Generic skills may request repository/PR/Issue evidence or prepare mutation payloads, but they do not invoke GitHub tools or `git push` directly. The Issue/PR specialist skills own content and review semantics; `github-operations` verifies the target and authorization and performs the remote operation.
 
-`code-walkthrough-review` uses a business request, message, task, or lifecycle as the reading boundary. It establishes a compact context map, automatically anchors pasted fragments when repository evidence permits, applies maintainability gates with explicit exceptions, and keeps candidate concerns in a version-bound one-item dialogue queue. The included `references/chatgpt-project-prompt.md` can be copied into an XDLP ChatGPT Project.
+`github-pr-dialogue-review` binds a PR and current head SHA as a review model, reuses inline-thread semantics, refreshes anchors after new evidence, and sends authorized remote operations through `github-operations`.
+
+`code-walkthrough-review` uses a business request, message, task, or lifecycle as the reading boundary. It establishes a compact context map, automatically anchors pasted fragments when repository evidence permits, applies maintainability gates with explicit exceptions, and keeps candidate concerns in a version-bound one-item dialogue queue. The included `references/chatgpt-project-prompt.md` is repository-agnostic and can be copied into a ChatGPT Project.
 
 ## Workflow Skills
 
@@ -117,6 +120,7 @@ For an enterprise machine, use the audited default-deny profile:
 Enterprise mode uses a default-deny allowlist. It currently excludes:
 
 - `ROUTER`
+- `github-operations`
 - `github-issue-harvest`
 - `github-pr-dialogue-review`
 - `github-pr-harvest`
