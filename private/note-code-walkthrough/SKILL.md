@@ -65,7 +65,7 @@ Do not duplicate their full contents in the generated note.
 
 Use when a local checkout, repository evidence packet, branch, tag, commit, or remote repository is the primary source of truth.
 
-For local source, inspect the checkout directly. When evidence exists only on GitHub, request the smallest required remote read through `github-operations` and consume the returned evidence. This skill must not invoke GitHub tools or perform remote mutations directly.
+For local source, inspect the checkout directly. When evidence exists only on GitHub, request the smallest required remote read through `github-operations` and consume the returned evidence. This skill must not invoke GitHub tools or perform remote mutations directly. If the gateway is unavailable, continue from local or user-provided evidence and mark the remote evidence as unavailable rather than bypassing the gateway.
 
 Required behavior:
 
