@@ -67,8 +67,8 @@ The skill serves human comprehension first. It must not replace the walkthrough 
 Reuse existing specialist skills instead of duplicating them.
 
 - For a local repository or Codex environment that needs a durable source snapshot, use `../source-walk/SKILL.md` as the context reconstruction layer.
-- For an existing GitHub pull request, use `../github-pr-dialogue-review/SKILL.md` for PR binding, head-SHA refresh, diff anchors, review threads, and publication rules. This skill remains responsible for walkthrough scope and maintainability gates.
-- When the user accepts a concern and asks to turn it into an Issue, use `../github-issue-harvest/SKILL.md`.
+- For remote repository, Pull Request, Issue, review-thread, or publication access, delegate to `../github-operations/SKILL.md`. This skill consumes the returned evidence and remains responsible for walkthrough scope and maintainability gates.
+- When the user accepts a concern and asks to turn it into an Issue or publish a review comment, prepare the semantic payload here, then hand the authorized remote operation to `github-operations`.
 - When the user asks to modify executable code, load `../code-comment-writing/SKILL.md` together with the applicable coding or repository workflow.
 - When the user asks to archive the completed walkthrough into Obsidian, route through `../../ROUTER/SKILL.md` rather than generating a generic note directly.
 
@@ -145,9 +145,9 @@ review goal or user journey
 read-only or publication preference
 ```
 
-Bind the PR and current head SHA, inspect changed files, and fetch only the required surrounding callers, callees, interfaces, configuration, and tests.
+Treat the Pull Request as a repository-diff input. If remote state must be retrieved or refreshed, request only the required metadata, changed files, patches, head revision, review threads, and surrounding source through `github-operations`.
 
-For publication state, anchors, comments, replies, and head refresh, follow `github-pr-dialogue-review`.
+This skill must not invoke GitHub tools directly. It receives the remote evidence, performs the walkthrough and maintainability analysis, and returns any authorized Issue or review-comment payload to `github-operations` for publication.
 
 ## Repository, Branch, Directory, or Microservice
 
@@ -485,7 +485,7 @@ Support natural-language operations:
 - `深挖`：inspect the smallest additional evidence needed for the current concern;
 - `需要证据`：mark `needs_evidence` and state what evidence is missing;
 - `提高优先级` or `降低优先级`：change ordering without changing evidence level;
-- `转 Issue`：route only the accepted concern to `github-issue-harvest`;
+- `转 Issue`：convert only the accepted concern into a focused Issue payload, then delegate publication to `github-operations`;
 - `下一条`：advance to the next candidate without expanding other items;
 - `查看队列`：show the compact ledger, not full details;
 - `只解释`：answer without changing the ledger;
@@ -522,6 +522,8 @@ When a fragment was auto-located, optionally prefix:
 When the user is unfamiliar with the technology, explain business meaning before syntax or library detail. Do not turn one syntax question into a general language lesson.
 
 # Read-Only and Write Boundaries
+
+This skill is GitHub-agnostic at execution time. It must not invoke GitHub tools, GitHub CLI publication commands, or `git push` directly. Remote GitHub evidence and mutations go through `github-operations`.
 
 Without explicit authorization, do not:
 
@@ -631,10 +633,10 @@ User:
 
 Expected behavior:
 
-- route PR binding and diff state through `github-pr-dialogue-review`;
+- route remote PR binding, diff retrieval, thread state, and any publication through `github-operations`;
 - retain read-only and explain-only publication mode;
-- use this skill's context and gate protocols;
-- never post comments unless later authorized.
+- use this skill's context and gate protocols on the returned evidence;
+- never post comments unless later authorized, and never publish directly from this skill.
 
 ## Pasted Fragment
 
