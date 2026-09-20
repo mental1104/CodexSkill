@@ -105,7 +105,7 @@ Do not run build, test, install, migration, cleanup, format, or generation comma
 
 This skill is local-source-first. It may inspect the current checkout with read-only filesystem and Git metadata commands, but it must not invoke GitHub API/connector tools, create or update Issues/PRs, publish review comments, or run `git push`.
 
-If required evidence exists only on GitHub, delegate the smallest remote read to `github-operations`, then continue the snapshot from the returned evidence.
+If required evidence exists only on GitHub, delegate the smallest remote read to `github-operations`, then continue the snapshot from the returned evidence. If the gateway is not installed or unavailable, do not bypass it with direct GitHub access; continue from local or user-provided evidence and mark the missing remote evidence explicitly.
 
 
 Every important claim in the report must be backed by evidence.
