@@ -4,7 +4,6 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
 target="${CODEX_HOME:-$HOME/.codex}/skills"
-force=0
 dry_run=0
 list_only=0
 enterprise=0
@@ -23,7 +22,7 @@ Options:
   --target DIR   Link into DIR instead of the default skills directory.
   --list         List skills selected by the current install mode without changing files.
   --enterprise   Install only the audited enterprise-safe Skill allowlist.
-  --force        Replace existing destination entries.
+  --force        Compatibility flag; existing destination entries are replaced by default.
   --dry-run      Print actions without changing files.
   -h, --help     Show this help.
 USAGE
@@ -68,6 +67,15 @@ same_symlink_target() {
   [ -n "$dest_real" ] && [ "$dest_real" = "$source_real" ]
 }
 
+# 为即将安装的 Skill 准备目标路径。
+#
+# 参数：
+#   $1: 目标 Skill 路径，例如 ~/.codex/skills/<skill-name>。
+# 返回：
+#   成功时返回 0；删除失败时由 set -e 终止脚本。
+# 副作用：
+#   若目标已存在，无论是目录、文件还是软链，都会先删除再由调用方创建新软链。
+#   正确指向当前来源的软链会在 link_skill 中提前返回，不会进入本函数。
 prepare_destination() {
   local dest="$1"
 
@@ -75,12 +83,8 @@ prepare_destination() {
     return
   fi
 
-  if [ "$force" -eq 1 ]; then
-    run_cmd rm -rf "$dest"
-    return
-  fi
-
-  die "$dest already exists. Re-run with --force to replace it."
+  # Skill 安装目录中的同名项视为旧安装，默认直接替换，保证重复安装和升级无需额外参数。
+  run_cmd rm -rf "$dest"
 }
 
 link_skill() {
@@ -224,7 +228,7 @@ while [ "$#" -gt 0 ]; do
       shift
       ;;
     --force)
-      force=1
+      # 兼容旧调用；覆盖现有同名 Skill 已经是默认行为。
       shift
       ;;
     --dry-run)
