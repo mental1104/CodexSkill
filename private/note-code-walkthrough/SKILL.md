@@ -63,7 +63,9 @@ Do not duplicate their full contents in the generated note.
 
 ### `repository-mode`
 
-Use when a local checkout or GitHub repository, branch, tag, or commit is the primary source of truth.
+Use when a local checkout, repository evidence packet, branch, tag, commit, or remote repository is the primary source of truth.
+
+For local source, inspect the checkout directly. When evidence exists only on GitHub, request the smallest required remote read through `github-operations` and consume the returned evidence. This skill must not invoke GitHub tools or perform remote mutations directly.
 
 Required behavior:
 
@@ -329,7 +331,7 @@ When writing into the Blue Espeon vault:
 - run `obsidian-frontmatter-metadata`;
 - use `latex-math-writing` when mathematical notation appears;
 - do not create dead wikilinks;
-- prefer repository-relative paths and immutable GitHub permalinks over machine-specific absolute paths;
+- prefer repository-relative paths; when a stable remote permalink is useful, consume one returned by `github-operations` instead of constructing or fetching it directly;
 - preserve the minimum explanation inline even when a deeper note exists.
 
 ## Representation Rules
