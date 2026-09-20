@@ -1,6 +1,6 @@
 ---
 name: github-issue-harvest
-description: Turn the current conversation, repository context, experiment result, or problem description into a focused and executable GitHub Issue. Use when the user asks to 提 Issue、转 Issue、生成 Issue、整理成 Issue or Issue 化. Draft by default; create the GitHub Issue only when explicitly requested.
+description: Turn the current conversation, repository context, experiment result, or problem description into a focused and executable GitHub Issue payload. Use when the user asks to 提 Issue、转 Issue、生成 Issue、整理成 Issue or Issue 化. This skill owns Issue semantics and drafting; all GitHub reads and writes are delegated to github-operations.
 ---
 
 # GitHub Issue Harvest
@@ -357,30 +357,32 @@ Default draft behavior:
 6. output the primary type and proposed labels;
 7. do not create the Issue.
 
-Create the GitHub Issue only when the user explicitly asks to submit, publish, or create it in a specified repository.
+If repository metadata or existing labels must be read from GitHub, request only that evidence through `github-operations`.
 
-Before creating it, confirm from available context:
+When the user explicitly asks to submit, publish, or create the Issue, return an authorized Issue mutation payload to `github-operations`. The gateway verifies the target repository and performs the remote write.
+
+Before handing off the mutation, confirm from available evidence:
 
 - repository;
 - primary Issue type;
 - final title;
 - Issue body;
-- existing repository labels;
+- existing repository labels when available;
 - exact labels to apply.
 
-When creating the Issue:
+The payload should request:
 
-1. apply exactly one existing type label when an equivalent exists;
-2. apply relevant existing area labels;
-3. apply priority, status, or concern labels only when justified;
-4. do not substitute title prefixes for labels or labels for a clear title;
-5. report any requested classification that could not be represented by existing repository labels.
+1. exactly one existing type label when an equivalent exists;
+2. relevant existing area labels;
+3. priority, status, or concern labels only when justified;
+4. no substitution of title prefixes for labels or labels for a clear title;
+5. reporting of any requested classification that cannot be represented by existing repository labels.
 
-Do not create milestones, assign users, link projects, create labels, or change repository taxonomy unless explicitly requested.
+Do not request milestones, assignees, project links, label creation, or repository-taxonomy changes unless explicitly requested.
 
 ## Boundary
 
-This skill drafts or creates GitHub Issues.
+This skill drafts GitHub Issue content and mutation payloads. It never invokes GitHub tools directly and never performs the remote write.
 
 It does not:
 
