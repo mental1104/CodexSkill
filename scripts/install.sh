@@ -113,6 +113,8 @@ link_skill() {
 #   0 表示允许企业模式安装；非 0 表示跳过。
 #
 # 新增 Skill 默认不进入企业环境，必须经过单独安全审计后显式加入此处。
+# github-operations 及可执行 GitHub 写入的专项 Skill 故意不在企业 allowlist 中；
+# github-actions-ci-policy 仅包含规则约束，不执行远程 GitHub 操作，因此可以安装。
 is_enterprise_safe_skill() {
   local label="$1"
   local name="$2"
