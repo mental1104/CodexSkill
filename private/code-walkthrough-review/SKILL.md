@@ -525,6 +525,8 @@ When the user is unfamiliar with the technology, explain business meaning before
 
 This skill is GitHub-agnostic at execution time. It must not invoke GitHub tools, GitHub CLI publication commands, or `git push` directly. Remote GitHub evidence and mutations go through `github-operations`.
 
+If `github-operations` is not installed or unavailable, do not substitute direct GitHub access. Continue from the local checkout, repository evidence already supplied by the user, or clearly mark the remote evidence as unavailable.
+
 Without explicit authorization, do not:
 
 - modify source code;
