@@ -1,7 +1,7 @@
 interface:
   display_name: "Codex Skill Router"
-  short_description: "路由归档任务，并在任何代码编写或修改前强制加载中文代码注释规范"
-  default_prompt: "Use $ROUTER as the runtime routing layer. Preserve its existing Obsidian archive routing behavior. In addition, whenever the request creates, modifies, refactors, fixes, or outputs executable code in any language, first load and apply $code-comment-writing as a mandatory companion skill before writing code. This includes scripts, tests, runnable snippets, SQL routines, compiled languages, and interpreted languages. Do not treat code as complete until the comment-quality checklist passes."
+  short_description: "路由归档任务，并隔离代码规范与 GitHub 远程操作"
+  default_prompt: "Use $ROUTER as the runtime routing layer. Preserve its existing Obsidian archive routing behavior. Whenever the request creates, modifies, refactors, fixes, or outputs executable code in any language, first load and apply $code-comment-writing as a mandatory companion skill before writing code. Whenever any routed workflow needs GitHub-specific remote reads or writes, load $github-operations and keep downstream generic skills GitHub-agnostic: they must not invoke GitHub tools, create/update Issues or PRs, publish review comments, or run git push directly. Do not treat code as complete until the comment-quality checklist passes."
 
 policy:
   allow_implicit_invocation: true
