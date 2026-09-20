@@ -101,6 +101,13 @@ Do not run build, test, install, migration, cleanup, format, or generation comma
 
 ## Evidence Policy
 
+## Remote Repository Boundary
+
+This skill is local-source-first. It may inspect the current checkout with read-only filesystem and Git metadata commands, but it must not invoke GitHub API/connector tools, create or update Issues/PRs, publish review comments, or run `git push`.
+
+If required evidence exists only on GitHub, delegate the smallest remote read to `github-operations`, then continue the snapshot from the returned evidence.
+
+
 Every important claim in the report must be backed by evidence.
 
 Use:
@@ -113,7 +120,7 @@ Use:
 
 Do not paste huge files. Quote focused snippets only.
 
-If a path belongs to a GitHub-backed repository and the remote is easy to infer, include GitHub links when useful. Local path + line number is enough when stable links are not easy to produce.
+Default to repository-relative local paths and line numbers. If a stable remote permalink or other GitHub-only evidence is required, request it through `github-operations`; this skill must not invoke GitHub tools directly.
 
 ## Report Shape
 
