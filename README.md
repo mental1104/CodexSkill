@@ -144,7 +144,7 @@ New private or public skills are not installed in enterprise mode until they are
 
 The installer does not remove unrelated or previously installed entries from the target directory. Use `--enterprise --list` to inspect the selected set and prefer a clean target on managed machines.
 
-If a destination already exists and points somewhere else, the script stops. Re-run with `--force` only when you want to replace those entries.
+If a destination already contains the same Skill name, the installer replaces that file, directory, or symlink automatically. A symlink that already points to the correct source is kept unchanged. `--force` remains accepted for backward compatibility but is no longer required.
 
 ## Update Public Skills
 
