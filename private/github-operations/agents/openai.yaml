@@ -1,0 +1,7 @@
+interface:
+  display_name: "GitHub Operations Gateway"
+  short_description: "集中处理 GitHub 读取、Issue/PR、评论与 push 等远程操作"
+  default_prompt: "Use $github-operations as the single execution gateway whenever a workflow needs GitHub-specific reads or writes. Generic skills must not invoke GitHub tools or git push directly. Resolve the exact repository, separate read authorization from write authorization, never fall back to personal repositories or credentials, delegate content semantics to the appropriate specialist skill, and execute only the explicitly authorized remote operation."
+
+policy:
+  allow_implicit_invocation: true
