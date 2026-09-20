@@ -103,7 +103,8 @@ The selected primary skill owns the final note. Apply helper skills as required:
 - `blue-espeon-note-style`: vault placement, naming, backlinks, wikilinks, Mermaid conventions, and single-thesis boundaries;
 - `obsidian-frontmatter-metadata`: valid `source`, `tags`, `summary`, and `read_status` metadata;
 - `latex-math-writing`: required when LaTeX mathematics appears;
-- `source-walk`: temporary repository evidence packet under `/tmp` when direct repository inspection is unavailable or a separate snapshot is explicitly useful.
+- `source-walk`: temporary repository evidence packet under `/tmp` when direct repository inspection is unavailable or a separate snapshot is explicitly useful;
+- `github-operations`: single gateway for any GitHub-specific remote read or write. Downstream generic skills must not invoke GitHub tools, create/update Issues or PRs, publish review comments, or run `git push` directly.
 
 Do not treat helper skills as competing note types.
 
@@ -189,7 +190,9 @@ Default: infer and proceed.
 
 ## `repository-mode`
 
-Use when the primary source of truth is a local checkout, GitHub repository, branch, tag, or commit and the requested durable artifact is a repository-grounded code walkthrough.
+Use when the primary source of truth is a local checkout, repository evidence packet, branch, tag, commit, or remote repository and the requested durable artifact is a repository-grounded code walkthrough.
+
+When the source exists only on GitHub, route remote retrieval through `github-operations` first. The selected note skill consumes returned repository evidence and must not invoke GitHub tools directly.
 
 Resolve when available:
 
