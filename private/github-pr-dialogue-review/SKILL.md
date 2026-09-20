@@ -1,6 +1,6 @@
 ---
 name: github-pr-dialogue-review
-description: ChatGPT-first GitHub pull-request review workflow. Use whenever the user provides or refers to a PR and asks to review, inspect, explain, question, challenge, recheck, or comment on its code. Keep the review inside ChatGPT, answer each user question quickly from repository evidence, and publish the distilled concern to the most precise matching GitHub diff line or existing review thread when the active session authorizes comments.
+description: ChatGPT-first GitHub pull-request review semantics. Use whenever the user provides or refers to a PR and asks to review, inspect, explain, question, challenge, recheck, or comment on its code. This skill owns review reasoning, anchors, thread reuse, and comment payloads; all GitHub remote reads and writes are delegated to github-operations.
 ---
 
 # GitHub PR Dialogue Review
@@ -18,6 +18,17 @@ The user should be able to provide one PR URL and then continue asking natural-l
 5. keep enough review state to continue, recheck, and summarize later.
 
 This skill reviews code. It does not modify the PR branch unless the user separately asks to implement fixes.
+
+## GitHub Execution Boundary
+
+This skill must not invoke GitHub API/connector tools, GitHub CLI publication commands, or `git push` directly.
+
+All remote operations go through `github-operations`:
+
+- PR metadata, diff, head SHA, changed files, review threads, author replies, and checks are remote-read requests;
+- inline comments, replies, formal review states, thread resolution, and PR updates are remote-write requests;
+- this skill determines what evidence is needed, what anchor is correct, and what comment/review payload should be sent;
+- `github-operations` verifies the target and authorization, executes the remote operation, and returns the result.
 
 ## Mandatory Triggers
 
@@ -85,8 +96,8 @@ A new chat cannot rely on hidden state from an old chat.
 
 When the user reopens a PR in another chat:
 
-1. fetch current PR metadata and diff;
-2. fetch existing inline review threads and review submissions;
+1. request current PR metadata and diff through `github-operations`;
+2. request existing inline review threads and review submissions through `github-operations`;
 3. recover prior skill-created threads using the hidden marker defined below when available;
 4. rebuild the open review ledger from GitHub state;
 5. continue against the current head SHA.
@@ -111,9 +122,9 @@ Never invent code behavior, test results, author intent, thread state, file path
 When the user provides a PR:
 
 1. resolve repository and PR number from the URL or explicit identifier;
-2. fetch PR metadata;
-3. fetch changed filenames and the full patch or relevant per-file patches;
-4. fetch existing review threads and review submissions;
+2. request PR metadata through `github-operations`;
+3. request changed filenames and the full patch or relevant per-file patches through `github-operations`;
+4. request existing review threads and review submissions through `github-operations`;
 5. record the current head SHA;
 6. build a lightweight change map:
    - entrypoints and public interfaces;
@@ -133,8 +144,8 @@ For every user question in an active review session:
    - Start from the last anchor, named symbol, quoted code, file path, existing thread, or wording in the current question.
    - Read enough surrounding implementation and related code to avoid line-isolated reasoning.
 3. **Check the PR head**
-   - Before any GitHub write, verify that the PR head SHA still matches the session.
-   - If it changed, refresh metadata, patches, threads, and anchors before commenting.
+   - Before any remote write, ask `github-operations` to verify that the PR head SHA still matches the session.
+   - If it changed, request refreshed metadata, patches, and threads, then rebuild anchors before preparing the comment payload.
 4. **Answer in ChatGPT**
    - Give the conclusion first.
    - Explain the relevant execution path, invariant, failure mode, or tradeoff.
@@ -143,9 +154,9 @@ For every user question in an active review session:
    - Reuse an existing thread when the new question continues the same concern.
    - Otherwise choose one precise changed line, a changed range, or PR-level placement.
 6. **Publish when authorized**
-   - Convert the discussion into one concise, independently answerable GitHub comment.
-   - Post it in `immediate` mode.
-   - In `explain_only` mode, provide the comment draft without posting.
+   - Convert the discussion into one concise, independently answerable GitHub comment payload.
+   - In `immediate` mode, hand the authorized payload to `github-operations` and consume its result.
+   - In `explain_only` mode, provide the comment draft without requesting a remote write.
 7. **Update the ledger**
    - Record the review ID, file and line or thread, category, evidence level, head SHA, and status.
 8. **Report the result**
@@ -313,8 +324,8 @@ The ledger is a navigation structure, not a substitute for GitHub thread state. 
 
 When the PR head changes or the user asks to recheck:
 
-1. fetch the new head SHA and changed patches;
-2. list current review threads, including resolved and outdated state;
+1. request the new head SHA and changed patches through `github-operations`;
+2. request current review threads, including resolved and outdated state, through `github-operations`;
 3. remap every open ledger item to the new diff;
 4. classify each item as:
    - fixed;
@@ -398,7 +409,7 @@ Do not infer that the PR is ready merely because all conversational questions re
 - If the user asks to write, update, create, or submit the PR description, load `github-pr-harvest`.
 - If the user asks to implement fixes for review comments, route to the available PR-comment fixing workflow and load `code-comment-writing` before changing executable code.
 - If the user asks to debug failing GitHub Actions checks, route to the CI-fix workflow.
-- If the user asks to commit, push, or open a new PR for local changes, route to the repository publishing workflow.
+- If the user asks to commit, push, or open a new PR for local changes, route the authorized remote operation to `github-operations`.
 - If the user asks only for a repository-grounded code walkthrough note, use the appropriate note skill rather than leaving review comments.
 
 This skill remains responsible for review-state continuity and follow-up after another workflow returns.
