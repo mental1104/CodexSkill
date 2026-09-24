@@ -115,6 +115,36 @@ Any
 
 如果一种写法只有运行以后才知道字段、状态或对象能力，而另一种同样简单的写法能让静态分析器提前知道，优先后者。
 
+## 4. 保留已经可以静态表达的类型关系
+
+如果参数、返回值或两个 callable 之间的类型关系在编写代码时已经确定，不要为了统一接口、注册表或“以后扩展”而主动将其退化成 `object`、`Any` 或其他宽泛类型。
+
+避免：
+
+```python
+ProcessingResult = FileResult | BatteryResult | object
+EventParser = Callable[[Mapping[str, object]], object]
+EventProcessor = Callable[[object], ProcessingResult]
+```
+
+这种设计会先擦除类型信息，再迫使后续代码通过 `isinstance()` 在运行期恢复它。
+
+优先保持具体关系：
+
+```python
+def parse_file_uploaded(...) -> FileUploadedEvent:
+    ...
+
+def process_file_uploaded(event: FileUploadedEvent) -> FileProcessingResult:
+    ...
+```
+
+如果确实需要动态注册或异构 registry，应把类型擦除限制在最小的基础设施边界，不要让 `object` / `Any` 扩散到正常业务函数。
+
+核心原则：
+
+> 一旦获得了可靠的静态类型信息，就不要在中间层主动把它弄丢。
+
 # 三、动态数据止于边界
 
 ## 1. JSON 和裸字典不是内部业务模型
@@ -258,6 +288,33 @@ if not isinstance(data["xxx"], ...):
 
 > validate once, model once, then trust the internal type.
 
+## 内部可信接口不要重复进行静态契约校验
+
+运行期类型校验主要用于系统边界和真实动态数据。
+
+当内部函数已经通过类型签名建立可靠契约时，不要为了防御式编程重复写：
+
+```python
+def process(event: FileUploadedEvent) -> FileProcessingResult:
+    if not isinstance(event, FileUploadedEvent):
+        raise TypeError(...)
+```
+
+这种检查通常意味着上游类型设计已经被擦除。
+
+优先修复类型关系，而不是在每一层增加运行期检查。
+
+只有以下情况才保留内部运行期类型检查：
+
+- 数据确实来自未受信任的动态来源；
+- 第三方框架绕过静态类型系统；
+- 运行期插件接口无法静态保证实现；
+- 检查本身属于明确的协议边界。
+
+核心原则：
+
+> 如果运行期检查只是为了重新证明静态分析阶段本来就能知道的事实，优先修改接口设计，而不是增加检查。
+
 # 五、参数默认是输入
 
 ## 1. 普通处理函数默认不得偷偷修改参数
@@ -385,6 +442,37 @@ process(config, user)
 
 不要为了“以后可能要改”而提前暴露可变接口。
 
+## 保持单一 canonical name
+
+同一个概念应只有一个 canonical name。
+
+不要为了“名字更顺口”、兼容不存在的旧接口、猜测未来调用习惯，或单纯追求别名便利性，为同一个 class、function、result 或 type 创建多个近义名称。
+
+避免：
+
+```python
+FileProcessResult = FileProcessingResult
+BatteryProcessingResult = BatteryStatusResult
+```
+
+也避免同时暴露语义完全一致的：
+
+```python
+handle_message(...)
+process_message(...)
+
+handle_json(...)
+process_json(...)
+```
+
+除非存在明确的兼容性、协议映射、迁移窗口或领域语义差异，否则保留一个名字。
+
+类型别名、函数别名和兼容入口都必须真实减少复杂度，而不是扩大调用者需要记忆的词汇表。
+
+核心原则：
+
+> 一个概念只保留一个正名；不要为了“方便”主动制造同义 API。
+
 # 七、减少 stringly-typed 和 dictly-typed 设计
 
 稳定语义不要长期编码在任意字符串、魔法 key 和匿名结构里。
@@ -434,6 +522,28 @@ event["type"]
 不要因为 Python 能做到，就自动把行为变成 magic。
 
 动态能力可以隐藏重复机制，但不能隐藏重要业务状态变化。
+
+## 运行期扩展不是默认设计目标
+
+“未来会增加新的类型、事件或处理逻辑”默认表示代码未来会继续修改，不代表当前必须提供运行期注册、插件系统、动态 factory 或通用 registry。
+
+如果新增一种类型只需要：
+
+- 新增一个模型；
+- 新增一个处理函数；
+- 扩展一个 union；
+- 增加一个显式 dispatch 分支；
+
+这通常是可以接受的源码级扩展。
+
+只有需求明确要求以下能力时，才为运行期扩展机制付出额外复杂度：
+
+- 第三方插件；
+- 无需修改源码即可注册；
+- 配置驱动加载；
+- 运行期间动态增加实现。
+
+不要为了假设中的未来扩展提前牺牲静态类型信息。
 
 # 九、合理默认值 + 显式覆盖入口
 
@@ -525,6 +635,11 @@ Static First 是为了降低不确定性，不是为了把 Python 写成低配 C
 - [ ] 是否把状态修改和后续只读处理拆开；
 - [ ] 只读函数是否无理由要求可变容器；
 - [ ] 是否存在可以用明确类型替代的 stringly-typed / dictly-typed 协议；
+- [ ] 是否为了 registry / factory / callback 统一接口，把已知具体类型擦成了 `object` 或 `Any`；
+- [ ] 是否存在先擦除类型、随后又通过 `isinstance()` 恢复类型的逻辑；
+- [ ] 是否仅因为“未来可能扩展”就提前引入运行期注册机制；
+- [ ] 内部可信函数是否重复执行本可由 type checker 保证的类型检查；
+- [ ] 同一个概念是否被创建了多个近义类型别名、函数别名或同义 API；
 - [ ] 动态抽象是否真的降低了调用方复杂度；
 - [ ] 是否为了满足类型检查制造了不必要的抽象；
 - [ ] 已运行项目已有的 formatter、linter、type checker 和相关测试。
