@@ -160,7 +160,7 @@ is_enterprise_safe_skill() {
   case "$label" in
     private)
       case "$name" in
-        archive-code-demand-note|blue-espeon-note-style|book-operation-manual-extract|calendar-harvest|code-comment-writing|code-walkthrough-review|english-harvest|github-actions-ci-policy|latex-math-writing|note-code-walkthrough|note-cognitive-convergence|note-conclusion-evidence|note-linear-achievement|note-operation-manual|obsidian-frontmatter-metadata|python-code-style|source-walk|task-harvest)
+        archive-code-demand-note|blue-espeon-note-style|book-operation-manual-extract|calendar-harvest|code-comment-writing|cpp-code-style|code-walkthrough-review|english-harvest|github-actions-ci-policy|latex-math-writing|note-code-walkthrough|note-cognitive-convergence|note-conclusion-evidence|note-linear-achievement|note-operation-manual|obsidian-frontmatter-metadata|python-code-style|source-walk|task-harvest)
           return 0
           ;;
       esac

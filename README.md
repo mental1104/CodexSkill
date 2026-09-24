@@ -119,7 +119,7 @@ It excludes:
 - `note-work-delivery`
 - `personal-vault-retrieval`
 
-The remaining currently reviewed private skills are allowed, including `python-code-style`, `code-comment-writing`, `source-walk`, `code-walkthrough-review`, note/harvest helpers, and other coding policy skills.
+The remaining currently reviewed private skills are allowed, including `python-code-style`, `cpp-code-style`, `code-comment-writing`, `source-walk`, `code-walkthrough-review`, note/harvest helpers, and other coding policy skills.
 
 The currently reviewed public `kepano/obsidian-skills` skills are also allowlisted:
 

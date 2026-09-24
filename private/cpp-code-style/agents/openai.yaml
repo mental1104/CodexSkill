@@ -1,0 +1,7 @@
+interface:
+  display_name: "C++ Code Style"
+  short_description: "应用个人 C++ 强类型、所有权、RAII 与显式状态变化规范"
+  default_prompt: "Use $cpp-code-style whenever creating or modifying C++ code. Prefer compile-time guarantees, strongly typed domain models, const-correct and ownership-explicit interfaces, RAII-managed lifetimes, value semantics, explicit error contracts, and visible state transitions. Avoid unnecessary output parameters, shared ownership, runtime type erasure, stringly-typed APIs, and speculative abstraction."
+
+policy:
+  allow_implicit_invocation: true
