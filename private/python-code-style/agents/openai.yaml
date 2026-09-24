@@ -1,0 +1,7 @@
+interface:
+  display_name: "Python Code Style"
+  short_description: "应用个人 Python 静态类型、数据建模与显式状态变化规范"
+  default_prompt: "Use $python-code-style whenever creating or modifying Python code. Prefer static-analysis-first APIs, convert external JSON or dictionary-shaped data into validated typed models at system boundaries, keep internal function parameters and return values strongly typed, avoid hidden argument mutation, and make important state transitions visible at the call site."
+
+policy:
+  allow_implicit_invocation: true
