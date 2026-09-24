@@ -7,7 +7,7 @@ Personal Codex skill collection with a split between first-party skills and publ
 - `ROUTER/`: runtime routing skill. It is installed as `${CODEX_HOME:-$HOME/.codex}/skills/ROUTER` when `ROUTER/SKILL.md` exists.
 - `private/`: skills maintained directly in this repository.
 - `public/obsidian-skills/`: public upstream skills from `kepano/obsidian-skills`, tracked as a git submodule.
-- `scripts/install.sh`: links the optional `ROUTER` and every discovered skill into `${CODEX_HOME:-$HOME/.codex}/skills`.
+- `install.sh`: root-level installer. By default it links only the audited enterprise-safe Skill allowlist into `${CODEX_HOME:-$HOME/.codex}/skills`; pass `--all` to install `ROUTER` and every discovered Skill.
 
 ## Mandatory Coding Skill
 
@@ -76,7 +76,7 @@ Helper skills:
 
 | Skill | Narrow responsibility |
 |---|---|
-| `code-comment-writing` | mandatory Chinese-first documentation and critical-path comments for code creation and modification |
+| `code-comment-writing` | mandatory Chinese-first documentation and critical-path comments for code creation and modification |\n| `python-code-style` | personal Python static-analysis-first, typed-boundary, read-only-input, and visible-state-change conventions |
 | `blue-espeon-note-style` | vault style, directory placement, naming, backlinks, Mermaid convention, single-thesis boundary |
 | `latex-math-writing` | LaTeX math notation for calculus, linear algebra, probability/statistics, discrete math, and algorithms |
 | `obsidian-frontmatter-metadata` | `source`, `tags`, `summary`, and `read_status` only |
@@ -87,37 +87,27 @@ Helper skills:
 Fresh clone:
 
 ```bash
-git clone --recurse-submodules <repo-url> codex-skills
-cd codex-skills
-./scripts/install.sh
+git clone https://github.com/mental1104/CodexSkill.git
+cd CodexSkill
+./install.sh
 ```
 
-Existing clone:
+The installer initializes and synchronizes the public Skill submodule automatically, so a separate recursive clone or manual submodule update is not required for normal installation.
+
+For an existing clone, the fast update path is:
 
 ```bash
-git submodule update --init --recursive
-./scripts/install.sh
+git pull --ff-only
+./install.sh
 ```
 
-The installer creates symlinks, so editing this repository updates the installed skills immediately. It is written for the default Bash and core tools on macOS and Ubuntu.
+The installer creates symlinks, so repository updates immediately flow through to installed first-party skills. Running the installer after each pull also refreshes the public submodule to the revision recorded by the repository.
 
-Useful options:
+### Default Safe Install
 
-```bash
-./scripts/install.sh --dry-run
-./scripts/install.sh --list
-./scripts/install.sh --target /path/to/skills
-./scripts/install.sh --force
-```
+Running `./install.sh` with no mode flag uses the audited default-deny enterprise-safe allowlist.
 
-For an enterprise machine, use the audited default-deny profile:
-
-```bash
-./scripts/install.sh --enterprise --list
-./scripts/install.sh --enterprise
-```
-
-Enterprise mode uses a default-deny allowlist. It currently excludes:
+It excludes:
 
 - `ROUTER`
 - `github-operations`
@@ -129,7 +119,7 @@ Enterprise mode uses a default-deny allowlist. It currently excludes:
 - `note-work-delivery`
 - `personal-vault-retrieval`
 
-The remaining currently reviewed private skills are allowed, including `source-walk`, `code-walkthrough-review`, note/harvest helpers, and coding policy skills.
+The remaining currently reviewed private skills are allowed, including `python-code-style`, `code-comment-writing`, `source-walk`, `code-walkthrough-review`, note/harvest helpers, and other coding policy skills.
 
 The currently reviewed public `kepano/obsidian-skills` skills are also allowlisted:
 
@@ -140,9 +130,29 @@ The currently reviewed public `kepano/obsidian-skills` skills are also allowlist
 - `obsidian-cli`
 - `obsidian-markdown`
 
-New private or public skills are not installed in enterprise mode until they are explicitly added to the allowlist in `scripts/install.sh` after review. Public submodule initialization may perform Git fetch/update operations, but the reviewed enterprise allowlist contains no `git push` workflow.
+New private or public skills are not installed by default until they are explicitly added to the allowlist in `install.sh` after review.
 
-The installer does not remove unrelated or previously installed entries from the target directory. Use `--enterprise --list` to inspect the selected set and prefer a clean target on managed machines.
+When the default mode runs after an earlier `--all` installation, it removes only disallowed symlinks that still point back into this repository. It does not delete unrelated user-managed files or directories.
+
+### Install Everything
+
+To install `ROUTER` and every discovered private/public Skill:
+
+```bash
+./install.sh --all --list
+./install.sh --all
+```
+
+The legacy `--enterprise` flag remains accepted as a compatibility alias for the default safe mode.
+
+Useful options:
+
+```bash
+./install.sh --dry-run
+./install.sh --list
+./install.sh --target /path/to/skills
+./install.sh --force
+```
 
 If a destination already contains the same Skill name, the installer replaces that file, directory, or symlink automatically. A symlink that already points to the correct source is kept unchanged. `--force` remains accepted for backward compatibility but is no longer required.
 
