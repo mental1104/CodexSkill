@@ -1,6 +1,6 @@
 ---
 name: python-code-style
-description: Mandatory personal Python coding conventions. Use automatically whenever creating, modifying, refactoring, fixing, or outputting executable Python code, even when the user does not explicitly mention this skill. Prefer static-analysis-first design, explicit typing, validated boundary models instead of dict/JSON-shaped internal APIs, visible state changes, read-only-oriented parameters, and IDE-discoverable contracts. Apply repository-specific mandatory constraints when they directly conflict, but do not copy legacy dynamic patterns into new code merely because they already exist.
+description: Mandatory personal Python coding conventions. Use automatically whenever creating, modifying, refactoring, fixing, or outputting executable Python code, even when the user does not explicitly mention this skill. Prefer static-analysis-first design, complete boundary modeling instead of dict/JSON-shaped internal APIs, preserved concrete type relationships, no unrequested runtime plugin registries, visible state changes, responsibility-grouped private implementations, canonical naming, read-only-oriented parameters, and IDE-discoverable contracts. Always pair with code-comment-writing. Apply repository-specific mandatory constraints when they directly conflict, but do not copy legacy dynamic patterns into new code merely because they already exist.
 ---
 
 # Python Code Style
@@ -30,7 +30,7 @@ description: Mandatory personal Python coding conventions. Use automatically whe
 
 格式化、换行、单双引号、import 排序等机械规则交给项目已有 formatter、linter 和静态检查工具。
 
-`code-comment-writing` 负责注释和文档要求，本 Skill 不重复定义注释规则。
+`code-comment-writing` 负责注释和文档要求，本 Skill 不重复定义注释细则。所有 Python 编码任务必须同时应用 `code-comment-writing`；如果其中文优先、docstring、参数/返回值和关键路径注释要求未满足，则代码不能视为完成。
 
 # 一、规则优先级
 
@@ -145,6 +145,28 @@ def process_file_uploaded(event: FileUploadedEvent) -> FileProcessingResult:
 
 > 一旦获得了可靠的静态类型信息，就不要在中间层主动把它弄丢。
 
+## 5. 公共 API 不得为了内部动态机制退化类型
+
+当公开方法的合法返回集合在源码中已经确定，应使用明确 union 或具体结果类型，不要因为内部使用 registry、factory、callback 或其他动态机制就把返回值退化成 `object` / `Any`。
+
+避免：
+
+```python
+ProcessResult = FileProcessingResult | BatteryStatusResult | IgnoredEventResult
+
+def process(message: object) -> object:
+    ...
+```
+
+应优先：
+
+```python
+def process(message: object) -> ProcessResult:
+    ...
+```
+
+如果确实存在用户明确要求的运行期插件能力，应把动态类型边界限制在插件接入层，不要污染正常业务 API 的类型信息。
+
 # 三、动态数据止于边界
 
 ## 1. JSON 和裸字典不是内部业务模型
@@ -171,6 +193,39 @@ JSON、反序列化后的 `dict`、第三方 payload 等动态结构允许存在
 ```
 
 不要让原始动态结构穿过多个业务函数。
+
+## 1.1 边界建模必须完整
+
+边界转换不能只建模公共字段，再把原始 JSON / dict 与部分模型一起传给内部 handler。
+
+避免：
+
+```python
+context = parse_context(message)
+return handle_file_uploaded(context, message)
+```
+
+其中 `message` 仍然是 `Mapping[str, object]`，事件专属字段依旧在内部业务逻辑中动态读取。
+
+应在边界层一次性完成具体事件建模：
+
+```python
+event = parse_file_uploaded_event(message)
+return handle_file_uploaded(event)
+```
+
+内部业务 handler 应只接收完整、明确、已经校验过的事件模型，例如：
+
+```python
+def handle_file_uploaded(event: FileUploadedEvent) -> FileProcessingResult:
+    ...
+```
+
+对于带 discriminator 的 JSON，应在边界层根据 discriminator 选择具体解析器并构造具体事件模型；原始 mapping 到此为止，不再继续进入后续业务层。
+
+核心原则：
+
+> 动态数据一旦完成边界转换，就不要以“上下文 + 原始 dict”的形式继续泄漏到内部。
 
 ## 2. 固定 schema 禁止使用 dict 表达
 
@@ -473,7 +528,46 @@ process_json(...)
 
 > 一个概念只保留一个正名；不要为了“方便”主动制造同义 API。
 
-# 七、减少 stringly-typed 和 dictly-typed 设计
+# 七、内部实现按职责聚合
+
+模块级下划线函数不是默认的内部组织方式。
+
+当一组私有函数服务于同一类职责，例如：
+
+- 外部消息字段解析；
+- 事件模型构造；
+- 业务结果生成；
+- 状态转换；
+- 协议适配；
+
+应优先收敛到一个职责明确的私有类中维护，而不是把大量 `_xxx()` 函数平铺在整个模块。
+
+例如可以使用：
+
+```python
+class _MessageParser:
+    ...
+
+class _EventHandler:
+    ...
+```
+
+目标不是为了面向对象而制造 class，而是让文件结构本身表达职责边界。
+
+避免创建 `_Utils`、`_Helpers` 这类无边界的万能私有类。
+
+以下情况可以保留模块级私有函数：
+
+- 极小；
+- 无状态；
+- 职责天然属于整个模块；
+- 与其他 helper 不形成明显的一组功能。
+
+核心原则：
+
+> 一组相关的私有实现应该有结构上的归属，而不是仅靠下划线表达“这是内部代码”。
+
+# 八、减少 stringly-typed 和 dictly-typed 设计
 
 稳定语义不要长期编码在任意字符串、魔法 key 和匿名结构里。
 
@@ -497,7 +591,7 @@ event["type"]
 
 目标不是消灭字符串，而是避免让调用者依赖无法被 IDE 理解的隐式协议。
 
-# 八、抽象必须降低调用方复杂度
+# 九、抽象必须降低调用方复杂度
 
 允许使用 Python 的动态能力，包括：
 
@@ -527,6 +621,8 @@ event["type"]
 
 “未来会增加新的类型、事件或处理逻辑”默认表示代码未来会继续修改，不代表当前必须提供运行期注册、插件系统、动态 factory 或通用 registry。
 
+除非需求明确要求运行期扩展，否则不要新增 `register_handler()`、插件注册表、配置驱动 handler、动态 factory 等公共扩展入口。
+
 如果新增一种类型只需要：
 
 - 新增一个模型；
@@ -545,7 +641,9 @@ event["type"]
 
 不要为了假设中的未来扩展提前牺牲静态类型信息。
 
-# 九、合理默认值 + 显式覆盖入口
+源码级扩展是默认策略：新增模型、扩展 union、增加显式 dispatch 分支，都属于正常维护成本，不需要为了“未来可能增加”预先设计插件架构。
+
+# 十、合理默认值 + 显式覆盖入口
 
 基础设施和复用层可以提供合理默认行为，让常见调用保持简单。
 
@@ -570,7 +668,7 @@ event["type"]
 
 默认值用于减少重复，不用于剥夺控制权。
 
-# 十、Sync / Async 保持概念对称
+# 十一、Sync / Async 保持概念对称
 
 同一能力同时存在同步和异步实现时，应尽量保持：
 
@@ -584,7 +682,7 @@ event["type"]
 
 实现层可以不同，概念接口应尽量一致。
 
-# 十一、静态分析不得为了形式制造噪声
+# 十二、静态分析不得为了形式制造噪声
 
 Static First 是为了降低不确定性，不是为了把 Python 写成低配 C++。
 
@@ -602,14 +700,14 @@ Static First 是为了降低不确定性，不是为了把 Python 写成低配 C
 
 如果答案是否定的，就不要仅为了“类型更多”而增加结构。
 
-# 十二、编码前流程
+# 十三、编码前流程
 
 处理 Python 编码任务时：
 
 1. 阅读目标仓库的 `AGENTS.md`、`CONTRIBUTING.md`、README 和 Python 工具配置；
 2. 确认 formatter、linter 和 type checker；
 3. 应用本 Skill；
-4. 同时应用 `code-comment-writing`；
+4. 同时读取并应用 `code-comment-writing`，确保中文优先的 docstring、参数/返回值和关键路径注释要求生效；
 5. 确定外部动态数据的系统边界；
 6. 确定内部数据模型；
 7. 确定哪些函数纯消费数据，哪些操作真正改变状态；
@@ -619,7 +717,7 @@ Static First 是为了降低不确定性，不是为了把 Python 写成低配 C
 
 只在当前修改范围内改善接口，并避免新增同类问题。
 
-# 十三、交付前检查
+# 十四、交付前检查
 
 完成 Python 代码前检查：
 
@@ -629,6 +727,8 @@ Static First 是为了降低不确定性，不是为了把 Python 写成低配 C
 - [ ] 外部 JSON / dict 是否在边界完成字段存在性和类型校验；
 - [ ] 固定 schema 是否已经转换为明确模型；
 - [ ] 是否有裸 dict / JSON 继续穿过内部业务函数；
+- [ ] 是否只建模了公共字段，却仍把原始 mapping 传入内部 handler；
+- [ ] 具体事件 handler 是否只接收完整、已校验的 typed model；
 - [ ] 内部函数是否使用 dict 作为固定 schema 的参数或返回值；
 - [ ] 是否存在多个参数中某一个被偷偷修改的情况；
 - [ ] 重要状态变化是否能直接从调用点看到；
@@ -638,8 +738,13 @@ Static First 是为了降低不确定性，不是为了把 Python 写成低配 C
 - [ ] 是否为了 registry / factory / callback 统一接口，把已知具体类型擦成了 `object` 或 `Any`；
 - [ ] 是否存在先擦除类型、随后又通过 `isinstance()` 恢复类型的逻辑；
 - [ ] 是否仅因为“未来可能扩展”就提前引入运行期注册机制；
+- [ ] 在没有明确插件需求时是否仍暴露了 `register_handler()`、动态 registry 或类似扩展入口；
+- [ ] 已知有限结果集合的公共 API 是否仍错误返回 `object` / `Any`；
 - [ ] 内部可信函数是否重复执行本可由 type checker 保证的类型检查；
 - [ ] 同一个概念是否被创建了多个近义类型别名、函数别名或同义 API；
+- [ ] 是否存在大量职责相关的模块级 `_xxx()` 私有函数却没有结构化归类；
+- [ ] 是否已经同时应用 `code-comment-writing`；
+- [ ] 新增或修改的 Python docstring 与关键路径注释是否按 companion Skill 以中文为主；
 - [ ] 动态抽象是否真的降低了调用方复杂度；
 - [ ] 是否为了满足类型检查制造了不必要的抽象；
 - [ ] 已运行项目已有的 formatter、linter、type checker 和相关测试。
