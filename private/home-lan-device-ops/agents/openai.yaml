@@ -1,4 +1,4 @@
 interface:
   display_name: "家庭局域网设备运维"
-  short_description: "通过 SSH 排查和维护家中的 OpenWrt 路由器与 NAS"
-  default_prompt: "Use $home-lan-device-ops to diagnose my router or NAS over SSH."
+  short_description: "查私有知识库中的 SSH alias，连接并维护 NAS、软路由与无线路由器"
+  default_prompt: "Use $home-lan-device-ops to look up the private home-LAN SSH inventory, connect through the recorded alias, and guide me to configure passwordless SSH if the current terminal is not ready."
