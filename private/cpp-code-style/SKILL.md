@@ -43,8 +43,9 @@ description: Mandatory personal C++ coding conventions. Use automatically whenev
 4. **不要为了统一或未来扩展擦除已有静态类型。** 已知具体类型关系时，不要无依据退化成 `void*`、`std::any`、宽泛基类、动态 registry 或 runtime type erasure，再在下游恢复类型。
 5. **不要擅自扩大兼容面、public API 或业务校验。** 未经用户、协议、既有公共 API / ABI 或明确迁移计划要求，不新增同义 overload、隐式兼容入口、alias、fallback、额外输入形态，也不因为“更严格”而自行缩小合法输入范围。
 6. **优先复用仓库和 `mental1104/common` 中已有的稳定通用能力。** 先确认当前仓库真实依赖关系和已有实现，再决定直接复用、参考后局部适配或忽略；不得制造隐藏构建依赖。
-7. **新 C++ / CMake 项目的单元测试默认使用 GoogleTest。** 如果仓库已有测试框架，继续沿用现有框架；如果用户明确指定其他框架，遵循用户要求。只有在从零创建且没有既有测试约束时，才默认选择 GoogleTest。生成测试代码时必须同时把 GoogleTest 接入 CMake 构建和 CTest 注册，不能只留下无法由项目构建系统执行的测试源码。
-8. **生成完成后必须回看本 Skill。** 编译、测试、formatter、clang-tidy 和静态分析全部通过仍不等于完成。交付前必须按本 Skill 的 mandatory gates 和末尾 checklist 重新审查生成代码，并主动修正明显冲突。
+7. **新 C++ / CMake 项目的自动化测试默认使用 GoogleTest。** 如果仓库已有测试框架，继续沿用现有框架；如果用户明确指定其他框架，遵循用户要求。只有在从零创建且没有既有测试约束时，才默认选择 GoogleTest。生成测试代码时必须同时把测试框架接入 CMake 构建和 CTest 注册，不能只留下无法由项目构建系统执行的测试源码。
+8. **TDD 模式下 Integration Test 必须选择性编译。** 当 `tdd-workflow` 激活时，本 Skill 只负责 C++ / CMake 落地，不改变阶段顺序。Integration Test 优先沿用仓库已有 CMake 开关；如果是新项目且没有既有约定，默认使用类似 `BUILD_INTEGRATION_TESTS` 的专用 option，并默认关闭。只有显式启用时才添加 integration test target；不要把 Integration Test 无条件塞进普通 build。Unit Test 不受这个 integration-only 开关控制，除非仓库已有不同约定。
+9. **生成完成后必须回看本 Skill。** 编译、测试、formatter、clang-tidy 和静态分析全部通过仍不等于完成。交付前必须按本 Skill 的 mandatory gates 和末尾 checklist 重新审查生成代码，并主动修正明显冲突。
 
 如果当前任务与这些 gate 发生真实冲突，必须以“用户明确需求 / 仓库强制约束 / 公共 API、ABI 或协议兼容”为依据，而不是以“实现方便”作为绕过理由。
 
@@ -700,7 +701,7 @@ Runtime
 1. 阅读仓库的 `AGENTS.md`、`CONTRIBUTING.md`、README 和现有 C++ 风格；
 2. 确认 C++ 标准版本；
 3. 确认 formatter、clang-tidy、编译告警和静态分析配置；
-4. 确认测试框架和 CMake 测试接入方式；已有项目沿用现有框架，从零创建且无既有约束时默认使用 GoogleTest，并确保测试 target 能通过 CTest 运行；
+4. 确认测试框架和 CMake 测试接入方式；已有项目沿用现有框架，从零创建且无既有约束时默认使用 GoogleTest，并确保测试 target 能通过 CTest 运行；如果 `tdd-workflow` 当前阶段是 Integration Test，实现其专用且默认关闭的 opt-in CMake 编译入口；
 5. 如果任务涉及通用能力，检查当前仓库是否已经正式依赖 `mental1104/common`，并实际阅读对应 C++ 接口和用法；
 6. 根据 common 的存在形态决定直接复用、仅参考后局部适配或忽略，不制造隐藏构建依赖；
 7. 应用本 Skill；
@@ -749,9 +750,12 @@ Runtime
 - [ ] common 仅在系统环境或仓库外可见时，是否错误地制造了未声明的 include / link 隐藏依赖；
 - [ ] 复用 common 前是否实际确认了接口语义、C++ 标准、依赖和线程 / ownership 契约，而不是凭名称猜测；
 - [ ] 当前仓库已有更合适的稳定抽象时，是否错误地为了使用 common 而强行替换；
-- [ ] 新 C++ / CMake 项目需要单元测试且没有既有测试框架时，是否默认使用 GoogleTest；
+- [ ] 新 C++ / CMake 项目需要自动化测试且没有既有测试框架时，是否默认使用 GoogleTest；
 - [ ] 生成了 GoogleTest 测试源码时，CMake 是否真实声明 / 获取对应依赖、链接测试 target，并注册到 CTest，而不是只生成孤立测试文件；
 - [ ] 已有项目是否错误地因为本 Skill 默认 GoogleTest 而引入第二套测试框架；
+- [ ] `tdd-workflow` 激活时，是否严格服从其当前 phase gate，没有因为本 Skill 的测试 / 实现规则提前跨阶段；
+- [ ] Integration Test 是否通过仓库已有开关，或无约定时通过默认关闭的专用 CMake option 选择性编译，而不是进入默认 build；
+- [ ] Integration Test 的 CMake option 是否只控制 integration suite，没有顺手把普通 Unit Test 一起隐藏；
 - [ ] 已运行项目已有 formatter、clang-tidy、编译、静态分析和相关测试。
 
 任何一项明显违反且没有项目约束或任务需求作为理由时，都应在交付前修正。
