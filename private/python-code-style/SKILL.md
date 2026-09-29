@@ -277,7 +277,79 @@ dict[str, Any]
 - 与既有字典 API 兼容的边界；
 - 短生命周期的适配层。
 
-## 4. 动态映射本身是领域语义时允许 Mapping
+## 4. 边界 schema 优先声明式建模
+
+对于 JSON、配置、请求参数等具有稳定字段集合的外部 schema，应优先让模型字段声明本身表达：
+
+- 字段是否必填；
+- 是否允许缺省；
+- 默认值是什么；
+- 是否允许 `None`；
+- 基础类型；
+- 枚举 / Literal；
+- 能自然表达的简单值约束。
+
+不要在已经存在明确模型定义的同时，再额外维护一份字段名 tuple、set、list 或 `check_schema()` / `required()` 规则表。
+
+避免：
+
+```python
+class RemoteTransferPlan:
+    ...
+
+fields.check_schema(("mode", "source_path", "target_url", "timeout"))
+```
+
+这种设计会让同一份 schema 同时存在于模型字段和手写字段集合中，字段增删时容易产生漂移。
+
+核心原则：
+
+> schema 应尽量只有一个事实源；字段契约优先体现在模型声明中，而不是散落在 helper 和字段清单里。
+
+如果当前项目已经使用 Pydantic，或任务允许使用项目已有的 Pydantic 依赖，应优先考虑：
+
+- `BaseModel`；
+- `Field`；
+- `model_config`；
+- field / model validator；
+- discriminated union；
+
+来表达外部边界 schema，而不是手写一套字段存在性、默认值、未知字段和基础类型校验框架。
+
+例如：
+
+```python
+class RemoteTransferConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    mode: Literal["remote"]
+    source_path: Path
+    target_url: str
+    timeout: float
+```
+
+然后只为真正属于业务语义、Pydantic 无法自然表达，或需要访问多个字段关系的规则补充 validator。
+
+不要：
+
+- 为了使用这条规则给原本无第三方依赖的项目强行新增 Pydantic；
+- 在用户明确要求“仅标准库”时引入 Pydantic；
+- 为简单 schema 叠加 Pydantic model + 手写 `check_schema()` 两套校验；
+- 把 Pydantic validator 当成新的万能 helper 层；
+- 因为使用 Pydantic 就把内部执行层模型也全部改成 BaseModel，如果 dataclass / 普通 class 更适合内部不可变执行模型。
+
+推荐边界：
+
+```text
+外部 JSON / Mapping
+→ 声明式 schema model 完成字段契约和基础校验
+→ 转换成内部执行模型
+→ 内部逻辑
+```
+
+如果项目没有 Pydantic、任务禁止第三方依赖，或仓库明确采用其他模型机制，则继续使用标准库或项目既有方案，但仍应遵守“schema 单一事实源”，避免重复字段清单。
+
+## 5. 动态映射本身是领域语义时允许 Mapping
 
 如果数据的真实语义本来就是动态键值集合，例如：
 
@@ -1002,6 +1074,10 @@ COMMON_SOURCE = absent
 - [ ] IDE / type checker 是否能够理解主要字段和返回类型；
 - [ ] 外部 JSON / dict 是否在边界完成字段存在性和类型校验；
 - [ ] 固定 schema 是否已经转换为明确模型；
+- [ ] 外部稳定 schema 是否优先由模型字段声明表达必填、缺省、默认值和基础约束；
+- [ ] 是否已经有明确模型，却又额外维护了一份字段名 tuple / set / list 或 `check_schema()`；
+- [ ] 项目已有 Pydantic 且适合边界建模时，是否仍无理由手写了一套 schema engine；
+- [ ] 是否为了使用 Pydantic 反而给原本要求标准库或无第三方依赖的任务新增了不必要依赖；
 - [ ] 是否有裸 dict / JSON 继续穿过内部业务函数；
 - [ ] 是否只建模了公共字段，却仍把原始 mapping 传入内部 handler；
 - [ ] 具体事件 handler 是否只接收完整、已校验的 typed model；
