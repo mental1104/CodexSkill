@@ -32,6 +32,21 @@ description: Mandatory personal Python coding conventions. Use automatically whe
 
 `code-comment-writing` 负责注释和文档要求，本 Skill 不重复定义注释细则。所有 Python 编码任务必须同时应用 `code-comment-writing`；如果其中文优先、docstring、参数/返回值和关键路径注释要求未满足，则代码不能视为完成。
 
+# Mandatory generation gates
+
+以下规则属于 Python 代码交付前的强制 gate。它们不是可选建议，也不能因为测试通过就跳过。
+
+1. **稳定外部 schema 必须声明式建模。** 如果项目已经使用 Pydantic，或当前任务允许使用项目已有 Pydantic 依赖，优先使用 `BaseModel` / `Field` / validator / discriminated union 表达 required、optional、default、extra 和基础约束；不要手写第二套 schema engine。
+2. **schema 只保留一个事实源。** 已有明确模型后，不要再维护 `_LOCAL_FIELDS`、`_REMOTE_FIELDS`、required tuple、`check_schema()` 等重复字段清单。
+3. **有限稳定状态不要散落魔法字符串。** 对稳定且有限的 mode / status / kind 等，优先使用 `Enum` / `StrEnum` 或其他明确 typed representation；不要让 `"local"`、`"remote"` 之类字符串在分支、校验和构造逻辑中重复出现。
+4. **不要擅自扩大兼容面和 public API。** 未经用户、协议、已有公共 API 或明确迁移计划要求，不新增 bytes / Mapping 等额外输入形态，不新增字段 alias、fallback、兼容入口，也不增加多个同义 public parser / loader。
+5. **错误模型保持轻量。** 如果调用方只需要错误类别、字段和说明，优先使用一个异常类型 + typed error code；不要按每个错误类别机械创建异常子类。
+6. **运行时可见字符串使用 ASCII English。** 日志、异常文本、CLI/stdout/stderr、assertion 和诊断字符串不得因为注释中文优先而改成中文。
+7. **相关私有实现按职责聚合。** 一组共同服务于解析、校验、构造或适配的私有 helper 不应无边界平铺在模块中；但也不要为了消灭 helper 强造万能类。
+8. **生成完成后必须回看本 Skill。** formatter、测试和 type checker 全部通过仍不等于完成。交付前必须按本 Skill 的 mandatory gates 和末尾 checklist 重新审查生成代码，并主动修正明显冲突。
+
+如果当前任务与这些 gate 发生真实冲突，必须以“用户明确需求 / 仓库强制约束 / 公共 API 兼容”为依据，而不是以“实现方便”作为绕过理由。
+
 # 一、规则优先级
 
 发生冲突时按以下顺序处理：
@@ -741,6 +756,34 @@ event["type"]
 
 目标不是消灭字符串，而是避免让调用者依赖无法被 IDE 理解的隐式协议。
 
+## 模式分派优先让类型拥有语义
+
+当外部配置、消息或请求使用 discriminator（例如 `mode`、`type`、`kind`）区分多个稳定模式时，应先完成：
+
+```text
+discriminator
+→ typed enum / literal
+→ 具体 schema model
+→ 具体内部模型或行为
+```
+
+不要把 discriminator 长期保留为任意字符串，并在多个函数中重复：
+
+```python
+if mode == "local":
+    ...
+elif mode == "remote":
+    ...
+```
+
+如果不同模式只存在非常轻量、局部的构造差异，一个明确的 typed dispatch 分支是可以接受的，不要为了“用了设计模式”强行增加 class 层次。
+
+如果每个模式开始拥有独立且非平凡、会继续增长的解析、校验、构造或执行行为，则应优先考虑 strategy / polymorphism / 独立职责对象，让新增模式主要通过新增实现完成，而不是持续扩大中央 `if/elif`。
+
+判断标准：
+
+> 是否已经出现“新增一种 mode，需要同时修改多处字符串判断、字段清单、校验函数和构造分支”的趋势？如果是，应收敛到 typed model + 独立模式实现。
+
 # 九、抽象必须降低调用方复杂度
 
 允许使用 Python 的动态能力，包括：
@@ -1075,6 +1118,9 @@ COMMON_SOURCE = absent
 - [ ] 外部 JSON / dict 是否在边界完成字段存在性和类型校验；
 - [ ] 固定 schema 是否已经转换为明确模型；
 - [ ] 外部稳定 schema 是否优先由模型字段声明表达必填、缺省、默认值和基础约束；
+- [ ] 稳定有限的 mode / status / kind 是否仍以魔法字符串散落在分支和校验逻辑中；
+- [ ] discriminator 是否已经收敛到 typed enum / literal 和具体 schema model；
+- [ ] 多模式行为已经明显独立并持续增长时，是否仍把所有逻辑堆在中央 if/elif；
 - [ ] 是否已经有明确模型，却又额外维护了一份字段名 tuple / set / list 或 `check_schema()`；
 - [ ] 项目已有 Pydantic 且适合边界建模时，是否仍无理由手写了一套 schema engine；
 - [ ] 是否为了使用 Pydantic 反而给原本要求标准库或无第三方依赖的任务新增了不必要依赖；
