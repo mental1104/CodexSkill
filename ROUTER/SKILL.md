@@ -1,6 +1,6 @@
 ---
 name: ROUTER
-description: Mandatory routing layer for Blue Espeon Obsidian archive requests. Use whenever the user asks to archive, materialize, rewrite, or turn current context into a durable note. Infer the input source, future reading intention, one primary note type, execution mode, companion skills, and whether clarification is materially necessary, then hand off directly to the selected skill instead of writing a generic document or asking the user to choose a template.
+description: Mandatory routing layer for Blue Espeon Obsidian archive workflows and executable-code companion workflows. Use for archive/materialization requests and whenever executable code is created, modified, refactored, fixed, reviewed, or output. For coding, compose code-comment-writing with the applicable language code-style skill; when the user explicitly requests TDD/test-driven development, integration tests before implementation, or staged approval between tests and implementation, also load tdd-workflow and treat its current phase gate as the highest-priority coding workflow constraint.
 ---
 
 # Codex Skill Router
@@ -22,6 +22,48 @@ It decides:
 ROUTER does not write the final note. After deciding, hand off to the selected primary skill and let that skill own the document structure and output policy.
 
 Choose by what the user's future self needs when reopening the note, not by superficial features such as whether the conversation contains steps, code, failures, tables, or commands.
+
+ROUTER also composes coding companion skills. Archive routing and coding workflow composition are separate responsibilities; a code request does not become an archive request merely because ROUTER is active.
+
+# Coding Workflow Composition
+
+## Mandatory code entry
+
+Whenever a request creates, modifies, refactors, fixes, reviews for direct modification, or outputs executable code:
+
+- load `code-comment-writing` as the language-independent documentation companion;
+- for Python executable code, also load `python-code-style`;
+- for C++ executable code, also load `cpp-code-style`;
+- for other languages, load any applicable language-specific coding Skill when available.
+
+When the user explicitly requests TDD / test-driven development, requires Integration Test before production implementation, or requires staged confirmation between testing and implementation, also load `tdd-workflow`.
+
+Do not trigger `tdd-workflow` merely because a normal coding task asks for tests.
+
+## Coding Skill priority
+
+When `tdd-workflow` is active, apply coding Skills in this order:
+
+```text
+user explicit requirements / repository hard constraints
+→ tdd-workflow current phase gate
+→ language code-style
+→ code-comment-writing
+→ unspecified historical style
+```
+
+The `tdd-workflow` phase gate has the highest priority among coding Skills for deciding **what may be produced now**.
+
+Language and comment Skills still fully apply inside the currently approved phase, but they must never cause the workflow to cross into a later phase.
+
+Examples:
+
+- during Integration Scenario Review, do not generate code even though language/comment Skills are loaded;
+- during Integration Test Implementation, apply language test/build rules and comment rules, but do not generate production implementation or Unit Test;
+- during Production Implementation, apply language/comment rules, but do not add new Unit Test;
+- only after the implementation phase is explicitly approved may Unit Test be added.
+
+A user confirmation advances only the artifact already shown. Do not treat a blanket initial request as approval of unseen later TDD phases.
 
 # Mandatory Archive Entry
 
