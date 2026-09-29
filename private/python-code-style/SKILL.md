@@ -828,7 +828,128 @@ Static First 是为了降低不确定性，不是为了把 Python 写成低配 C
 
 优先复用“已有、熟悉、已验证”的实现，但最终代码仍需符合当前仓库和本 Skill 的约束。
 
-# 十四、文件内代码布局按阅读拓扑组织
+# 十四、common Python 来源探测与优先级
+
+当实现 Python 通用能力、准备参考 `mental1104/common` 中已有实现时，不要凭目录名、当前工作区偶然可见路径或历史记忆判断 common 是否可用。
+
+必须按以下优先级探测：
+
+> submodule > 当前解释器已安装的 mental1104 distribution > common 不可用
+
+## 1. 优先检查 Git submodule
+
+先检查当前仓库的 Git 元数据，而不是简单判断是否存在名为 `common` 的目录。
+
+应读取：
+
+- `.gitmodules`；
+- `git submodule status --recursive`；
+
+并确认某个 submodule 的远端或配置确实指向：
+
+`mental1104/common`
+
+找到后进一步确认其中存在 Python 源码结构，例如：
+
+- `python/pyproject.toml`；
+- `python/mental1104/`。
+
+如果成立，则将 common 来源视为 submodule。
+
+此时即使当前 Python 环境同时安装了 `mental1104` package，也优先使用 submodule，不再使用系统安装版本作为实现来源。
+
+如果当前仓库已经通过 submodule 建立了正式引用关系，应遵循当前仓库已有 import、构建和依赖方式直接复用；不要再复制一份相同实现。
+
+## 2. 没有 submodule 时检查当前项目解释器
+
+只有不存在 common submodule 时，才检查 Python package 是否已经安装。
+
+不要默认使用裸 `python3`。
+
+应优先确定当前项目真实使用的 Python interpreter，例如：
+
+1. 仓库明确配置的解释器；
+2. 当前激活 virtualenv 的 Python；
+3. `.venv/bin/python` 等项目本地解释器；
+4. 最后才退回系统 `python3` / `python`。
+
+使用该解释器通过 package metadata 检查：
+
+`importlib.metadata.distribution("mental1104")`
+
+只有成功找到 distribution 时，才视为 common Python 已安装。
+
+不要只通过：
+
+`import mental1104`
+
+判断安装状态，因为当前工作区、`PYTHONPATH` 或其他临时路径可能遮蔽真正的 site-packages 来源。
+
+探测时应同时确认：
+
+- distribution 名为 `mental1104`；
+- 当前 interpreter；
+- distribution location；
+- `mental1104` module 实际解析位置。
+
+推荐思路：
+
+```python
+from importlib import metadata
+import importlib.util
+
+dist = metadata.distribution("mental1104")
+spec = importlib.util.find_spec("mental1104")
+```
+
+这样可以区分“真正安装到当前解释器环境”与“只是当前目录碰巧能 import”。
+
+## 3. 系统安装版本只能作为参考实现
+
+如果 common 仅通过当前解释器的 site-packages 可见，而当前仓库没有把 common 作为 submodule 或正式源码依赖：
+
+- 可以读取已安装 `mental1104` package 中已有、熟悉、成熟的实现；
+- 需要复用时，把必要代码复制并适配到当前模块包中；
+- 不要直接 import 系统安装的 `mental1104` 来形成隐藏运行时依赖；
+- 不要因为开发机上恰好安装了 common，就改变当前仓库原本的依赖契约。
+
+## 4. 两者都不存在时忽略 common
+
+如果：
+
+- 当前仓库没有指向 `mental1104/common` 的 submodule；
+- 当前项目实际使用的 Python interpreter 也没有安装 `mental1104` distribution；
+
+则忽略 common 的存在，按照本 Skill 和当前仓库自身约束正常实现。
+
+不要：
+
+- 为了寻找 common 阻塞任务；
+- 从网络临时安装 common；
+- 凭记忆假设 common 中存在某个 API；
+- 因 common 不存在而降低当前实现质量。
+
+## 5. 探测结果必须影响复用方式
+
+最终只允许得到三种明确状态：
+
+```text
+COMMON_SOURCE = submodule
+COMMON_SOURCE = installed-package
+COMMON_SOURCE = absent
+```
+
+对应行为：
+
+- `submodule`：按当前仓库既有引用关系直接复用；
+- `installed-package`：只作为参考源码，必要时复制到当前模块；
+- `absent`：忽略 common，正常实现。
+
+核心原则：
+
+> common 的来源探测必须可重复、可解释，并且优先尊重当前仓库已经声明的源码依赖关系。
+
+# 十五、文件内代码布局按阅读拓扑组织
 
 单个 Python 模块默认按“先定义静态概念，再放核心实现，最后暴露统一入口”的顺序组织，使读者可以快速定位入口和依赖关系。
 
@@ -853,7 +974,7 @@ Static First 是为了降低不确定性，不是为了把 Python 写成低配 C
 
 如果语言或框架对注册顺序、装饰器执行、声明位置有明确要求，优先满足真实运行约束；否则默认采用上述顺序。
 
-# 十五、编码前流程
+# 十六、编码前流程
 
 处理 Python 编码任务时：
 
@@ -864,14 +985,15 @@ Static First 是为了降低不确定性，不是为了把 Python 写成低配 C
 5. 确定外部动态数据的系统边界；
 6. 确定内部数据模型；
 7. 确定哪些函数纯消费数据，哪些操作真正改变状态；
-8. 如果需要实现通用能力，检查 `mental1104/common` 在当前环境中是系统安装、仓库 submodule，还是不存在，并按本 Skill 的复用规则处理；
-9. 再开始实现。
+8. 如果需要实现通用能力，按“submodule > 当前解释器已安装 package > absent”探测 `mental1104/common`，并记录实际来源；
+9. 根据来源决定直接引用、复制参考实现或忽略 common；
+10. 再开始实现。
 
 遇到已有代码大量使用 dict、Any 或隐式 mutation 时，不要自动扩大重构范围。
 
 只在当前修改范围内改善接口，并避免新增同类问题。
 
-# 十六、交付前检查
+# 十七、交付前检查
 
 完成 Python 代码前检查：
 
@@ -899,6 +1021,11 @@ Static First 是为了降低不确定性，不是为了把 Python 写成低配 C
 - [ ] 是否擅自新增了字段 alias、旧格式兼容、fallback 或迁移逻辑；
 - [ ] 是否因为内部 helper 已经存在，就顺手扩大了 public API 或正式支持的输入类型；
 - [ ] 如果实现了通用能力，是否先检查了 `mental1104/common` 的可用形态；
+- [ ] common 探测是否优先检查真正指向 `mental1104/common` 的 Git submodule，而不是仅检查目录名；
+- [ ] submodule 与系统安装同时存在时，是否错误地选择了系统安装版本；
+- [ ] 检查系统安装时是否使用了当前项目真实 interpreter，而不是无脑调用裸 `python3`；
+- [ ] 是否通过 `importlib.metadata.distribution("mental1104")` 等 metadata 方式确认真实安装，而不是只凭 `import mental1104`；
+- [ ] system package 模式下是否只参考/复制实现，而没有制造对开发机 site-packages 的隐藏依赖；
 - [ ] common 仅系统安装时，是否错误地直接 import 并制造了隐藏环境依赖；
 - [ ] common 作为 submodule 时，是否重复复制了本可直接引用的实现；
 - [ ] 是否存在大量职责相关的模块级 `_xxx()` 私有函数却没有结构化归类；
