@@ -42,7 +42,8 @@
 - 错误模型保持轻量；
 - runtime-visible error/log/diagnostic strings 使用 ASCII English；
 - 成组私有解析/校验逻辑具有清晰职责归属；如果形成一组 helper 家族，优先进入职责明确的私有类；
-- 文件按逆向调用拓扑组织：低层被调用实现位于上方，public entry 位于其依赖实现之后并靠近文件底部。
+- 文件按逆向调用拓扑组织：低层被调用实现位于上方，public entry 位于其依赖实现之后并靠近文件底部；
+- 生成的 pytest 测试如果围绕同一个 parser / public API 形成多个 case，应使用清晰的 `TestXxx` class 聚合，而不是全部平铺在模块级。
 
 如果 local / remote 的模式特有行为已经包含多步独立解析、校验或构造逻辑并明显会随模式增长，应优先让模式拥有独立 strategy / polymorphic implementation，而不是继续扩大中央 `if/elif`。如果只是一个很轻的 typed dispatch，则不要求为了模式名称强造策略类。
 
@@ -58,6 +59,7 @@
 - 为 missing/type/value/mode/unknown-field 分别创建一整套异常子类，而调用方没有独立 catch / recovery 需求；
 - 一组 `_decode_*` / `_read_*` / `_validate_*` / `_required_*` helper 无职责归属地平铺整个模块，而没有封装进明确私有职责类；
 - public parser / facade 出现在文件中部或顶部，而它调用的私有 helper 大量定义在其后方；
+- 针对同一个 parser / public API 的多个 pytest case 全部以模块级 `test_*` 函数平铺，没有明确 test class 归属；
 - runtime exception/log/diagnostic 文本使用中文；
 - pytest 通过后直接交付，却仍明显违反上述规则。
 
