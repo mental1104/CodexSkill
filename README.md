@@ -52,8 +52,19 @@ The following skills are primarily written for ChatGPT chat-triggered workflows 
 | Skill | Use when the user wants to... |
 |---|---|
 | `note-work-delivery` | advance unchecked work from one Obsidian note through GitHub issues and PRs when frontmatter `source` names a GitHub repository, or directly in ChatGPT when it does not |
+| `tdd-workflow` | run explicit TDD requests through reviewed Integration Scenarios, Integration Tests, production implementation, and Unit Tests with hard user-approval gates |
 
 `note-work-delivery` is invoked directly by requests such as “推进这篇笔记里的待办”. It keeps execution orchestration separate from the archive `ROUTER`; once work is accepted, final source-note refresh is handed back through `ROUTER` and the selected transform-mode note skill.
+
+`tdd-workflow` is a cross-language coding workflow, not a language style guide. When active, ROUTER composes it with the language-specific code-style Skill and `code-comment-writing`. Its phase gate has the highest priority among coding Skills for deciding what can be produced in the current turn:
+
+```text
+tdd-workflow phase gate
++ language code-style
++ code-comment-writing
+```
+
+The workflow requires explicit user approval between Integration Scenario Review, Integration Test implementation, production implementation, and Unit Test.
 
 ## Active Note Skills
 
@@ -79,6 +90,7 @@ Helper skills:
 | `code-comment-writing` | mandatory Chinese-first documentation and critical-path comments for code creation and modification |
 | `python-code-style` | personal Python static-analysis-first, typed-boundary, read-only-input, and visible-state-change conventions |
 | `cpp-code-style` | personal C++ compile-time, ownership, RAII, const-correctness, and visible-state-change conventions |
+| `tdd-workflow` | cross-language TDD phase gating and requirement-to-integration-scenario traceability when TDD is explicitly requested |
 | `blue-espeon-note-style` | vault style, directory placement, naming, backlinks, Mermaid convention, single-thesis boundary |
 | `latex-math-writing` | LaTeX math notation for calculus, linear algebra, probability/statistics, discrete math, and algorithms |
 | `obsidian-frontmatter-metadata` | `source`, `tags`, `summary`, and `read_status` only |
@@ -121,7 +133,7 @@ It excludes:
 - `note-work-delivery`
 - `personal-vault-retrieval`
 
-The remaining currently reviewed private skills are allowed, including `python-code-style`, `cpp-code-style`, `code-comment-writing`, `source-walk`, `code-walkthrough-review`, note/harvest helpers, and other coding policy skills.
+The remaining currently reviewed private skills are allowed, including `tdd-workflow`, `python-code-style`, `cpp-code-style`, `code-comment-writing`, `source-walk`, `code-walkthrough-review`, note/harvest helpers, and other coding policy skills.
 
 The currently reviewed public `kepano/obsidian-skills` skills are also allowlisted:
 
