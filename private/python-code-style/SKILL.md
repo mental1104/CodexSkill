@@ -44,7 +44,8 @@ description: Mandatory personal Python coding conventions. Use automatically whe
 6. **运行时可见字符串使用 ASCII English。** 日志、异常文本、CLI/stdout/stderr、assertion 和诊断字符串不得因为注释中文优先而改成中文。
 7. **相关私有实现必须有职责归属。** 当存在一组共同服务于解析、校验、构造或适配的私有 helper 时，应优先封装进职责明确的私有类；不要让一串 `_decode_*` / `_read_*` / `_validate_*` / `_required_*` 在模块级平铺。只有极小、无状态、天然属于整个模块且不形成职责组的 helper 才保留为模块级函数；同时不要为了消灭 helper 强造万能类。
 8. **文件按逆向调用拓扑组织。** 除 import、枚举/常量/协议和基础模型外，默认让被调用的低层实现位于上方，调用它们的高层实现位于下方；public facade / public entry 属于调用链最外层，应靠近文件底部，`__all__` 最后。不要先写 public entry，再在后面补它调用的一串 helper。
-9. **生成完成后必须回看本 Skill。** formatter、测试和 type checker 全部通过仍不等于完成。交付前必须按本 Skill 的 mandatory gates 和末尾 checklist 重新审查生成代码，并主动修正明显冲突。
+9. **pytest 测试按被测职责聚合。** 当多个测试围绕同一个 public API、class、组件或行为域时，优先使用命名明确的 `TestXxx` class 聚合，而不是把一长串 `test_*` 函数平铺在模块级。测试类只承担组织职责，不要为了 OOP 引入无意义共享状态、setup 层次或继承。只有少量彼此独立、无法形成清晰职责组的测试才保留模块级函数。
+10. **生成完成后必须回看本 Skill。** formatter、测试和 type checker 全部通过仍不等于完成。交付前必须按本 Skill 的 mandatory gates 和末尾 checklist 重新审查生成代码，并主动修正明显冲突。
 
 如果当前任务与这些 gate 发生真实冲突，必须以“用户明确需求 / 仓库强制约束 / 公共 API 兼容”为依据，而不是以“实现方便”作为绕过理由。
 
@@ -1067,7 +1068,52 @@ COMMON_SOURCE = absent
 
 > common 的来源探测必须可重复、可解释，并且优先尊重当前仓库已经声明的源码依赖关系。
 
-# 十五、文件内代码布局按逆向调用拓扑组织
+# 十五、pytest 测试按被测职责聚合
+
+pytest 测试文件也应表达清晰的职责归属。
+
+当多个测试共同验证同一个被测对象、public API、class、组件或行为域时，默认使用命名明确的 test class 聚合，例如：
+
+```python
+class TestParseTaskConfig:
+    def test_move_uses_default_speed(self) -> None:
+        ...
+
+    def test_rejects_unknown_fields(self) -> None:
+        ...
+```
+
+不要默认把大量：
+
+```python
+def test_xxx():
+    ...
+
+def test_yyy():
+    ...
+
+def test_zzz():
+    ...
+```
+
+直接平铺在模块级，迫使读者仅靠函数名前缀自行判断它们属于哪个测试职责。
+
+测试类的目标只是提供结构归属和阅读导航，不代表必须引入面向对象测试设计。
+
+因此：
+
+- 不要为了使用 test class 制造共享可变状态；
+- 不要无依据引入 `setup_method` / fixture 成员状态；
+- 不要创建测试类继承体系；
+- 不要把所有测试塞进一个巨大的 `TestEverything`；
+- 如果不同测试自然属于不同职责，应拆成多个 `TestXxx`；
+- 如果文件中只有一两个彼此独立的测试，保留模块级函数是可以接受的。
+
+判断标准：
+
+> 测试文件结构应直接表达“这组 case 在验证谁 / 哪一类行为”，而不是让相关测试函数长期散落在模块级。
+
+# 十六、文件内代码布局按逆向调用拓扑组织
 
 单个 Python 模块默认采用“逆向调用拓扑”：**被调用者在上，调用者在下**。文件越往下，越接近对外入口和最高层 orchestration。
 
@@ -1122,7 +1168,7 @@ private helper
 
 如果语言或框架对注册顺序、装饰器执行、声明位置有明确要求，优先满足真实运行约束；否则默认遵守逆向调用拓扑。
 
-# 十六、编码前流程
+# 十七、编码前流程
 
 处理 Python 编码任务时：
 
@@ -1141,7 +1187,7 @@ private helper
 
 只在当前修改范围内改善接口，并避免新增同类问题。
 
-# 十七、交付前检查
+# 十八、交付前检查
 
 完成 Python 代码前检查：
 
@@ -1184,6 +1230,8 @@ private helper
 - [ ] common 仅系统安装时，是否错误地直接 import 并制造了隐藏环境依赖；
 - [ ] common 作为 submodule 时，是否重复复制了本可直接引用的实现；
 - [ ] 是否存在成组 `_decode_*` / `_read_*` / `_validate_*` / `_required_*` 等职责相关私有函数仍平铺在模块级，而没有归入职责明确的私有类；
+- [ ] pytest 中多个测试是否围绕同一个 public API / class / 行为域却仍全部平铺为模块级 `test_*`，而没有用清晰的 `TestXxx` class 组织；
+- [ ] test class 是否仅承担组织职责，没有因此引入无意义共享状态、继承或 setup 复杂度；
 - [ ] 私有函数归类后是否又形成了吸收多个独立职责的万能私有类；
 - [ ] 私有类的职责是否可以用一个清晰概念描述，而不是仅因为“这些都是内部实现”就放在一起；
 - [ ] 错误模型是否因为“每个错误都要可区分”而机械膨胀成大量异常子类；
