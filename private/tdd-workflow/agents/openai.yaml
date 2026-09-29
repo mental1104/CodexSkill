@@ -1,0 +1,7 @@
+interface:
+  display_name: "TDD Workflow"
+  short_description: "跨语言 TDD 阶段门禁、集成测试场景评审与显式确认流程"
+  default_prompt: "Use $tdd-workflow whenever the user explicitly requests TDD/test-driven development, asks for integration tests before implementation, or requires staged approval between testing and implementation. This workflow owns sequencing and has the highest priority among coding skills for deciding what may be produced in the current phase. Enforce four phases: (1) Integration Scenario Review only, with requirement-to-scenario traceability, purpose, actions, expectations, and no code; stop for explicit user approval. (2) Integration Test implementation only, including test fixtures/harness and test build/run wiring but no production behavior or unit tests; stop for explicit user approval. (3) Production implementation only, constrained by the approved integration contract and applicable language/comment skills; no new unit tests; stop for explicit user approval. (4) Unit tests. A user may approve only artifacts already shown; never pre-approve unseen later phases or infer approval from passing tests/CI. Integration tests should read as domain Action/Expectation scenarios and must have an explicit opt-in execution/build path chosen by the repository or language tooling. Language-specific skills control frameworks and build details inside the current phase but may never cross the TDD phase gate."
+
+policy:
+  allow_implicit_invocation: true
