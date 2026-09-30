@@ -43,6 +43,10 @@ Output only a JSON code block. Do not explain.
 
 ## Output Format
 
+Top-level keys represent independent major topics or problem domains.
+
+If the conversation contains multiple peer-level major topics, output multiple top-level key-value pairs. Do not force unrelated or semantically independent topics into one generalized parent theme.
+
 When there are two or more independently actionable tasks under one theme, use the nested numbered form:
 
 ```json
@@ -54,7 +58,7 @@ When there are two or more independently actionable tasks under one theme, use t
 }
 ```
 
-When there is exactly one remaining task, always output the task itself as the top-level key with an empty object:
+When there is exactly one remaining task for a topic, output the task itself as a top-level key with an empty object:
 
 ```json
 {
@@ -74,6 +78,8 @@ If a single task needs conversational context to remain restartable, enrich the 
 - Do not convert AI analysis, summaries, code, prompts, or drafts into tasks unless the user still has to apply, save, run, or verify them.
 - Do not output rest, buffer time, mindset adjustment, or vague preparation.
 - Keep only key actions, but do not over-merge independent work merely to reduce task count.
+- Keep peer-level major topics as separate top-level keys.
+- Do not invent a broad umbrella parent solely to make multiple independent topics fit under one theme.
 - Treat actions as separate tasks when they have distinct execution steps, distinct verification results, or can be completed independently.
 - Merge items only when they are genuinely one action or share the same completion state and splitting them would create artificial bookkeeping.
 - Task names should include the action, object, and key context.
@@ -122,7 +128,7 @@ Better when the work is genuinely one task:
 }
 ```
 
-Better when the conversation contains multiple independently completable actions:
+Better when the conversation contains multiple independently completable actions under one topic:
 
 ```json
 {
@@ -131,6 +137,44 @@ Better when the conversation contains multiple independently completable actions
     "2. 验证真实客户端 IP 日志": "确认代理链能够可靠记录公网来源 IP。",
     "3. 审计近期恶意访问": "分析访问与授权日志，判断近期是否存在扫描、认证攻击或其他可疑来源。"
   }
+}
+```
+
+Bad when the conversation actually contains multiple peer-level major topics:
+
+```json
+{
+  "NAS 运维": {
+    "1. 完成网络安全审计": "...",
+    "2. 完成备份策略检查": "..."
+  }
+}
+```
+
+Better:
+
+```json
+{
+  "NAS 网络安全审计": {
+    "1. 检查公网暴露面": "...",
+    "2. 审计近期恶意访问": "..."
+  },
+  "NAS 备份策略": {
+    "1. 检查现有备份覆盖": "...",
+    "2. 验证恢复流程": "..."
+  }
+}
+```
+
+If one peer-level topic has only one task, keep it as its own top-level empty-object task instead of nesting a single numbered child:
+
+```json
+{
+  "NAS 网络安全审计": {
+    "1. 检查公网暴露面": "...",
+    "2. 审计近期恶意访问": "..."
+  },
+  "检查 NAS 证书自动续期": {}
 }
 ```
 
