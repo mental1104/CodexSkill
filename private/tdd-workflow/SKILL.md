@@ -1,6 +1,6 @@
 ---
 name: tdd-workflow
-description: Mandatory cross-language TDD workflow and phase gate. Use whenever the user explicitly asks for TDD/test-driven development, requires integration tests before production implementation, or asks to advance implementation through reviewed test stages. This skill owns requirement-to-integration-scenario traceability, explicit user approval gates, phase sequencing, and integration-vs-unit test responsibilities. When active, its current phase gate has the highest priority among coding skills for deciding what artifacts may be produced; language-specific code-style and code-comment-writing still apply inside the currently approved phase.
+description: Mandatory cross-language TDD workflow and phase gate. Use whenever the user explicitly asks for TDD/test-driven development, requires integration tests before production implementation, or asks to advance implementation through reviewed test stages. This skill owns black-box contract review, requirement-to-integration-scenario traceability, explicit user approval gates, phase sequencing, and integration-vs-unit test responsibilities.
 ---
 
 # TDD Workflow
@@ -9,74 +9,128 @@ description: Mandatory cross-language TDD workflow and phase gate. Use whenever 
 
 这是跨语言的 TDD 工作流 Skill。
 
+它负责：
+
+- 先建立并评审黑盒 Contract；
+- 从 Contract 建立可追踪的 Integration Scenario；
+- 区分 Integration Test 与 Unit Test 的责任；
+- 控制阶段顺序；
+- 控制每个阶段内部的讨论、产出、评审和通过；
+- 防止自动跨阶段推进。
+
 它不负责：
 
-- Python / C++ / Go 等语言的具体编码风格；
-- 某个测试框架的 API；
-- CMake、pytest、go test 等工具的全部细节；
+- 语言具体编码风格；
+- 测试框架 API；
+- 构建系统全部细节；
 - 注释格式。
-
-它只负责：
-
-- 从业务目标建立可追踪的 Integration Scenario；
-- 区分 Integration Test 与 Unit Test 的责任；
-- 控制 TDD 阶段顺序；
-- 在阶段之间建立强制的用户确认 gate；
-- 防止模型把“先测试后实现”误解成“一次回复里先输出测试、随后马上输出实现”。
 
 核心原则：
 
-> TDD Skill 决定当前阶段“允许产出什么”；语言 Skill 和注释 Skill 决定这些产物“应该怎样写”。
+> 用户定义问题和阶段边界；TDD Skill 决定当前阶段允许产出什么；语言 Skill 决定产物怎样写。
 
 # 一、触发边界
 
-以下情况应自动应用本 Skill：
+以下情况自动应用本 Skill：
 
-- 用户明确说使用 TDD / test-driven development；
-- 用户要求“先写测试再实现”，并且语义明确要求按阶段推进；
+- 用户明确要求 TDD / test-driven development；
+- 用户要求先测试、后实现，并要求分阶段推进；
 - 用户要求先设计或评审 Integration Test，再开始实现；
-- 用户明确要求 Integration Test → 实现 → Unit Test 分阶段完成；
+- 用户要求 Integration Test → 实现 → Unit Test；
 - 用户要求每一阶段经过确认后再继续。
 
-以下请求默认不自动进入本工作流：
+以下情况默认不自动进入本工作流：
 
-- “给这个函数补几个单元测试”；
-- “修这个 bug，顺便加测试”；
-- “把现有测试修好”；
-- “跑一下测试”；
-- 普通代码生成任务中附带“需要测试”，但没有 TDD 或阶段确认语义。
+- 单纯补几个单元测试；
+- 修 bug 顺便加测试；
+- 修现有测试；
+- 跑测试；
+- 普通代码任务里仅附带“需要测试”。
 
-不要因为看见“测试”两个字就强制用户进入多轮 TDD。
+# 二、优先级
 
-# 二、优先级与 Skill 组合
+当本 Skill 激活时：
 
-当本 Skill 激活时，编码 Skill 的执行优先级为：
-
-1. 用户当前任务中的明确要求；
-2. 仓库必须遵守的 API / ABI / 协议 / AGENTS.md / CONTRIBUTING.md 等硬约束；
-3. **本 Skill 的当前 TDD phase gate；**
+1. 用户当前明确要求；
+2. 仓库硬约束；
+3. 本 Skill 当前 phase gate；
 4. 语言级 code-style Skill；
-5. `code-comment-writing` 等代码质量 companion Skill；
-6. 项目未明确规定的历史习惯。
+5. code-comment-writing；
+6. 项目历史习惯。
 
-其中第 3 项只控制：
+如果当前 phase 禁止 production code，即使已经知道怎样实现，也不能提前实现。
 
-- 当前能否生成测试代码；
-- 当前能否生成 production implementation；
-- 当前能否生成 unit test；
-- 当前是否必须停止等待用户确认。
+# 三、默认协作模式：DISCUSSION
 
-它不覆盖语言 Skill 对类型、ownership、错误模型、测试组织、构建系统等具体约束。
+每个新阶段默认进入 DISCUSSION。
 
-如果本 Skill 当前阶段禁止生成 production code，那么即使语言 Skill 已经知道怎样实现，也必须停止。
+DISCUSSION 的默认行为是倾听，而不是主动收敛。
 
-# 三、四阶段状态机
+当用户只是持续描述、头脑风暴、补充上下文、修正想法或推演时：
 
-TDD 流程固定为：
+- 保持上下文；
+- 回复应尽量短，只表示正在跟随，例如“继续，我在听”；
+- 不主动总结；
+- 不主动生成候选方案；
+- 不主动补全未定义需求；
+- 不主动宣布讨论完成；
+- 不主动生成 Contract、Scenario、接口、测试或实现。
+
+如果用户明确提出一个局部问题：
+
+- 回答这个问题；
+- 只扩展到回答该问题所必需的范围；
+- 不借机完成整个阶段；
+- 不把局部回答自动升级为正式 artifact。
+
+核心规则：
+
+> 信息充分不等于阶段完成。
+
+> 用户没有要求收敛时，不替用户收敛。
+
+# 四、冻结信号与内部状态
+
+只有用户明确表现出“准备冻结当前讨论”的意图时，才开始形成当前阶段 artifact。
+
+典型冻结信号：
+
+- “整理一下”；
+- “差不多了”；
+- “按这个定”；
+- “可以冻结了”；
+- “把 contract 写出来”；
+- “生成场景”；
+- “按刚才讨论的实现出来”。
+
+每个 Phase 使用同一套内部状态：
 
 ```text
-业务需求
+DISCUSSION
+    ↓ 用户要求收敛 / 形成当前阶段产物
+ARTIFACT REVIEW
+    ↓ 用户显式确认当前产物
+APPROVED
+    ↓ 用户显式要求进入下一 Phase
+NEXT PHASE
+```
+
+规则：
+
+1. DISCUSSION 可以持续任意多轮；
+2. 讨论时间长、信息完整、已有明显方案，都不等于自动结束 DISCUSSION；
+3. “整理 / 冻结 / 生成”只允许生成当前 artifact，不等于批准 artifact；
+4. artifact 必须经过用户 Review；
+5. 用户显式确认后才进入 APPROVED；
+6. APPROVED 后也不自动进入下一 Phase。
+
+# 五、五阶段状态机
+
+```text
+业务目标 / 初始想法
   ↓
+Phase 0: Black-box Contract
+  ↓ 用户显式确认
 Phase 1: Integration Scenario Review
   ↓ 用户显式确认
 Phase 2: Integration Test Implementation
@@ -86,103 +140,129 @@ Phase 3: Production Implementation
 Phase 4: Unit Test
 ```
 
-不得在同一轮中自动跨越两个 phase。
+不得在同一轮中自动跨越两个 Phase。
 
-每次用户确认只能确认**已经看到的当前阶段产物**，不能预先批准尚未生成的后续阶段。
+每次确认只能确认已经展示的当前阶段产物，不能预先批准尚未出现的后续产物。
 
 例如：
 
-- “这版场景可以，写测试”可以从 Phase 1 进入 Phase 2；
-- “测试这版确认，开始实现”可以从 Phase 2 进入 Phase 3；
-- “实现没问题，补单测”可以从 Phase 3 进入 Phase 4。
+- “把刚才讨论的输入输出整理成 contract”只允许生成 Phase 0 artifact；
+- “这版 contract 可以，开始设计场景”允许进入 Phase 1；
+- “这版场景可以，写测试”允许进入 Phase 2；
+- “测试这版确认，开始实现”允许进入 Phase 3；
+- “实现没问题，补单测”允许进入 Phase 4。
 
-初始请求中的：
+# 六、Phase 0：Black-box Contract
 
-- “直接全部做完”；
-- “后面都默认确认”；
-- “不用停，继续到底”；
+目标是先明确“这个黑盒承诺什么”，不提前设计内部实现。
 
-不应被解释为对尚未出现的 phase artifact 的提前评审。
+DISCUSSION 中不主动生成完整 Contract。
 
-如果用户明确表示本次**退出 TDD 阶段 gate**、取消逐阶段确认或改用其他流程，则遵循用户当前明确要求。
+用户开始冻结后，Contract 根据任务实际需要明确：
 
-# 四、Phase 1：Integration Scenario Review
+- 被测对象；
+- 外部输入；
+- 外部输出；
+- 可观察状态或副作用；
+- 成功语义；
+- failure / timeout / cancel / retry 等稳定语义；
+- 当前需求明确包含和不包含的行为。
 
-## 1. 从业务目标直接转译
+对于服务或协议，Contract 可以表现为：
 
-在写 production code 之前，先把用户给出的业务目标转换成 Integration Scenario。
+- API / ABI；
+- ROS Action / Service / Topic；
+- RPC / HTTP / MQTT / DDS 消息；
+- request / response schema；
+- error code；
+- 状态机；
+- 文件系统或网络副作用。
 
-原则上，每一条独立业务目标都应能追踪到至少一个 Integration Scenario。
+Contract 不等于内部函数签名，不要求提前设计 private helper 或内部 class。
 
-如果多个目标天然属于同一个不可分割的业务 journey，可以由一个较粗粒度场景共同覆盖，但必须显式标明每条需求被哪个场景覆盖。
+在 Phase 0 中：
 
-不要为了“测试粒度更细”把一个完整业务目标机械拆成大量实现细节测试。
+- 用户只是描述时继续倾听；
+- 用户问局部问题时只回答局部问题；
+- 用户明确要求候选时才提供候选；
+- 不擅自决定 timeout、覆盖、重试、回退、幂等、错误码等产品语义；
+- 不把合理猜测写成确定需求。
 
-## 2. 每个场景必须先评审目的
+冻结后可以：
 
-Phase 1 只输出测试设计，不输出测试代码，也不输出 production implementation。
+- 整理候选 Contract；
+- 标出未决定项；
+- 对冲突项给少量候选；
+- 区分“用户已明确”“基于讨论推断”“仍待确认”。
 
-每个 Integration Scenario 至少说明：
+Contract 未经用户显式确认，不得进入 Phase 1。
+
+黑盒测试优先描述：
+
+```text
+Input
+→ Observable Behavior
+→ Output / Side Effect
+```
+
+不得先看内部实现，再反推一个方便实现的 Contract。
+
+# 七、Phase 1：Integration Scenario Review
+
+从已确认 Contract 和业务目标转换成 Integration Scenario。
+
+DISCUSSION 中默认不输出完整测试设计。
+
+用户要求冻结后，每个 Scenario 至少说明：
 
 - 场景名称；
 - 场景目的；
-- 对应的业务目标；
-- 前置 fixture / 环境边界；
-- 关键 Action 顺序；
-- 可观察的 Expectation；
-- 为什么这个场景能够证明对应需求已经满足。
+- 对应业务目标 / Contract；
+- fixture / 环境边界；
+- 关键 Action；
+- 可观察 Expectation；
+- 为什么这个场景能证明对应需求。
 
-测试目的没有经过用户确认前，不得进入 Phase 2。
-
-## 3. Integration Test 验证用户可观察行为
+每条独立业务目标原则上都应能追踪到至少一个 Scenario。
 
 Integration Test 优先观察：
 
 - 公共接口；
 - 协议行为；
-- 组件之间的真实交互；
+- 组件真实交互；
 - 最终状态；
 - 对外输出；
 - 可观察副作用。
 
-不要默认通过大量内部字段、private state 或实现细节证明业务成立。
+不要默认通过 private state 或实现细节证明业务成立。
 
-Integration Test 是业务需求的 executable specification，不是内部实现快照。
+Scenario 未经用户确认，不得进入 Phase 2。
 
-# 五、Phase 2：Integration Test Implementation
+# 八、Phase 2：Integration Test Implementation
 
 只有 Phase 1 得到用户明确确认后，才能编写 Integration Test。
 
-本阶段允许：
+允许：
 
 - Integration Test 代码；
-- 测试 fixture / harness；
+- fixture / harness；
 - fake / stub / protocol-level test peer；
 - 测试数据 builder；
-- 让 Integration Test 能被构建、发现、运行所必须的测试配置；
-- 仅为表达已评审公共 contract 所必需的最小接口声明或测试接缝。
+- 必要的测试构建配置；
+- 表达已评审公共 Contract 所需的最小接口声明或测试接缝。
 
-本阶段禁止：
+禁止：
 
 - 实现真实业务逻辑；
 - 顺手补 production implementation；
 - 提前补 Unit Test；
-- 因为测试“不方便写”而擅自改变已评审业务目标。
+- 因为测试不好写而改变已评审需求。
 
-如果实现测试时发现：
+如果测试实现暴露出 Contract 或 Scenario 需要改变，退回对应前置 Phase 重新讨论，不静默修改。
 
-- 场景目的不成立；
-- requirement mapping 需要改变；
-- 可观察结果必须改；
-- fixture 边界会实质改变场景含义；
+# 九、Integration Test 可读性
 
-必须回到 Phase 1 重新评审，而不是静默修改测试目的。
-
-# 六、Integration Test 的可读性
-
-Integration Test 应优先读起来像一段业务或协议行为，而不是一串零散断言。
-
-推荐表达：
+测试正文优先读起来像业务或协议行为：
 
 ```text
 Scenario
@@ -193,91 +273,57 @@ Scenario
 → Final Expectation
 ```
 
-对于复杂状态机、协议和组件协作，可建立职责明确的 fixture / harness，把：
+复杂机制可以放入职责明确的 fixture / harness，让测试正文保留领域动作和领域期望。
 
-- socket；
-- transport；
-- clock；
-- mock server；
-- 消息封装；
-- 低层字段构造；
+不要为了 DSL 感提前设计庞大的测试框架。重复机制真正妨碍场景阅读时再抽象。
 
-等机制噪声隐藏起来，让测试正文保留领域动作和领域期望。
+Integration Test 默认应与快速测试路径隔离，通过 CMake option、pytest marker、build tag 或项目已有机制显式 opt-in。具体机制由语言和仓库约定决定。
 
-可参考 CS144 一类测试的阅读方式：
+# 十、Phase 3：Production Implementation
 
-```text
-Connect
-→ Expect SYN
-→ Receive SYN/ACK
-→ Expect ESTABLISHED
-```
+只有 Phase 2 Integration Test 得到用户明确确认后，才能进入实现。
 
-这里参考的是“场景步骤可读性”和“Action / Expectation”结构，不要求复制任何特定 harness API、类名或框架实现。
+目标：
 
-不要为了追求 DSL 感而提前设计一套庞大的测试框架。只有重复机制已经妨碍场景阅读时才抽 fixture / harness。
+> 用最小、清晰的实现满足已经评审的 Contract 和 Integration Scenario。
 
-# 七、Integration Test 必须与默认快速测试路径隔离
+要求：
 
-Integration Test 默认应拥有显式的 opt-in 入口。
+- 让已确认 Integration Test 从 red 走向 green；
+- 遵守语言 code-style；
+- 遵守 code-comment-writing；
+- 不扩展未确认的新行为；
+- 不提前创建 Unit Test。
 
-目标是：
+如果实现过程中发现 Contract 需要改变，回到 Phase 0；Scenario 需要改变，回到 Phase 1。
 
-- 普通 build / unit-test 流程保持快速；
-- Integration Test 需要用户或 CI 明确选择时才进入；
-- 不因为新增 Integration Test 就让所有开发者默认承担外部依赖、长耗时或复杂 fixture。
+# 十一、Phase 4：Unit Test
 
-具体机制由语言 / 构建系统 Skill 和仓库约定决定，例如：
-
-- CMake option；
-- pytest marker / command-line selector；
-- Go build tag / test flag；
-- Gradle source set / task；
-- 其他项目已有 test profile。
-
-本 Skill 不规定具体参数名。
-
-# 八、Phase 3：Production Implementation
-
-只有 Phase 2 的 Integration Test 已经由用户明确确认后，才能进入 production implementation。
-
-本阶段目标：
-
-> 用最小、清晰、符合语言 Skill 的实现满足已经评审的业务 contract。
-
-本阶段应：
-
-- 以已确认 Integration Scenario 为实现边界；
-- 让 Integration Test 从 red 走向 green；
-- 遵守语言级 code-style；
-- 遵守 `code-comment-writing`；
-- 不擅自扩展 Integration Scenario 未要求的新行为；
-- 不提前创建新的 Unit Test。
-
-如果实现过程中发现业务 contract 本身需要调整，应停止并回到 Integration Scenario Review，而不是让实现反过来偷偷改变测试。
-
-# 九、Phase 4：Unit Test
-
-只有 Phase 3 production implementation 已由用户明确确认后，才能新增 Unit Test。
+只有 Phase 3 production implementation 得到用户明确确认后，才能新增 Unit Test。
 
 Unit Test 主要验证：
 
-- 单个 class / function / module 的局部行为；
+- 单个 class / function / module；
 - invariant；
 - 算法边界；
 - 错误路径；
 - 细粒度状态转换；
-- 难以通过粗粒度 Integration Test 定位的局部逻辑。
+- Integration Test 难以定位的局部逻辑。
 
 Unit Test 不承担业务需求完整覆盖的主要责任。
 
-不要用几十个 Unit Test 替代一个本应存在的业务 Integration Scenario。
+# 十二、确认判定
 
-Unit Test 的框架、目录组织、fixture 风格和命名由语言 Skill / 仓库约定决定。
+“要求形成 artifact”和“确认 artifact”不是一回事。
 
-# 十、显式确认判定
+形成 artifact 的信号包括：
 
-可以视为当前 phase 已确认的自然语言包括：
+- “整理一下”；
+- “差不多了，收一下”；
+- “把 contract 写出来”；
+- “生成场景”。
+
+确认当前 artifact 的信号包括：
 
 - “确认”；
 - “可以”；
@@ -285,73 +331,56 @@ Unit Test 的框架、目录组织、fixture 风格和命名由语言 Skill / �
 - “这版没问题”；
 - “继续写集成测试”；
 - “开始实现”；
-- “补单测”；
-- 其他清楚表达“当前已经展示的产物可以进入下一阶段”的语句。
+- “补单测”。
 
 以下情况不能视为确认：
 
 - 用户没有回复；
+- 用户仍在追加或修改需求；
 - 测试通过；
 - 编译通过；
 - CI 通过；
-- 模型认为“应该没问题”；
-- 用户在看到当前阶段产物之前提前说“后面都默认同意”。
+- 模型认为已经足够；
+- 用户提前批准尚未看到的后续产物。
 
-不得根据沉默或自动化结果推断用户批准。
+# 十三、与其他 Skill 的边界
 
-# 十一、与其他 Skill 的职责边界
-
-## Router
-
-Router 负责：
-
-- 判断是否进入 TDD workflow；
-- 加载本 Skill；
-- 加载对应语言 code-style；
-- 在当前 phase 真正需要输出代码时加载 `code-comment-writing`；
-- 保证本 Skill 的 phase gate 在编码 Skill 之间优先。
-
-## 语言 code-style
+Router 负责判断是否进入 TDD workflow，并加载对应语言 Skill。
 
 语言 Skill 负责：
 
-- 具体类型和 API 设计；
+- 类型和 API 设计；
 - 测试框架默认值；
 - 测试文件结构；
-- 构建系统接入；
-- formatter / linter / static analysis；
-- 语言特有可读性和工程约束。
+- 构建系统；
+- formatter / linter / static analysis。
 
-语言 Skill 不得改变 TDD phase 顺序。
+语言 Skill 不得改变本 Skill 的 Phase 顺序，也不得绕过 DISCUSSION / ARTIFACT REVIEW / APPROVED。
 
-## code-comment-writing
+code-comment-writing 只在当前 Phase 允许生成代码时约束注释，不能推动 workflow 提前生成代码。
 
-`code-comment-writing` 只在当前 phase 允许生成代码时约束代码注释。
+# 十四、交付前 Gate
 
-它不能因为“所有代码都必须有注释”而推动 workflow 提前生成代码。
+每轮回复或代码修改前检查：
 
-# 十二、交付前 Gate
-
-当本 Skill 激活时，每轮回复或代码修改前检查：
-
-- [ ] 当前处于哪个 phase；
-- [ ] 上一个 phase 是否已由用户明确确认；
-- [ ] 当前输出是否只包含该 phase 允许的 artifact；
-- [ ] 是否错误地把后续 phase 一起做掉；
-- [ ] 每条业务目标是否能追踪到 Integration Scenario；
-- [ ] Integration Scenario 的 purpose 是否先于测试代码得到评审；
-- [ ] Integration Test 是否主要验证用户可观察行为；
-- [ ] Integration Test 是否读起来像清晰的 Action / Expectation 场景；
-- [ ] Integration Test 是否与默认快速测试路径隔离；
-- [ ] Production Implementation 是否只实现已评审 contract；
-- [ ] Unit Test 是否没有提前出现在 implementation 之前；
-- [ ] 当前 phase 中的代码是否同时满足语言 Skill 和 `code-comment-writing`；
-- [ ] 是否错误地把 compile / test / CI success 当成用户确认。
-
-只要当前 phase 尚未得到用户确认，就必须停在该 gate，不得继续。
+- [ ] 当前处于哪个 Phase；
+- [ ] 当前是 DISCUSSION / ARTIFACT REVIEW / APPROVED 中哪个状态；
+- [ ] 如果仍在 DISCUSSION，是否保持最小必要回应；
+- [ ] 如果只是局部问题，是否只回答当前问题；
+- [ ] 是否真的出现了用户冻结信号；
+- [ ] Phase 0 Contract 是否已确认；
+- [ ] 上一个 Phase 是否已确认；
+- [ ] 当前只产出本 Phase 允许的 artifact；
+- [ ] 是否错误跨到后续 Phase；
+- [ ] 业务目标是否能追踪到 Integration Scenario；
+- [ ] Scenario purpose 是否先于测试代码评审；
+- [ ] Integration Test 是否验证可观察行为；
+- [ ] Production Implementation 是否只实现已评审 Contract；
+- [ ] Unit Test 是否没有提前出现；
+- [ ] 是否错误把 compile / test / CI success 当成用户确认。
 
 # 核心判断
 
-> 先确认“要证明什么”，再写 Integration Test；先确认 Integration Test，再写实现；先确认实现，再写 Unit Test。
+> 用户先定义问题，AI 默认跟随讨论；用户准备冻结时再形成 Contract。先确认 Contract，再确认要证明什么；先确认 Integration Test，再写实现；先确认实现，再写 Unit Test。
 
-TDD 的关键不是把测试文本排在实现文本前面，而是让业务 contract 在实现之前被显式、可执行、可评审地固定下来。
+TDD 的关键不是让 AI 尽快收敛，而是让业务 Contract 在实现之前由用户主导、显式冻结、可执行、可评审地固定下来。
