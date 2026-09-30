@@ -43,6 +43,8 @@ Output only a JSON code block. Do not explain.
 
 ## Output Format
 
+When there are two or more independently actionable tasks under one theme, use the nested numbered form:
+
 ```json
 {
   "<主题名>": {
@@ -52,7 +54,7 @@ Output only a JSON code block. Do not explain.
 }
 ```
 
-For a simple single task whose title remains independently understandable and actionable without the original conversation, output:
+When there is exactly one remaining task, always output the task itself as the top-level key with an empty object:
 
 ```json
 {
@@ -60,17 +62,9 @@ For a simple single task whose title remains independently understandable and ac
 }
 ```
 
-Do not use the empty-object form merely because there is only one task.
+Do not output a nested object containing only one numbered subtask.
 
-If a single task depends on conversational context, use the normal nested format with one numbered task so the description can preserve a restart checkpoint:
-
-```json
-{
-  "<主题名>": {
-    "1. <任务名>": "触发背景、待解决问题和完成标志"
-  }
-}
-```
+If a single task needs conversational context to remain restartable, enrich the task title with the minimum necessary context instead of creating a numbered child merely to hold a description.
 
 ## Rules
 
@@ -79,12 +73,14 @@ If a single task depends on conversational context, use the normal nested format
 - Do not include AI-completed work.
 - Do not convert AI analysis, summaries, code, prompts, or drafts into tasks unless the user still has to apply, save, run, or verify them.
 - Do not output rest, buffer time, mindset adjustment, or vague preparation.
-- Keep only key actions. Merge related items when possible.
+- Keep only key actions, but do not over-merge independent work merely to reduce task count.
+- Treat actions as separate tasks when they have distinct execution steps, distinct verification results, or can be completed independently.
+- Merge items only when they are genuinely one action or share the same completion state and splitting them would create artificial bookkeeping.
 - Task names should include the action, object, and key context.
 - Avoid turning one goal into many tiny implementation details.
 - Apply a restartability check to every task: assume the user sees it days or weeks later without access to the current conversation.
-- Use the empty-object form only when the task title alone clearly communicates the action, object, relevant context, and expected completion.
-- When context is required, preserve only the minimum useful checkpoint in the task description:
+- For exactly one task, use the empty-object form and make the title independently understandable and actionable.
+- For two or more tasks, use task descriptions only when needed to preserve restart context:
   - what triggered the task;
   - what unresolved question, decision, or problem remains;
   - what result or decision would count as completion;
@@ -93,7 +89,7 @@ If a single task depends on conversational context, use the normal nested format
 - Do not invent motivations, constraints, next steps, or completion criteria that were not present in the conversation.
 - A thought, observation, or interesting topic is not automatically a task. Include it only when the conversation shows that the user intends to revisit, evaluate, apply, verify, decide, or otherwise act on it.
 - For exploratory tasks, prefer decision-oriented actions such as `判断`, `验证`, `评估`, or `形成结论` instead of vague actions such as `研究一下` or `了解一下`.
-- Keep related background inside one task description instead of expanding it into artificial subtasks.
+- If multiple actions have different completion criteria, keep them as multiple tasks even when they contribute to the same broader goal.
 - If there are no remaining user-side actions, output an empty JSON object.
 
 ## Task Naming
@@ -112,21 +108,33 @@ Bad:
 
 ```json
 {
-  "研究 AI 灵感": {}
-}
-```
-
-Better:
-
-```json
-{
-  "优化横向灵感的延迟兑现流程": {
-    "1. 修正 Task Harvest Skill 的上下文保留规则": "触发背景：横向灵感导入提醒事项后，后续处理时会丢失原始语境。待解决问题：在不改变固定 JSON 格式的前提下保存足够的重启上下文。完成标志：Skill 能区分标题即可恢复的普通任务与需要描述保存 checkpoint 的上下文型任务。"
+  "NAS 网络安全审计": {
+    "1. 完成 NAS 安全检查": "检查暴露面、日志和攻击情况。"
   }
 }
 ```
 
-Avoid placing all background into the task name. Use the description as the restart checkpoint when the title would otherwise become too long.
+Better when the work is genuinely one task:
+
+```json
+{
+  "完成 NAS 网络安全审计并形成加固结论": {}
+}
+```
+
+Better when the conversation contains multiple independently completable actions:
+
+```json
+{
+  "NAS 网络安全审计": {
+    "1. 检查公网暴露面": "确认 ECS、NAS、FRP 和 Docker 的公网可达入口是否符合预期。",
+    "2. 验证真实客户端 IP 日志": "确认代理链能够可靠记录公网来源 IP。",
+    "3. 审计近期恶意访问": "分析访问与授权日志，判断近期是否存在扫描、认证攻击或其他可疑来源。"
+  }
+}
+```
+
+Avoid placing all background into the task name. However, for a single task, prefer a slightly richer title over creating a one-item nested object only to preserve context.
 
 ## Boundary
 
