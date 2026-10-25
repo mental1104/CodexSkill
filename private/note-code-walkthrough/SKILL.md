@@ -292,7 +292,7 @@ Read real bodies and fixtures for every target-owned behavioral family. Do not a
 
 ### 9. Generate The Note
 
-Use `templates/cs144-style-generation-template.md`.
+Before drafting the note, ensure the Mandatory Pre-Write Outline Approval Gate in `ROUTER/SKILL.md` has been explicitly passed. Use `templates/cs144-style-generation-template.md` as a content-quality and presentation reference, not as a competing heading contract. The approved outline controls the final headings; adapt template sections to that hierarchy instead of replacing it. Do not generate the completed note or write to the vault before confirmation.
 
 The generated note must:
 
