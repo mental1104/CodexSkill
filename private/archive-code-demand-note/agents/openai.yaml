@@ -1,4 +1,4 @@
 interface:
   display_name: "Archive Code Demand Note"
   short_description: "Archive code and requirements into notes"
-  default_prompt: "Use $archive-code-demand-note to turn this code file and original requirement into a self-contained Obsidian archive note."
+  default_prompt: "Use $ROUTER for Obsidian archive requests to determine the scope and apply the mandatory pre-write outline approval gate. For a source-code file plus original requirement brief, use $archive-code-demand-note as the note writer only after the user explicitly confirms the Mermaid mind map and exact H2-H6 heading tree. The approved hierarchy must govern the final self-contained archive note; do not write or commit before confirmation."
