@@ -21,6 +21,10 @@ The durable asset is the user's actual solving journey:
 
 Write for the user's future self. Be direct, compact, and concrete. Do not turn the note into a public tutorial or expand it into a generic algorithm article.
 
+## Pre-Write Outline Gate
+
+When this skill creates a new knowledge-base note from new material, or materially redesigns an existing note's headings while incorporating new material, follow `ROUTER/SKILL.md`'s **Mandatory Pre-Write Outline Approval Gate**. Do not write or commit the archive, or present a completed note as already drafted, before the user explicitly confirms the proposed mind map and exact heading tree. After confirmation, preserve the approved hierarchy in the final note and adapt this skill's default template to it. The Router owns the gate's full procedure and note-type exception. Read-only retrieval, metadata-only changes, and narrow edits that preserve the heading hierarchy do not trigger this gate.
+
 ## Trigger
 
 Use this skill when all of the following are true:
@@ -94,7 +98,7 @@ The filename is the note title. Do not add a separate top-level `# <title>` head
 
 If the target file already exists, fetch it first and update it in place. Merge useful existing content when practical; do not blindly discard an earlier independent solving history.
 
-The archive request itself authorizes writing the note to the archive repository. Do not stop for a dry run when the problem identity, target path, and AC status are clear.
+The archive request authorizes the eventual write, but it does not bypass the mandatory pre-write outline gate in `ROUTER/SKILL.md`. Before creating or updating the target note, present the Mermaid mind map and exact H2-H6 heading tree and wait for explicit user confirmation. After the structure is confirmed, do not add a separate dry-run approval; proceed with the archive using the confirmed hierarchy.
 
 ## Source Scope
 
