@@ -20,6 +20,10 @@ It should:
 5. decide whether to create, update, merge, or only backlink;
 6. use `note-operation-manual` as the final output contract.
 
+## Pre-Write Outline Gate
+
+When this skill creates a new knowledge-base note from new material, or materially redesigns an existing note's headings while incorporating new material, follow `ROUTER/SKILL.md`'s **Mandatory Pre-Write Outline Approval Gate**. Do not write or commit the archive, or present a completed note as already drafted, before the user explicitly confirms the proposed mind map and exact heading tree. After confirmation, preserve the approved hierarchy in the final note and adapt this skill's default template to it. The Router owns the gate's full procedure and note-type exception. Read-only retrieval, metadata-only changes, and narrow edits that preserve the heading hierarchy do not trigger this gate.
+
 ## Relationship To Other Skills
 
 Use this skill before `note-operation-manual` when the source is a book or reading note.
