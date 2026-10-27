@@ -21,6 +21,8 @@ It decides:
 
 ROUTER does not write the final note. After deciding, hand off to the selected primary skill and let that skill own the document structure and output policy.
 
+All archive-note outputs must start directly with meaningful content rather than template wrapper headings. Do not emit headings named `AI摘要`, `AI 摘要`, or `正文`; remove those wrappers when rewriting existing notes, while preserving useful content and adjusting nested heading levels.
+
 Choose by what the user's future self needs when reopening the note, not by superficial features such as whether the conversation contains steps, code, failures, tables, or commands.
 
 # Mandatory Archive Entry

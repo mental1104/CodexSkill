@@ -402,19 +402,17 @@ Before finishing:
 Use for small operational questions and short repeatable tasks:
 
 ````markdown
-## 正文
-
-### 适用场景
+## 适用场景
 
 <when to use this>
 
-### 操作
+## 操作
 
 ```bash
 <copyable command or short sequence>
 ```
 
-### 验证或注意事项
+## 验证或注意事项
 
 <only decisive verification or important caveat>
 ````
@@ -426,13 +424,7 @@ Do not inflate a small manual with empty sections.
 Use when the procedure has several phases or meaningful recovery branches:
 
 ````markdown
-## AI摘要
-
-<goal, environment, happy path, and decisive warning>
-
-## 正文
-
-### 快速使用
+## 快速使用
 
 - 目标：
 - 触发场景：
@@ -440,33 +432,33 @@ Use when the procedure has several phases or meaningful recovery branches:
 - 最终状态：
 - 主要风险：
 
-### 前置条件
+## 前置条件
 
 ...
 
-### 成功路径
+## 成功路径
 
-#### 1. ...
+### 1. ...
 
 ```bash
 ...
 ```
 
-#### 2. ...
+### 2. ...
 
 ```bash
 ...
 ```
 
-### 关键检查点
+## 关键检查点
 
 | 检查点 | 正常状态 | 异常时 |
 |---|---|---|
 | ... | ... | [[#...]] |
 
-### 故障处理
+## 故障处理
 
-#### `<observable symptom>`
+### `<observable symptom>`
 
 - 优先检查：
 - 已知原因：
@@ -474,15 +466,15 @@ Use when the procedure has several phases or meaningful recovery branches:
 - 验证：
 - 返回主线：
 
-### 回滚、清理与恢复
+## 回滚、清理与恢复
 
 ...
 
-### 环境或版本差异
+## 环境或版本差异
 
 ...
 
-### 相关原理与来源
+## 相关原理与来源
 
 <optional; links or minimum explanation only>
 ````

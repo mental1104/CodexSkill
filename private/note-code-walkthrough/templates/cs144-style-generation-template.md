@@ -25,10 +25,6 @@ Do not use this template to replace investigation, evidence normalization, hotsp
 ## Default Opening
 
 ```markdown
-## AI摘要
-
-## 正文
-
 # <Title>
 
 > [!summary]

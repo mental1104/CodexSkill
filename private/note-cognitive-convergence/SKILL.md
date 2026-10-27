@@ -403,47 +403,41 @@ Then provide a compact restatement, checklist, or comparison that makes later re
 Use the following as a flexible default, not a mandatory fixed outline:
 
 ```markdown
-## AI摘要
-
-<one-sentence model, main distinction, and practical meaning>
-
-## 正文
-
-### 核心模型
+## 核心模型
 
 <one-sentence definition or causal model>
 
 <whole-picture diagram / scenario / comparison>
 
-### 先建立哪些对象与关系
+## 先建立哪些对象与关系
 
 <minimum prerequisites and responsibilities>
 
-### 机制如何运转
+## 机制如何运转
 
 <trigger → state read → rule → state change → result>
 
-### 最容易误解的地方
+## 最容易误解的地方
 
 <naive model → failing case → corrected model>
 
-### 与相邻概念的边界
+## 与相邻概念的边界
 
 | 维度 | 概念 A | 概念 B |
 |---|---|---|
 | ... | ... | ... |
 
-### 完整场景重组
+## 完整场景重组
 
 <walk through one end-to-end scenario using the final model>
 
-### 最终可复述模型
+## 最终可复述模型
 
 - ...
 - ...
 - ...
 
-### 证据、实现示例与来源
+## 证据、实现示例与来源
 
 <optional supporting material>
 ```

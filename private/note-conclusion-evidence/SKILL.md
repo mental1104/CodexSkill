@@ -80,9 +80,7 @@ Use `note-operation-manual` when the main value is direct execution.
 
 ## Required Opening
 
-The note may start with `AI摘要`.
-
-The first body section after `AI摘要` must be a conclusion index table.
+Start the note directly with a conclusion index table, optionally under a meaningful heading such as `## 结论索引`.
 
 The conclusion index table must link to proof sections only.
 
@@ -102,12 +100,11 @@ The table is the main reading entrance. Do not put long explanations before it.
 
 Prefer this structure:
 
-1. AI摘要.
-2. Conclusion index table.
-3. Optional context only when it changes how conclusions should be read.
-4. Linear proof processes.
-5. Boundaries and uncertainty.
-6. Raw material archive when needed.
+1. Conclusion index table.
+2. Optional context only when it changes how conclusions should be read.
+3. Linear proof processes.
+4. Boundaries and uncertainty.
+5. Raw material archive when needed.
 
 Do not add a generic `reading scope` section by default.
 

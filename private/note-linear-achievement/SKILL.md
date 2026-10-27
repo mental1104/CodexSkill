@@ -149,14 +149,13 @@ If multiple failed attempts differ only trivially, preserve one representative v
 
 Prefer:
 
-1. AI摘要.
-2. Overview diagram.
-3. Whole-note example / table / command block / artifact.
-4. Key observations.
-5. Stage-by-stage breakdown.
-6. Final achieved path.
-7. Review.
-8. Raw material archive when needed.
+1. Overview diagram.
+2. Whole-note example / table / command block / artifact.
+3. Key observations.
+4. Stage-by-stage breakdown.
+5. Final achieved path.
+6. Review.
+7. Raw material archive when needed.
 
 ## Detail Rules
 

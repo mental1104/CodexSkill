@@ -46,7 +46,7 @@ When paired with another skill, this skill supplies conventions only. The concre
 
 ## Default Note Template
 
-Every new Markdown content note may reuse `Templates/default-note.md`, unless the target directory clearly uses another established pattern.
+Every new Markdown content note may reuse `Templates/default-note.md`, unless the target directory clearly uses another established pattern. Apply the heading rules below even when an existing template still contains legacy wrapper headings.
 
 The YAML frontmatter must contain exactly these four fields:
 
@@ -64,15 +64,13 @@ Keep:
 - `source`;
 - `tags`;
 - `summary`;
-- `read_status`;
-- `## AI摘要`;
-- `## 正文`.
+- `read_status`.
 
 Do not add convenience metadata such as `title`, `aliases`, `created`, `updated`, `related`, `repo`, `branch`, `source_commit`, `source_files`, `test_status`, `read_depth`, `read_at`, `read_note`, or visualization-plugin settings.
 
-Generated note content goes under `## 正文`.
+Start note content directly with meaningful subject-specific sections. Do not emit the template wrapper headings `AI摘要`, `AI 摘要`, or `正文` at any heading level. When transforming an existing note, remove these wrappers, preserve useful content, and promote nested sections to the appropriate level.
 
-Fill `## AI摘要` only when a concise summary is available.
+Use `##` for main content sections and `###` for their subsections. A concise opening paragraph may precede the first section when useful; it does not need a separate summary heading. Keep the YAML `summary` field.
 
 This template rule does not apply to skills, plugin files, templates, or other control/configuration documents.
 
