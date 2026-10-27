@@ -1,6 +1,6 @@
 ---
 name: ROUTER
-description: Mandatory routing layer for Blue Espeon Obsidian archive requests. Use whenever the user asks to archive, materialize, rewrite, or turn current context into a durable note. Infer the input source, future reading intention, one primary note type, execution mode, companion skills, and whether clarification is materially necessary, then hand off directly to the selected skill instead of writing a generic document or asking the user to choose a template.
+description: Mandatory routing layer for Blue Espeon Obsidian archive workflows and executable-code companion workflows. Use for archive/materialization requests and whenever executable code is created, modified, refactored, fixed, reviewed, or output. For new or structurally reorganized archive notes, require explicit pre-write approval of a detailed H2-H6 heading outline and mind map, except for note-conclusion-evidence. For coding, compose code-comment-writing with the applicable language code-style skill; when the user explicitly requests TDD/test-driven development, integration tests before production implementation, or staged approval between tests and implementation, also load tdd-workflow and treat its current phase gate as the highest-priority coding workflow constraint.
 ---
 
 # Codex Skill Router
@@ -24,6 +24,48 @@ ROUTER does not write the final note. After deciding, hand off to the selected p
 All archive-note outputs must start directly with meaningful content rather than template wrapper headings. Do not emit headings named `AI摘要`, `AI 摘要`, or `正文`; remove those wrappers when rewriting existing notes, while preserving useful content and adjusting nested heading levels.
 
 Choose by what the user's future self needs when reopening the note, not by superficial features such as whether the conversation contains steps, code, failures, tables, or commands.
+
+ROUTER also composes coding companion skills. Archive routing and coding workflow composition are separate responsibilities; a code request does not become an archive request merely because ROUTER is active.
+
+# Coding Workflow Composition
+
+## Mandatory code entry
+
+Whenever a request creates, modifies, refactors, fixes, reviews for direct modification, or outputs executable code:
+
+- load `code-comment-writing` as the language-independent documentation companion;
+- for Python executable code, also load `python-code-style`;
+- for C++ executable code, also load `cpp-code-style`;
+- for other languages, load any applicable language-specific coding Skill when available.
+
+When the user explicitly requests TDD / test-driven development, requires Integration Test before production implementation, or requires staged confirmation between testing and implementation, also load `tdd-workflow`.
+
+Do not trigger `tdd-workflow` merely because a normal coding task asks for tests.
+
+## Coding Skill priority
+
+When `tdd-workflow` is active, apply coding Skills in this order:
+
+```text
+user explicit requirements / repository hard constraints
+→ tdd-workflow current phase gate
+→ language code-style
+→ code-comment-writing
+→ unspecified historical style
+```
+
+The `tdd-workflow` phase gate has the highest priority among coding Skills for deciding **what may be produced now**.
+
+Language and comment Skills still fully apply inside the currently approved phase, but they must never cause the workflow to cross into a later phase.
+
+Examples:
+
+- during Integration Scenario Review, do not generate code even though language/comment Skills are loaded;
+- during Integration Test Implementation, apply language test/build rules and comment rules, but do not generate production implementation or Unit Test;
+- during Production Implementation, apply language/comment rules, but do not add new Unit Test;
+- only after the implementation phase is explicitly approved may Unit Test be added.
+
+A user confirmation advances only the artifact already shown. Do not treat a blanket initial request as approval of unseen later TDD phases.
 
 # Mandatory Archive Entry
 
@@ -50,7 +92,7 @@ When the user says only “归档” or another short trigger:
 2. infer the intended archive scope from the active topic;
 3. identify the future reading intention;
 4. choose one primary skill;
-5. proceed directly when the route and target are sufficiently clear.
+5. for every applicable note type except `note-conclusion-evidence`, present the proposed mind map and exact heading tree, then wait for explicit confirmation before writing; the archive request itself is not outline approval.
 
 Do not bypass the router and produce a generic Markdown summary.
 
@@ -67,15 +109,32 @@ When several distinct topics appear in the recent context:
 - do not silently combine unrelated topics into one note;
 - ask only when two scopes are equally plausible and would produce materially different notes.
 
+# Mandatory Pre-Write Outline Approval Gate
+
+This gate applies before creating a new Obsidian archive note from newly collected material, or materially reorganizing an existing note while incorporating new material. It applies across core note types and specialized archive writers, including `note-cognitive-convergence`, `note-linear-achievement`, `note-operation-manual`, `note-code-walkthrough`, `book-operation-manual-extract`, `archive-code-demand-note`, and `leetcode-archive`.
+
+**Exception:** do not add this gate to `note-conclusion-evidence`. Keep its conclusion-first workflow and existing confirmation rules unchanged.
+
+Do not trigger this gate for read-only retrieval, metadata-only changes, narrow factual or typo corrections that preserve the heading hierarchy, or an append to an explicitly identified existing section that does not require heading redesign.
+
+Before any vault write, file create/update, or commit:
+
+1. Inspect the source material, resolve the archive scope, and select the primary note type. Do not ask the user to approve the route separately when it is already clear.
+2. Propose the actual body-heading hierarchy starting at `##`. A document title or existing H1 convention is outside this reviewed hierarchy. Use `###` through `######` only when each level adds a distinct, useful subdivision.
+3. Make headings specific and top-down. Include the necessary actions, decisions, mechanisms, and important keywords from the source conversation or evidence. Each child must narrow its parent. Split until each independent knowledge point or action has a clear place and cannot be further divided into another meaningful heading. Do not force all six levels, use vague catch-all headings, or create empty headings.
+4. Present both a Mermaid `mindmap` preview and the exact Markdown heading tree. The mind map is a review artifact only; do not automatically insert it into the final note.
+5. Stop and wait for explicit confirmation of the currently displayed outline. The original “归档” request does not approve an outline the user has not seen. If the user requests changes, revise the outline and wait for confirmation again.
+6. After confirmation, use the approved hierarchy as the actual note headings. Adapt the selected skill's default template to fit it; do not silently rename, reorder, reparent, add, or remove headings. If source inspection reveals a material omission or unsupported section, present a revised outline and obtain confirmation before writing.
+
+Preserve the selected note type's reading logic: for example, cognitive-convergence notes follow reader understanding rather than chat chronology, while linear-achievement and LeetCode notes may preserve chronology when that is their purpose.
+
 # Execution Default
 
 ## Proceed Without Route Confirmation
 
-When the route is clear, do not stop to output a template choice or ask:
+When the route is clear, do not ask the user to approve the primary note type alone. Route confirmation and outline approval are different gates: applicable archive notes must still pass the Mandatory Pre-Write Outline Approval Gate before writing.
 
-> 是否按这个路线执行？
-
-Proceed directly when the current context provides enough information to infer:
+Proceed to the outline review without asking for route confirmation when the current context provides enough information to infer:
 
 - the source material;
 - the archive scope;
@@ -83,7 +142,7 @@ Proceed directly when the current context provides enough information to infer:
 - the primary note type;
 - the target note or a defensible new-note placement.
 
-This applies to both new notes and explicit rewrites of a clearly identified existing note.
+After the outline is explicitly approved, proceed with the archive without asking for a second route confirmation.
 
 ## Clarify Only When Materially Necessary
 
@@ -164,7 +223,7 @@ Signals:
 - “基于这个已有笔记整理”;
 - “重写这篇归档文档”.
 
-Inspect the current note and nearby vault conventions, select the primary shape, and proceed when the target file is clear.
+Inspect the current note and nearby vault conventions, select the primary shape, and proceed when the target file is clear. If the transformation materially redesigns headings while incorporating new material, pause at the pre-write outline gate; narrow edits that preserve the existing hierarchy can proceed directly.
 
 ## `materialize-mode`
 
@@ -188,7 +247,7 @@ Signals:
 - “把刚才讲的概念整理成笔记”;
 - “把这个操作记下来”.
 
-Default: infer and proceed.
+Default: infer the route and proceed to the mandatory outline review gate when it applies; do not write before approval.
 
 ## `repository-mode`
 
@@ -206,7 +265,7 @@ Resolve when available:
 - tests;
 - build or verification status.
 
-Then use `note-code-walkthrough` directly.
+Then hand the evidence to `note-code-walkthrough`; apply the pre-write outline gate before any new archive note or materially reorganized note is written.
 
 # Primary Note Types
 

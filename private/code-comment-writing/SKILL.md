@@ -45,6 +45,41 @@ description: Mandatory companion skill for every request that creates, modifies,
    - 自动化工具无法识别中文且会影响构建或文档生成。
 5. 即使必须使用英文，也要优先保证语义完整，而不是省略注释。
 
+## 运行时输出字符串必须使用 ASCII 英文
+
+代码中的运行时可见字符串，包括但不限于：
+
+- 日志；
+- 异常消息；
+- CLI 输出；
+- stdout / stderr 文本；
+- assertion message；
+- 监控、告警和诊断文本；
+- 面向运维和开发者的状态信息；
+
+默认必须使用 ASCII 英文，不得输出中文或其他非 ASCII 文本。
+
+这条规则与“注释和 docstring 中文优先”并不冲突：
+
+- 注释、docstring、设计说明：中文优先；
+- 程序运行时输出：ASCII 英文。
+
+例如：
+
+```python
+raise ConfigError("missing required field", field="timeout")
+logger.warning("retry limit reached")
+```
+
+不要写：
+
+```python
+raise ConfigError("缺少必填字段：timeout")
+logger.warning("重试次数已达到上限")
+```
+
+除非用户当前任务或外部协议明确要求本地化用户界面文本，否则所有代码任务默认遵守此规则。
+
 # 一、符号级注释
 
 ## 1. 类、结构体、接口与模块
@@ -407,6 +442,7 @@ i += 1
 - [ ] 短路路径、主线路径、失败恢复路径和反直觉代码已有必要注释；
 - [ ] 并发、状态机、协议和性能敏感逻辑说明了关键不变量或取舍；
 - [ ] 注释主要使用中文；
+- [ ] 运行时日志、异常消息、CLI/stdout/stderr、断言和诊断文本是否全部使用 ASCII 英文；
 - [ ] 注释与当前实现一致，没有复制旧描述；
 - [ ] 没有用逐行同义翻译制造噪声；
 - [ ] 动态语言的数据结构、字段和可空性已经讲清楚；

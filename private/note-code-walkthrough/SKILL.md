@@ -31,6 +31,10 @@ normalize the input
 → generate the strongest honest document allowed by the evidence
 ```
 
+## Pre-Write Outline Gate
+
+When this skill creates a new knowledge-base note from new material, or materially redesigns an existing note's headings while incorporating new material, follow `ROUTER/SKILL.md`'s **Mandatory Pre-Write Outline Approval Gate**. Do not write or commit the archive, or present a completed note as already drafted, before the user explicitly confirms the proposed mind map and exact heading tree. After confirmation, preserve the approved hierarchy in the final note and adapt this skill's default template to it. The Router owns the gate's full procedure and note-type exception. Read-only retrieval, metadata-only changes, and narrow edits that preserve the heading hierarchy do not trigger this gate.
+
 ## Mandatory Companion Files
 
 Read and apply these files before writing the note:
@@ -288,7 +292,7 @@ Read real bodies and fixtures for every target-owned behavioral family. Do not a
 
 ### 9. Generate The Note
 
-Use `templates/cs144-style-generation-template.md`.
+Before drafting the note, ensure the Mandatory Pre-Write Outline Approval Gate in `ROUTER/SKILL.md` has been explicitly passed. Use `templates/cs144-style-generation-template.md` as a content-quality and presentation reference, not as a competing heading contract. The approved outline controls the final headings; adapt template sections to that hierarchy instead of replacing it. Do not generate the completed note or write to the vault before confirmation.
 
 The generated note must:
 

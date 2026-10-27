@@ -22,6 +22,10 @@ problem
 
 Do not use this template to replace investigation, evidence normalization, hotspot ranking, or quality review.
 
+## Approved Outline Takes Precedence
+
+When `ROUTER/SKILL.md`'s Mandatory Pre-Write Outline Approval Gate applies, the user's explicitly approved H2-H6 heading tree is authoritative. This template defines content quality and teaching rhythm, not a fixed heading contract. Map its content responsibilities into the approved hierarchy and adapt or omit the default section labels when they conflict with that hierarchy. Never replace, rename, reorder, or add headings outside the approved tree without pausing to obtain confirmation of a revised outline.
+
 ## Default Opening
 
 ```markdown
