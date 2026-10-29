@@ -31,6 +31,31 @@ Use this skill when the user says one of:
 
 The trigger phrase itself is not a task.
 
+## Confirmation Gate
+
+Every time a Task Harvest trigger is first invoked in a conversation, run a confirmation round before exporting tasks. Do not output task JSON in that first response, even if the user appears to request that everything be converted immediately.
+
+Review only the current conversation and list all discussed plans, approaches, alternatives, and potential follow-up actions that the user may want to turn into tasks. Include alternatives that were discussed but not chosen; label their status inline when needed. Do not invent new options or silently choose a preferred approach.
+
+Present the candidates as a plain-text outline with at most two levels, using this shape:
+
+```text
+1. <major topic>
+   a. <candidate plan or action>
+   b. <candidate plan or action>
+2. <major topic>
+   a. <candidate plan or action>
+   b. <candidate plan or action>
+```
+
+Keep each candidate on one line with enough context to distinguish it. Do not use a third level, nested descriptions, tables, checklists, or JSON in this confirmation round. Keep independent major topics as separate numbered groups.
+
+Ask the user to confirm exactly which items to include, exclude, or revise, then wait. If no concrete candidate can be identified, say so and ask what they want included; do not export an empty or guessed task list.
+
+While a candidate list is awaiting confirmation, interpret the next user reply as part of that confirmation flow even if it repeats a Task Harvest trigger phrase. If the user clearly confirms a selection, run the existing Task Harvest rules and output format on only the confirmed items. If they add or change candidates, show the revised two-level list and request confirmation again. If their selection is ambiguous, clarify before exporting. A clear confirmation such as "全部" selects all listed candidates, but the existing Task Harvest rules still determine which user-side actions belong in the final export. If the user cancels, stop without exporting tasks.
+
+The confirmation round is separate from the final Task Harvest output; do not include its discussion or unselected alternatives in the exported JSON.
+
 ## Goal
 
 Extract only actions the user still needs to personally do.
@@ -39,7 +64,7 @@ Review only the current conversation.
 
 Ensure every exported task can be understood and resumed later without reopening the original conversation. Preserve only the minimum context needed to explain why the task exists, what remains unresolved, and what outcome would close it.
 
-Output only a JSON code block. Do not explain.
+After the user explicitly confirms the final candidate set, output only a JSON code block. Do not explain.
 
 ## Output Format
 
