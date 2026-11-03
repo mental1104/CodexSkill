@@ -93,6 +93,7 @@ Helper skills:
 | `blue-espeon-note-style` | vault style, directory placement, naming, backlinks, Mermaid convention, single-thesis boundary |
 | `latex-math-writing` | LaTeX math notation for calculus, linear algebra, probability/statistics, discrete math, and algorithms |
 | `obsidian-frontmatter-metadata` | `source`, `tags`, `summary`, and `read_status` only |
+| `obsidian-notes` | Obsidian Markdown note organization and the user's preferred `[label](relative/path.md)` internal-link format |
 | `source-walk` | source-code context snapshot reports under `/tmp` for ChatGPT analysis |
 
 ## Install
