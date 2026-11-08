@@ -1,0 +1,7 @@
+interface:
+  display_name: "默认编码（C++ / Python）"
+  short_description: "控制复杂度，优先自然且可维护的实现"
+  default_prompt: "Use $default-coding for C++ and Python coding tasks, with $cpp-code-style or $python-code-style and $code-comment-writing as applicable. Do not apply this skill to other languages. Inspect relevant surrounding code, prefer the smallest necessary conceptual change, then independently review and simplify unnecessary abstractions, states, layers, and fallbacks before delivery."
+
+policy:
+  allow_implicit_invocation: true
