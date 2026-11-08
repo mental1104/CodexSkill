@@ -34,6 +34,7 @@ ROUTER also composes coding companion skills. Archive routing and coding workflo
 Whenever a request creates, modifies, refactors, fixes, reviews for direct modification, or outputs executable code:
 
 - load `code-comment-writing` as the language-independent documentation companion;
+- for C++ and Python code, also load `default-coding` for engineering judgment and complexity control;
 - for Python executable code, also load `python-code-style`;
 - for C++ executable code, also load `cpp-code-style`;
 - for other languages, load any applicable language-specific coding Skill when available.
@@ -49,6 +50,7 @@ When `tdd-workflow` is active, apply coding Skills in this order:
 ```text
 user explicit requirements / repository hard constraints
 → tdd-workflow current phase gate
+→ default-coding (C++ / Python only)
 → language code-style
 → code-comment-writing
 → unspecified historical style
