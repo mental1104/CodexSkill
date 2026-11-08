@@ -3,6 +3,7 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 target="${CODEX_HOME:-$HOME/.codex}/skills"
+custom_target=0
 dry_run=0
 list_only=0
 install_all=0
@@ -20,6 +21,8 @@ Usage: ./install.sh [options]
 
 Link repository skills into ${CODEX_HOME:-$HOME/.codex}/skills.
 By default, only the audited enterprise-safe allowlist is installed.
+A normal install also maintains C++/Python coding rules in ${CODEX_HOME:-$HOME/.codex}/AGENTS.md.
+Using --target skips changes to global AGENTS.md.
 
 Options:
   --target DIR   Link into DIR instead of the default skills directory.
@@ -307,15 +310,101 @@ sync_public_skills() {
   fi
 }
 
+# 同步默认编码 Skill 的全局入口规则，不覆盖用户手工维护的 AGENTS.md 内容。
+#
+# 副作用：
+#   在 ${CODEX_HOME:-$HOME/.codex}/AGENTS.md 中创建或更新标记块。
+#   对不完整的标记块、符号链接或非普通文件拒绝自动修改。
+install_global_coding_agents() {
+  local codex_home="${CODEX_HOME:-$HOME/.codex}"
+  local agents_file="$codex_home/AGENTS.md"
+  local template="$repo_root/config/default-coding-agents.md"
+  local begin='<!-- BEGIN CodexSkill default-coding: managed by install.sh -->'
+  local end='<!-- END CodexSkill default-coding -->'
+  local begin_count=0
+  local end_count=0
+  local tmp
+
+  [ -f "$template" ] || die "missing global coding instructions: $template"
+
+  if [ "$dry_run" -eq 1 ]; then
+    log "[dry-run] Sync global coding instructions into $agents_file"
+    return
+  fi
+
+  mkdir -p "$codex_home"
+  if [ -L "$agents_file" ]; then
+    die "refusing to replace symlinked AGENTS.md: $agents_file"
+  fi
+  if [ -e "$agents_file" ] && [ ! -f "$agents_file" ]; then
+    die "AGENTS.md is not a regular file: $agents_file"
+  fi
+
+  if [ -f "$agents_file" ]; then
+    begin_count="$(grep -Fxc "$begin" "$agents_file" || true)"
+    end_count="$(grep -Fxc "$end" "$agents_file" || true)"
+  fi
+  if [ "$begin_count" -ne "$end_count" ] || [ "$begin_count" -gt 1 ]; then
+    die "invalid managed markers in $agents_file; no changes made"
+  fi
+
+  tmp="$(mktemp "$codex_home/.AGENTS.md.tmp.XXXXXX")"
+  if [ "$begin_count" -eq 1 ]; then
+    if ! awk -v begin="$begin" -v end="$end" -v source="$template" '
+      $0 == begin {
+        inside = 1
+        print
+        while ((getline line < source) > 0) print line
+        close(source)
+        next
+      }
+      $0 == end {
+        if (!inside) exit 1
+        inside = 0
+        print
+        next
+      }
+      !inside { print }
+      END { if (inside) exit 1 }
+    ' "$agents_file" > "$tmp"; then
+      rm -f "$tmp"
+      die "failed to update managed block in $agents_file"
+    fi
+  else
+    if [ -f "$agents_file" ]; then
+      cat "$agents_file" > "$tmp"
+      if [ -s "$agents_file" ]; then
+        printf '\n' >> "$tmp"
+      fi
+    fi
+    {
+      printf '%s\n' "$begin"
+      cat "$template"
+      printf '%s\n' "$end"
+    } >> "$tmp"
+  fi
+
+  if [ -f "$agents_file" ] && cmp -s "$tmp" "$agents_file"; then
+    rm -f "$tmp"
+    log "Already synced global coding instructions: $agents_file"
+    return
+  fi
+
+  mv "$tmp" "$agents_file"
+  log "Synced global coding instructions: $agents_file"
+}
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --target)
       [ "$#" -ge 2 ] || die "--target requires a directory"
       target="$2"
+      custom_target=1
       shift 2
       ;;
     --target=*)
       target="${1#--target=}"
+      custom_target=1
       shift
       ;;
     --list)
@@ -363,5 +452,11 @@ if [ "$install_all" -eq 0 ]; then
 fi
 
 for_each_selected_skill link_skill
+
+if [ "$custom_target" -eq 0 ]; then
+  install_global_coding_agents
+else
+  log "Skipped global coding instructions (--target specified)"
+fi
 
 log "Done. Target: $target"
