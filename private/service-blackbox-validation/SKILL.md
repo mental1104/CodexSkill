@@ -1,6 +1,6 @@
 ---
 name: service-blackbox-validation
-description: Design, implement, run, or explain black-box acceptance for HTTP/WebSocket services, especially container-based lifecycle checks and repeatable manual validation with curl and websocat. Use for external protocol tests, real artifact verification, and commands that correlate a run with service logs. Not for unit-only tests, ordinary source walkthroughs, or unrelated container health checks; does not itself activate TDD approval stages.
+description: Design, implement, run, or explain service black-box acceptance through public protocols such as HTTP, WebSocket, or ROS 2 Action. Use for container-based acceptance, independent application clients, real artifacts, and network fault evidence; use curl and websocat for HTTP/WebSocket manual validation. Not for unit-only tests, ordinary source walkthroughs, or unrelated container health checks; does not itself activate TDD approval stages.
 ---
 
 # 服务黑盒验收
@@ -21,7 +21,9 @@ description: Design, implement, run, or explain black-box acceptance for HTTP/We
 
 用简短映射组织需求、触发动作和独立验收依据。仅覆盖协议实际要求的场景；用户要验证全部用例时，先列全范围，再说明自动化覆盖与人工步骤的对应关系。尚未实现的能力应列为缺口；当前占位拒绝可以作为阶段回归，不能据此宣称目标生命周期已完成。
 
-黑盒客户端只通过公开 HTTP / WebSocket 契约驱动业务，不链接或调用服务内部实现。独立文件核验、外部配置准备和日志采集属于夹具与证据层，不冒充公开接口行为。云平台替身、真实服务组件和设备实测的范围分别说明。
+黑盒客户端通过约定的公开协议驱动业务，例如 HTTP / WebSocket 或 ROS 2 Action，不链接或调用服务内部实现。沿用对应协议的真实客户端及生成接口，不把 HTTP 工具要求套到其他协议。独立文件核验、外部配置准备和日志采集属于夹具与证据层，不冒充公开接口行为。云平台替身、真实服务组件和设备实测的范围分别说明。
+
+用户要求把容器服务作为整体、按生产形态验证时，先确认服务、上层客户端、共享依赖与数据卷的边界。要求独立应用部署时，客户端运行在服务容器之外的进程或独立容器；`docker exec` 进入服务容器运行应用只能证明容器内调用。网络隔离或降速应验证实际生效的链路，并保留本端公开接口和必要依赖的可达性。具体拓扑、探测与非侵入观察方式见 [容器与网络边界案例](references/container-network-boundaries.md)。
 
 ## 按可观察行为组织场景
 
@@ -46,7 +48,7 @@ description: Design, implement, run, or explain black-box acceptance for HTTP/We
 
 成功必须同时满足协议结果与业务产物；进度证据应有真实字节或状态推进。取消、失败和预期拒绝使用各自验收条件，不因有 ERROR 日志就自动判失败，也不把它们标成成功下载。
 
-每轮保存原始请求、状态码与响应体、WebSocket 帧、独立产物核验和相关容器日志。临时服务回收前归档其日志；查看归档时保留原始证据，避免用已消失容器的空输出覆盖。并发观察与操作使用各自的输出文件。
+每轮保存原始请求及对应协议的响应、反馈与终态（如 HTTP 状态码与正文、WebSocket 帧、Action Feedback / Result），以及独立产物核验和相关容器日志。临时服务回收前归档其日志；查看归档时保留原始证据，避免用已消失容器的空输出覆盖。并发观察与操作使用各自的输出文件。
 
 ## 交付方式
 

@@ -44,7 +44,7 @@ description: Mandatory personal C++ coding conventions. Use automatically whenev
 5. **不要擅自扩大兼容面、public API 或业务校验。** 未经用户、协议、既有公共 API / ABI 或明确迁移计划要求，不新增同义 overload、隐式兼容入口、alias、fallback、额外输入形态，也不因为“更严格”而自行缩小合法输入范围。
 6. **优先复用仓库和 `mental1104/common` 中已有的稳定通用能力。** 先确认当前仓库真实依赖关系和已有实现，再决定直接复用、参考后局部适配或忽略；不得制造隐藏构建依赖。
 7. **新 C++ / CMake 项目的自动化测试默认使用 GoogleTest。** 如果仓库已有测试框架，继续沿用现有框架；如果用户明确指定其他框架，遵循用户要求。只有在从零创建且没有既有测试约束时，才默认选择 GoogleTest。生成测试代码时必须同时把测试框架接入 CMake 构建和 CTest 注册，不能只留下无法由项目构建系统执行的测试源码。
-8. **TDD 模式下 Integration Test 必须选择性编译。** 当 `tdd-workflow` 激活时，本 Skill 只负责 C++ / CMake 落地，不改变阶段顺序。Integration Test 优先沿用仓库已有 CMake 开关；如果是新项目且没有既有约定，默认使用类似 `BUILD_INTEGRATION_TESTS` 的专用 option，并默认关闭。只有显式启用时才添加 integration test target；不要把 Integration Test 无条件塞进普通 build。Unit Test 不受这个 integration-only 开关控制，除非仓库已有不同约定。
+8. **TDD 模式下 Integration Test 必须选择性编译。** 当 `tdd-workflow` 激活时，本 Skill 只负责 C++ / CMake 落地，不改变阶段顺序。Integration Test 优先沿用仓库已有 CMake 开关；如果是新项目且没有既有约定，默认使用类似 `BUILD_INTEGRATION_TESTS` 的专用 option，并默认关闭。只有显式启用时才添加 integration test target；不要把 Integration Test 无条件塞进普通 build。Unit Test 不受这个 integration-only 开关控制，除非用户明确要求互斥构建模式或仓库已有不同约定。
 9. **生成完成后必须回看本 Skill。** 编译、测试、formatter、clang-tidy 和静态分析全部通过仍不等于完成。交付前必须按本 Skill 的 mandatory gates 和末尾 checklist 重新审查生成代码，并主动修正明显冲突。
 
 如果当前任务与这些 gate 发生真实冲突，必须以“用户明确需求 / 仓库强制约束 / 公共 API、ABI 或协议兼容”为依据，而不是以“实现方便”作为绕过理由。
@@ -732,7 +732,9 @@ Runtime
 
 组织多个测试目标时，同一构建配置下优先通过已有库 target 或共享对象复用业务源码与测试辅助代码；不要求不同标准、编译选项或 ABI 的配置复用对象。性能测试提供显式执行入口，默认与普通单元测试分离，沿用仓库已有构建和 CTest 约定；不要仅为分离执行就另建一套重复编译业务源码的工程。
 
-供人通读的集成场景正文保留业务动作与期望，环境搭建和协议细节放到职责明确的 fixture / helper。用户指定正向场景集中、异常场景另文件时按该阅读边界组织；共享机制按已有目标复用，不把两份场景再各自实现一套业务。GoogleTest 仍负责用例生命周期和断言，fixture 管理其进程及外部资源。具体组织见 [测试组织与构建配置案例](references/scenario-test-build-cases.md#案例一让正向场景保持可读)。
+供人通读的集成场景正文保留业务动作与期望，环境搭建和协议细节放到职责明确的 fixture / helper。用户指定正向场景集中、异常场景另文件时按该阅读边界组织；共享机制按已有目标复用，不把两份场景再各自实现一套业务。沿用现有测试框架管理用例生命周期和断言，fixture 管理其进程及外部资源。具体组织见 [测试组织与构建配置案例](references/scenario-test-build-cases.md#案例一让正向场景保持可读)。
+
+用户明确要求由 CMake 选择容器集成模式并接管后续构建命令时，在配置阶段固定模式与必要的测试日志选项，后续默认命令直接兑现约定的构建/启动、仅测试与清理职责；普通模式继续保持原行为。只在选中的模式启动容器，镜像内部构建与外部容器编排分开，避免递归部署。生命周期、顶部 Boolean 开关及宿主机依赖边界见 [容器集成模式案例](references/scenario-test-build-cases.md#案例三配置一次后的容器测试生命周期)。
 
 IDE 的宏、include 或生成头文件诊断应先与目标的真实编译参数对照，再修复生效工作区的 CMake provider、编译数据库与生成目标；同一源文件有多套配置时明确选择对应目标。不要只手填一个宏掩盖缺失生成目录，或为消除编辑器误报修改合法业务表达式及真实条件编译。具体诊断顺序与反例见 [编辑器配置案例](references/scenario-test-build-cases.md#案例二编辑器应读取真实目标配置)。
 
@@ -781,7 +783,7 @@ IDE 的宏、include 或生成头文件诊断应先与目标的真实编译参�
 - [ ] 已有项目是否错误地因为本 Skill 默认 GoogleTest 而引入第二套测试框架；
 - [ ] `tdd-workflow` 激活时，是否严格服从其当前 phase gate，没有因为本 Skill 的测试 / 实现规则提前跨阶段；
 - [ ] Integration Test 是否通过仓库已有开关，或无约定时通过默认关闭的专用 CMake option 选择性编译，而不是进入默认 build；
-- [ ] Integration Test 的 CMake option 是否只控制 integration suite，没有顺手把普通 Unit Test 一起隐藏；
+- [ ] Integration Test 的 CMake option 是否只控制 integration suite；只有用户或仓库明确要求互斥模式时，才按约定改变普通 Unit Test 的注册范围；
 - [ ] 已运行项目已有 formatter、clang-tidy、编译、静态分析和相关测试。
 
 任何一项明显违反且没有项目约束或任务需求作为理由时，都应在交付前修正。
