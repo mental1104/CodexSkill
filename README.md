@@ -34,7 +34,7 @@ The following skills are primarily written for ChatGPT chat-triggered workflows 
 | `task-harvest` | turn the current conversation into a small JSON todo list |
 | `calendar-harvest` | turn a short natural-language schedule request into a deterministic five-field calendar-event JSON array |
 | `english-harvest` | extract reusable English expressions from the current conversation |
-| `terminal-output-deconstruct` | explicitly ask “解构” or “解构一下” before a terminal transcript to produce copyable Markdown source in one outer code block, with level-six purpose headings, paired commands and outputs, and brief summaries with output line references; shell blocks use `sh` or `powershell` as appropriate |
+| `terminal-output-deconstruct` | explicitly ask “解构” or “解构一下” before a terminal transcript to produce copyable Markdown source in one outer code block, with level-five group headings over level-six purpose headings, paired commands and outputs, and brief summaries with output line references; shell blocks use `sh` or `powershell` as appropriate |
 | `leetcode-archive` | archive a completed LeetCode solving journey into the Obsidian repository, preserving every user code snapshot through the final AC version |
 | `github-operations` | act as the single gateway for GitHub remote reads/writes, Issue/PR mutations, review publication, and push |
 | `github-issue-harvest` | turn a discussion or repository problem into a focused, testable Chinese GitHub Issue payload |

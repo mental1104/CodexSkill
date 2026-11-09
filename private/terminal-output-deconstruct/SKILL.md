@@ -1,11 +1,11 @@
 ---
 name: terminal-output-deconstruct
-description: Deconstruct terminal transcripts into copyable Markdown source with level-six purpose headings, paired command/output blocks, and brief output summaries with line references. Use when the user provides a terminal command/output interaction transcript and explicitly asks before the material to 解构, 解构一下, 终端输出解构, or an equivalent deconstruction request. A pasted transcript alone, ordinary troubleshooting, or deconstructing non-terminal content does not trigger it.
+description: Deconstruct terminal transcripts into copyable Markdown source with level-five group headings over level-six purpose headings, paired command/output blocks, and brief output summaries with line references. Use when the user provides a terminal command/output interaction transcript and explicitly asks before the material to 解构, 解构一下, 终端输出解构, or an equivalent deconstruction request. A pasted transcript alone, ordinary troubleshooting, or deconstructing non-terminal content does not trigger it.
 ---
 
 # 终端输出解构
 
-将用户提供的大段终端记录，按原执行顺序整理成多个“六级目的标题 → 命令块 → 对应输出 → 带行号依据的简短概要”的 Markdown 小节。
+将用户提供的大段终端记录，按原执行顺序整理成“概括性五级分组标题 → 若干六级目的小节”的 Markdown 层级；每个六级小节保留“命令块 → 对应输出 → 带行号依据的简短概要”。
 
 ## 触发方式
 
@@ -33,7 +33,15 @@ description: Deconstruct terminal transcripts into copyable Markdown source with
 
 ## 标题与代码块标识
 
+### 五级分组与六级操作
+
+- 较长记录中，按共同目的、执行阶段或验证场景，将连续的六级小节归入概括性 `#####` 标题，让读者先浏览分组，再在支持标题折叠的编辑器中按组展开。标题应概括组内操作，例如“环境准备与连通检查”“任务创建与进度跟踪”“结果核验与收尾”。
+- 分组只包裹原顺序中相邻的操作；目的或阶段发生变化时开始新组。保留跨组的原执行顺序，不为合并同类主题而移动命令或输出。
+- 分组数量随内容和长度调整，通常一组包含几个相关六级小节；避免给每条命令机械套一层五级标题，或把整段长记录塞进一个含糊的大组。只有一个操作，或短记录没有自然分组时，可以保留原六级结构。
 - 每个配对小节只用一个 `######` 标题，以简短中文描述命令的目的，例如“准备测试环境并读取连接参数”“检查服务健康状态”“创建下载任务”“订阅任务进度”“查询任务最终状态”。不要用命令全文作标题，也不要把目的写成未经证实的成功结论。
+
+### 代码块标识
+
 - 命令标识取决于实际 Shell；尤其不要仅凭 Windows 操作系统判断为 PowerShell。
 
 | 内容 | 代码块标识 |
@@ -60,14 +68,16 @@ description: Deconstruct terminal transcripts into copyable Markdown source with
 ## 输出形状
 
 - 将整篇解构结果放在一个外层代码块中，外层标识使用 `markdown`，通常用四个反引号；内部命令和输出块仍用三个反引号，并保留 `sh`、`powershell`、`log`、`json` 等对应标识。这样复制外层代码块的内容，即可得到能直接粘贴进 `.md` 文件的完整源码。
-- 六级标题、命令、输出、概要和行号依据全部放在同一个外层代码块内。默认只交付这一块源码；用户明确要求渲染后的展示或其他交付形式时，遵循其当前要求。
+- 五级分组标题、六级目的标题、命令、输出、概要和行号依据全部放在同一个外层代码块内。默认只交付这一块源码；用户明确要求渲染后的展示或其他交付形式时，遵循其当前要求。
 - 先确定内部各块所需的围栏长度，再选择外层围栏。外层至少四个反引号，且必须长于内部所有反引号围栏；原记录含有围栏字符时相应加长，避免提前闭合。
 
 以下模板展示实际交付的外层四反引号和内部三反引号；展示模板本身使用五反引号。实际输出时用原记录的内容替换说明性占位文字，根据上表选择内部围栏标识。
 
 `````markdown
 ````markdown
-###### 命令的具体目的
+##### 环境准备与连通检查
+
+###### 准备运行环境
 
 ```sh
 此处放去掉提示符后的原命令
@@ -81,13 +91,29 @@ description: Deconstruct terminal transcripts into copyable Markdown source with
 
 概要：概括输出支持的信息（输出第 N 行，`关键原文或字段`）。
 
-###### 另一条无可见输出命令的目的
+###### 检查服务健康状态
 
-```powershell
-此处放原 PowerShell 命令
+```sh
+此处放原健康检查命令
 ```
 
 输出：无
+
+##### 任务结果核验
+
+###### 查询任务最终状态
+
+```sh
+此处放原任务查询命令
+```
+
+输出：
+
+```json
+{"state":"SUCCEEDED"}
+```
+
+概要：任务状态为成功（输出第 1 行，`state` 为 `SUCCEEDED`）。
 ````
 `````
 
@@ -97,6 +123,7 @@ description: Deconstruct terminal transcripts into copyable Markdown source with
 
 - 所有实际命令与输出均已覆盖，执行顺序和配对关系保持不变，空提示符没有被当作命令。
 - 多行命令未拆散，原变量、引号、重定向、注释与有效空白未被擅自改写。
+- 较长记录已由概括性五级标题分组，组内六级标题共同服务于对应目的；分组保持原执行顺序，短记录没有被强行加层。
 - 每节有六级目的标题和明确的输出位置；“无输出”与“记录缺失”已区分。
 - 命令语言符合实际 Shell；结构化标识适用于整个输出块；没有通过删减内容制造纯净数据。
 - 每个非空输出块后的概要均有对应行号依据；行号与最终输出一致，结论没有超出记录。
