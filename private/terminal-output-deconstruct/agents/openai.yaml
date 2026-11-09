@@ -1,7 +1,7 @@
 interface:
   display_name: "终端输出解构"
   short_description: "将终端交互按五级主题、六级操作分组，输出可复制 Markdown 源码和行号概要"
-  default_prompt: "使用 $terminal-output-deconstruct 解构一下下面的终端交互记录：按执行顺序，以概括性五级标题对相关六级目的小节分组，每个小节保留命令块和对应输出，短记录按需分组；Linux、macOS、Git Bash 使用 sh，Windows PowerShell 使用 powershell；每个非空输出块后附简短概要，并标注块内行号及关键字段；整篇放在外层四反引号的 markdown 代码块中，保留内部围栏和语言标识，内部围栏更长时相应加长外层。"
+  default_prompt: "使用 $terminal-output-deconstruct 解构以下终端记录：按原顺序以五级主题组织六级操作，配对命令和输出并附行号概要；普通 JSON（含混合日志中的 JSON）使用 4 空格缩进，JSONL 保持原格式；命令中的紧凑 JSON 原样保留，命令块后紧跟格式化 json 展示块，再展示输出；Linux、macOS、Git Bash 使用 sh，Windows PowerShell 使用 powershell；整篇放入外层至少四反引号的 markdown 源码块，内部围栏更长时相应加长外层。"
 
 policy:
   allow_implicit_invocation: true
