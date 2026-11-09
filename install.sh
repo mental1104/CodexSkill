@@ -162,8 +162,9 @@ is_enterprise_safe_skill() {
 
   case "$label" in
     private)
+      # terminal-output-deconstruct 只整理用户提供的文本，不执行记录中的命令。
       case "$name" in
-        archive-code-demand-note|blue-espeon-note-style|book-operation-manual-extract|calendar-harvest|code-comment-writing|cpp-code-style|code-walkthrough-review|default-coding|english-harvest|github-actions-ci-policy|latex-math-writing|note-code-walkthrough|note-cognitive-convergence|note-conclusion-evidence|note-linear-achievement|note-operation-manual|obsidian-frontmatter-metadata|python-code-style|source-walk|task-harvest|tdd-workflow)
+        archive-code-demand-note|blue-espeon-note-style|book-operation-manual-extract|calendar-harvest|code-comment-writing|cpp-code-style|code-walkthrough-review|default-coding|english-harvest|github-actions-ci-policy|latex-math-writing|note-code-walkthrough|note-cognitive-convergence|note-conclusion-evidence|note-linear-achievement|note-operation-manual|obsidian-frontmatter-metadata|python-code-style|source-walk|task-harvest|tdd-workflow|terminal-output-deconstruct)
           return 0
           ;;
       esac

@@ -1,0 +1,7 @@
+interface:
+  display_name: "终端输出解构"
+  short_description: "将终端记录按六级目的标题拆成命令与输出配对，保留原文并识别语言"
+  default_prompt: "使用 $terminal-output-deconstruct 将下面的终端记录按执行顺序整理为六级目的标题、命令块和对应输出；Linux、macOS、Git Bash 使用 sh，Windows PowerShell 使用 powershell，输出按完整内容选择 log 或结构化数据标识。"
+
+policy:
+  allow_implicit_invocation: true
