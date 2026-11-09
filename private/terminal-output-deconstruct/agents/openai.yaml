@@ -1,7 +1,7 @@
 interface:
   display_name: "终端输出解构"
-  short_description: "用户明确说解构时，将终端交互拆成命令与输出配对，并附带行号概要"
-  default_prompt: "使用 $terminal-output-deconstruct 解构一下下面的终端交互记录：按执行顺序整理为六级目的标题、命令块和对应输出；Linux、macOS、Git Bash 使用 sh，Windows PowerShell 使用 powershell；每个非空输出块后附简短概要，并标注块内行号及关键字段。"
+  short_description: "将终端交互解构成可整体复制的 Markdown 源码，配对命令与输出并附概要"
+  default_prompt: "使用 $terminal-output-deconstruct 解构一下下面的终端交互记录：按执行顺序整理为六级目的标题、命令块和对应输出；Linux、macOS、Git Bash 使用 sh，Windows PowerShell 使用 powershell；每个非空输出块后附简短概要，并标注块内行号及关键字段；整篇放在外层四反引号的 markdown 代码块中，保留内部围栏和语言标识，内部围栏更长时相应加长外层。"
 
 policy:
   allow_implicit_invocation: true
