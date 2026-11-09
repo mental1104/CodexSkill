@@ -1,6 +1,6 @@
 ---
 name: github-operations
-description: Single gateway for GitHub-specific access and mutations. Use whenever any workflow needs to read remote GitHub repository state, pull requests, issues, review threads, or checks, or needs to create/update issues, pull requests, comments, branches, commits, refs, or push local changes. Generic skills must delegate GitHub-specific operations here instead of invoking GitHub tools or git push directly.
+description: Single gateway for GitHub-specific access and mutations, also used for concise commit-message suggestions. Use whenever any workflow needs to read remote GitHub repository state, pull requests, issues, review threads, or checks, or needs to create/update issues, pull requests, comments, branches, commits, refs, or push local changes. Generic skills must delegate GitHub-specific operations here instead of invoking GitHub tools or git push directly.
 ---
 
 # GitHub Operations Gateway
@@ -95,6 +95,8 @@ When a specialist needs remote state, this gateway retrieves it and returns the 
 ## Branch, Commit, And Push
 
 All workflows that would publish local changes through Git must cross this boundary.
+
+When the user asks for a commit-message suggestion, default to one accurate subject line in the repository's style. Describe the actual change without claiming production wiring, runtime acceptance, or other work that the diff and evidence do not support. Add a body only when requested or required by the repository's commit format. Suggesting wording does not authorize creating a commit or pushing it.
 
 Before `git push`:
 
