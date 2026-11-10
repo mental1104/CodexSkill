@@ -122,6 +122,14 @@ Do not paste huge files. Quote focused snippets only.
 
 Default to repository-relative local paths and line numbers. If a stable remote permalink or other GitHub-only evidence is required, request it through `github-operations`; this skill must not invoke GitHub tools directly.
 
+### Capability And Contract Tracing
+
+When assessing whether an existing feature meets a requirement, bind each claim to its actor, protocol boundary, and inspected revision. Separate the user's adopted target contract, the current implementation, and any historical business flow. An inaccessible historical specification establishes an evidence gap; a migration summary does not establish the old request URL or payload. If the user limits ownership to one layer, keep findings in that layer and identify adjacent inputs and outputs as handoffs.
+
+Trace the decisive execution path before calling a capability reusable: input mapping → internal state → request construction → actual backend or SDK use → failure/recovery and cleanup → outward result. A declared interface, parsed field, refreshed state object, or existing test name proves only that local fact. Check that the active consumer actually receives and uses the value, especially when a client captures credentials or configuration at construction.
+
+For example, an upload refresh method plus a session-field assignment does not establish resumable upload. Inspect whether subsequent requests use the new credentials, whether failure aborts the original multipart task, and whether an outer retry initializes a new task. Report the verified behavior and remaining runtime checks. If the question is only where a field is declared, locating that declaration is sufficient; do not expand it into a recovery audit.
+
 ## Report Shape
 
 Write the report using this structure:

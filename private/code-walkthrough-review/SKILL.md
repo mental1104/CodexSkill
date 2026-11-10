@@ -521,6 +521,10 @@ When a fragment was auto-located, optionally prefix:
 
 When the user is unfamiliar with the technology, explain business meaning before syntax or library detail. Do not turn one syntax question into a general language lesson.
 
+For a field or protocol question, show only the links needed to explain its meaning: who produces it, its actual wire path, who consumes it, and what behavior it changes. Distinguish the complete response path from a decoder's already-unwrapped input. If behavior varies by mode, compare those modes instead of assigning one universal meaning to the field name.
+
+For example, a field at `data.object_key` may appear as `object_key` inside a decoder because the HTTP layer already extracted `data`; show that one unwrap step when asked where the value is returned. When checking a rename, classify remaining old-name matches by behavior: an active encoder or accepted input may need migration, while a guard rejecting legacy input deliberately retains the old spelling. Replacing that guard's string with the new name would reject valid requests. Explain the distinction without turning a read-only question into an edit.
+
 # Read-Only and Write Boundaries
 
 This skill is GitHub-agnostic at execution time. It must not invoke GitHub tools, GitHub CLI publication commands, or `git push` directly. Remote GitHub evidence and mutations go through `github-operations`.

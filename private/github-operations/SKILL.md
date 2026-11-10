@@ -98,6 +98,14 @@ All workflows that would publish local changes through Git must cross this bound
 
 When the user asks for a commit-message suggestion, default to one accurate subject line in the repository's style. Describe the actual change without claiming production wiring, runtime acceptance, or other work that the diff and evidence do not support. Add a body only when requested or required by the repository's commit format. Suggesting wording does not authorize creating a commit or pushing it.
 
+### Local Integration And Interruptions
+
+For authorized changes spanning branches or repositories, record the base, integration direction, target branches, and the user's active checkout before starting. Prefer separate worktrees when repeated branch switching or conflict resolution would disrupt that checkout; a single straightforward merge does not require extra worktrees. Preserve unrelated edits and verify each target retains its own behavior rather than applying one branch's whole file over another.
+
+When the user redirects work during a merge, stop dependent work at the next safe boundary and state the unfinished repository, branch, merge source, conflict/staging state, and remaining step before handing back the workspace. A necessary interruption may leave an in-progress merge; make that state visible and retain the original authorized objective for later continuation. Do not abort, reset, commit unrelated work, or treat the interruption as permission to publish.
+
+For example, when a shared field migration is being merged into two feature branches and a dependency-repository conflict needs attention first, identify which feature branch is already complete and which still has an uncommitted merge. Resume the remaining integration after the dependency issue is handled unless the user cancels it. In a refactored target, apply the field change at its current execution point and preserve that target's orchestration. If the user only asks to inspect a pre-existing conflict, explain it without completing a merge unless requested.
+
 Before `git push`:
 
 1. inspect the current repository remote and branch;
