@@ -164,8 +164,9 @@ is_enterprise_safe_skill() {
     private)
       # terminal-output-deconstruct 只整理用户提供的文本，不执行记录中的命令。
       # service-blackbox-validation 仅在已授权的测试范围内验收，不增加部署或远端写入授权。
+      # robot-debugging 仅连接用户提供的公司内网目标，定位默认只读，变更遵循当次授权。
       case "$name" in
-        archive-code-demand-note|blue-espeon-note-style|book-operation-manual-extract|calendar-harvest|code-comment-writing|cpp-code-style|code-walkthrough-review|default-coding|english-harvest|github-actions-ci-policy|latex-math-writing|note-code-walkthrough|note-cognitive-convergence|note-conclusion-evidence|note-linear-achievement|note-operation-manual|obsidian-frontmatter-metadata|python-code-style|service-blackbox-validation|source-walk|task-harvest|tdd-workflow|terminal-output-deconstruct)
+        archive-code-demand-note|blue-espeon-note-style|book-operation-manual-extract|calendar-harvest|code-comment-writing|cpp-code-style|code-walkthrough-review|default-coding|english-harvest|github-actions-ci-policy|latex-math-writing|note-code-walkthrough|note-cognitive-convergence|note-conclusion-evidence|note-linear-achievement|note-operation-manual|obsidian-frontmatter-metadata|python-code-style|robot-debugging|service-blackbox-validation|source-walk|task-harvest|tdd-workflow|terminal-output-deconstruct)
           return 0
           ;;
       esac

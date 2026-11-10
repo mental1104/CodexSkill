@@ -57,6 +57,7 @@ The following skills are primarily written for ChatGPT chat-triggered workflows 
 | `note-work-delivery` | advance unchecked work from one Obsidian note through GitHub issues and PRs when frontmatter `source` names a GitHub repository, or directly in ChatGPT when it does not |
 | `tdd-workflow` | run explicit TDD requests through reviewed Integration Scenarios, Integration Tests, production implementation, and Unit Tests with hard user-approval gates |
 | `service-blackbox-validation` | verify HTTP/WebSocket service lifecycles through public protocols, real artifacts and correlated logs, with repeatable curl/websocat commands for manual acceptance |
+| `robot-debugging` | locate company robot testing/debugging problems over SSH at a user-provided intranet IP, with host role clues under `/opt/xr/config` |
 
 `note-work-delivery` is invoked directly by requests such as “推进这篇笔记里的待办”. It keeps execution orchestration separate from the archive `ROUTER`; once work is accepted, final source-note refresh is handed back through `ROUTER` and the selected transform-mode note skill.
 
@@ -137,7 +138,7 @@ It excludes:
 - `note-work-delivery`
 - `personal-vault-retrieval`
 
-The remaining currently reviewed private skills are allowed, including `tdd-workflow`, `python-code-style`, `cpp-code-style`, `code-comment-writing`, `source-walk`, `code-walkthrough-review`, note/harvest helpers, and other coding policy skills.
+The remaining currently reviewed private skills are allowed, including `tdd-workflow`, `python-code-style`, `cpp-code-style`, `code-comment-writing`, `source-walk`, `code-walkthrough-review`, `robot-debugging`, note/harvest helpers, and other coding policy skills.
 
 The currently reviewed public `kepano/obsidian-skills` skills are also allowlisted:
 
