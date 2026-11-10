@@ -1,4 +1,0 @@
-interface:
-  display_name: "机器人调试问题定位"
-  short_description: "通过用户提供的内网 IP 以固定账号 SSH 上机，定位公司机器人测试与调试问题"
-  default_prompt: "使用 $robot-debugging，根据我提供的内网 IP 和问题现象，SSH 上机定位机器人问题。"
