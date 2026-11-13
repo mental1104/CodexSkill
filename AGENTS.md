@@ -70,6 +70,8 @@
 | C++ 类型、所有权、生命周期、接口和设计约束 | `private/cpp-code-style/` |
 | 显式 TDD、集成场景/测试先行、测试与实现的阶段审批 | `private/tdd-workflow/` |
 | 代码走读、解释节奏、逐项审阅、可维护性判断 | `private/code-walkthrough-review/` |
+| 既有技术文档回填、修改标记、按给定模板及篇幅改写 | `private/technical-document-editing/` |
+| 构建日志诊断、失败与提交的关联、跨仓库修复位置 | `private/build-failure-diagnosis/` |
 | 为后续分析还原源码现场、输出源码证据快照 | `private/source-walk/` |
 | PR 审阅语义；Issue/PR 的内容组织 | 分别由 `private/github-pr-dialogue-review/`、`private/github-issue-harvest/`、`private/github-pr-harvest/` 负责 |
 | GitHub 远端读写、授权、提交与推送操作 | `private/github-operations/`；CI 策略由 `private/github-actions-ci-policy/` 负责 |

@@ -57,6 +57,8 @@ The following skills are primarily written for ChatGPT chat-triggered workflows 
 | `note-work-delivery` | advance unchecked work from one Obsidian note through GitHub issues and PRs when frontmatter `source` names a GitHub repository, or directly in ChatGPT when it does not |
 | `tdd-workflow` | run explicit TDD requests through reviewed Integration Scenarios, Integration Tests, production implementation, and Unit Tests with hard user-approval gates |
 | `service-blackbox-validation` | verify HTTP/WebSocket service lifecycles through public protocols, real artifacts and correlated logs, with repeatable curl/websocat commands for manual acceptance |
+| `technical-document-editing` | fill specified gaps or adapt a supplied technical document while matching its structure and length, retaining unknown placeholders, and applying requested change markers |
+| `build-failure-diagnosis` | diagnose local or CI build failures, distinguish check triggers from proven causes, and identify the repository, file, and next repair action |
 
 `note-work-delivery` is invoked directly by requests such as “推进这篇笔记里的待办”. It keeps execution orchestration separate from the archive `ROUTER`; once work is accepted, final source-note refresh is handed back through `ROUTER` and the selected transform-mode note skill.
 

@@ -1,0 +1,7 @@
+interface:
+  display_name: "构建失败定位"
+  short_description: "从构建日志定位阻断项，核对提交因果关系并给出仓库与修复位置"
+  default_prompt: "Use $build-failure-diagnosis to locate this build failure, explain its evidenced relationship to the current change, and identify the repository, file, and next action without guessing dependency sources."
+
+policy:
+  allow_implicit_invocation: true

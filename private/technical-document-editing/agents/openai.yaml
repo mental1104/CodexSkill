@@ -1,0 +1,7 @@
+interface:
+  display_name: "技术文档回填"
+  short_description: "按指定版本回填技术数据或仿写模块文档，保留模板篇幅与修改边界"
+  default_prompt: "Use $technical-document-editing to fill the specified gaps or adapt the supplied technical document, matching its structure and length, preserving unknown placeholders, and using the requested change markers."
+
+policy:
+  allow_implicit_invocation: true
