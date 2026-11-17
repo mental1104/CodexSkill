@@ -34,7 +34,7 @@ Verify that natural-language requests to archive new knowledge into Obsidian sto
 ### Required observations
 
 - The assistant selects the operational note shape based on the future use.
-- It presents a detailed mind map and matching H2-H6 heading tree before writing.
+- It presents a concise mind map and matching heading tree beginning at H2 before writing; headings are added only when execution needs them.
 - It waits for explicit confirmation and uses the approved hierarchy as the final note structure.
 
 ## Case 3: Conclusion-evidence exception
@@ -47,6 +47,24 @@ Verify that natural-language requests to archive new knowledge into Obsidian sto
 
 - The assistant selects `note-conclusion-evidence`.
 - It preserves the existing conclusion-first workflow and does not add the new outline-approval gate.
+
+## Case 4: User requests only key operational steps
+
+### Natural-language prompt
+
+简化一下，这个操作文档太复杂了。我只想要关键步骤：构建测试镜像、更新部署配置、生成安装包，再验证产物。
+
+### Required observations
+
+- The request stays with `note-operation-manual` and uses its compact-first scope.
+- The revised review has only the headings needed for a short procedure; the actions can remain numbered steps under one heading.
+- Essential checks such as a package version matching its release tag stay beside the relevant action.
+- The response does not reproduce the earlier background chapters, failure catalog, version history, or exhaustive acceptance checklist.
+- The existing outline approval gate remains in effect; a request to simplify does not itself approve an unseen revised outline.
+
+### Adjacent scenario
+
+If the user explicitly requests a detailed disaster-recovery runbook with backup validation, destructive actions, and several independent recovery branches, the full shape remains available. Compact-first does not mean omitting information needed to execute or recover safely.
 
 ## Pass condition
 

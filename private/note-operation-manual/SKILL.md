@@ -1,6 +1,6 @@
 ---
 name: note-operation-manual
-description: "Create or transform Obsidian operation manuals around one minimum complete operational loop: a clear trigger, applicable starting state, verified happy path, decisive checkpoints, symptom-indexed recovery branches, final acceptance state, and rollback or cleanup. Use for repeatable setup, configuration, maintenance, recovery, CLI, software, infrastructure, and practical ChatGPT-derived procedures where the future reader wants to complete the task rather than replay the exploration history."
+description: "Create or transform concise Obsidian operation manuals centered on the key steps needed to complete one task. Use for repeatable setup, configuration, maintenance, recovery, CLI, software, infrastructure, and practical ChatGPT-derived procedures. Expand checkpoints, troubleshooting, and rollback only when execution requires them or the user requests detail."
 ---
 
 # Note Operation Manual
@@ -35,9 +35,23 @@ identify the current situation
 
 The reader should not need to replay the original chat, debugging session, or experiment chronology.
 
+## Compact-First Scope
+
+Default to a short ordered procedure that the reader can follow directly. Several tools, repositories, or phases do not by themselves justify a full runbook.
+
+- Give each step the action, necessary file/setting/command or exact UI operation, and only the check that determines whether the reader can continue.
+- Put short prerequisites, essential version relationships, and the completion condition next to the steps that use them. Keep warnings about concrete consequences; express them briefly.
+- Prefer numbered steps under one main heading, with a short notes section only when it adds necessary information. A separate heading for every action or knowledge point is unnecessary.
+- Add background, diagrams, version histories, failure catalogs, detailed acceptance lists, and rollback sections only when requested or needed to make this operation executable. A long source conversation is not a reason to preserve a long document.
+- When the user says “简化”, “只要关键步骤”, or that the result is too complicated, reduce both the outline and the document to the successful path and indispensable cautions. Shortening paragraphs while retaining the same large heading tree does not satisfy the request.
+
+For example, a routine test release can be four numbered steps: publish the application image → update deployment references → build the package → verify the artifact. Keep an essential version-equality rule beside the relevant step rather than creating separate chapters for every version, historical failure, and test. Expand the structure when the user requests a detailed recovery runbook or a material failure branch cannot be handled briefly.
+
 ## Pre-Write Outline Gate
 
 When this skill creates a new knowledge-base note from new material, or materially redesigns an existing note's headings while incorporating new material, follow `ROUTER/SKILL.md`'s **Mandatory Pre-Write Outline Approval Gate**. Do not write or commit the archive, or present a completed note as already drafted, before the user explicitly confirms the proposed mind map and exact heading tree. After confirmation, preserve the approved hierarchy in the final note and adapt this skill's default template to it. The Router owns the gate's full procedure and note-type exception. Read-only retrieval, metadata-only changes, and narrow edits that preserve the heading hierarchy do not trigger this gate.
+
+Keep the review outline as compact as the intended note. Numbered actions can live under one heading; the outline gate does not require promoting them into subsections.
 
 ## Modes
 
@@ -172,6 +186,8 @@ Use a checkpoint when:
 Do not add `Expected output` or `State after` after every quiet command.
 
 ## Troubleshooting Is Symptom-Indexed
+
+Use the expanded branch format below only when troubleshooting needs its own section. For a concise manual, an inline symptom-and-recovery note is enough when it lets the reader resume the procedure.
 
 Headings should normally use what the reader can observe:
 
@@ -403,29 +419,29 @@ Before finishing:
 
 ## Compact Shape
 
-Use for small operational questions and short repeatable tasks:
+Use by default, including procedures that span several tools or repositories:
 
 ````markdown
-## 适用场景
+<one sentence about the trigger and starting state, only when needed>
 
-<when to use this>
+## 关键步骤
 
-## 操作
+1. <action and necessary values or UI operation>
+2. <next action and its decisive check, if any>
+3. <completion action and minimum acceptance>
 
-```bash
-<copyable command or short sequence>
-```
+<put copyable commands beside the step that uses them when commands are needed>
 
-## 验证或注意事项
+## 必要注意事项
 
-<only decisive verification or important caveat>
+<only essential caveats or evidence boundaries; omit this section when unnecessary>
 ````
 
-Do not inflate a small manual with empty sections.
+The sample step count is illustrative. Use as many actions as the task actually requires, and do not add sections just to fill the template.
 
 ## Full Shape
 
-Use when the procedure has several phases or meaningful recovery branches:
+Use only when the user requests a detailed runbook, or essential prerequisites and substantial recovery branches cannot be expressed clearly in the compact shape. Several phases alone are not sufficient:
 
 ````markdown
 ## 快速使用
@@ -553,22 +569,4 @@ Before finishing, use `obsidian-frontmatter-metadata` and follow the target vaul
 
 # Output Policy
 
-After creating or editing the note, respond with:
-
-```markdown
-## 完成情况
-
-- 类型：操作手册型
-- 模式：transform-mode / materialize-mode
-- 文件：`<path>`
-- 操作闭环：`<trigger> → <goal state>`
-- 成功主线：
-  - ...
-- 故障分支：
-  - 内联：...
-  - 复用或新建：...
-- 拆分判断：未拆分 / 已拆分 + 理由
-- 验证状态：已验证 / 引用验证 / 未完全验证
-- 不确定点：
-  - ...
-```
+After creating or editing the note, give its clickable file link and a brief statement of what was saved. Mention a material verification limit when needed. Keep note type, mode, splitting decisions, and other internal workflow details out of the delivery message unless requested.
