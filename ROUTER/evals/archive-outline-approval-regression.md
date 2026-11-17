@@ -54,10 +54,13 @@ Verify that natural-language requests to archive new knowledge into Obsidian sto
 
 简化一下，这个操作文档太复杂了。我只想要关键步骤：构建测试镜像、更新部署配置、生成安装包，再验证产物。
 
+Follow-up correction: 这个又太简单了，还是要适当加入小级标题。
+
 ### Required observations
 
 - The request stays with `note-operation-manual` and uses its compact-first scope.
-- The revised review has only the headings needed for a short procedure; the actions can remain numbered steps under one heading.
+- The revised review keeps a few phase subheadings that help the reader locate image publication, deployment updates, package creation, and verification. Actions and checks remain brief beneath each heading.
+- Simplification removes secondary chapters and excessive nesting while preserving useful navigation; it does not flatten every multi-phase procedure into one list.
 - Essential checks such as a package version matching its release tag stay beside the relevant action.
 - The response does not reproduce the earlier background chapters, failure catalog, version history, or exhaustive acceptance checklist.
 - The existing outline approval gate remains in effect; a request to simplify does not itself approve an unseen revised outline.
@@ -65,6 +68,8 @@ Verify that natural-language requests to archive new knowledge into Obsidian sto
 ### Adjacent scenario
 
 If the user explicitly requests a detailed disaster-recovery runbook with backup validation, destructive actions, and several independent recovery branches, the full shape remains available. Compact-first does not mean omitting information needed to execute or recover safely.
+
+A short single-phase procedure can still use one numbered list; phase subheadings are not mandatory when they add no useful navigation.
 
 ## Pass condition
 

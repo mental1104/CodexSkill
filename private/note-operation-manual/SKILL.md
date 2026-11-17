@@ -41,17 +41,17 @@ Default to a short ordered procedure that the reader can follow directly. Severa
 
 - Give each step the action, necessary file/setting/command or exact UI operation, and only the check that determines whether the reader can continue.
 - Put short prerequisites, essential version relationships, and the completion condition next to the steps that use them. Keep warnings about concrete consequences; express them briefly.
-- Prefer numbered steps under one main heading, with a short notes section only when it adds necessary information. A separate heading for every action or knowledge point is unnecessary.
+- Use a few concise phase subheadings when the procedure changes stage, repository, or execution location; group the concrete actions beneath them. A short single-phase task may use one numbered list. Keep useful navigation without giving every action or knowledge point its own heading.
 - Add background, diagrams, version histories, failure catalogs, detailed acceptance lists, and rollback sections only when requested or needed to make this operation executable. A long source conversation is not a reason to preserve a long document.
-- When the user says “简化”, “只要关键步骤”, or that the result is too complicated, reduce both the outline and the document to the successful path and indispensable cautions. Shortening paragraphs while retaining the same large heading tree does not satisfy the request.
+- When the user says “简化”, “只要关键步骤”, or that the result is too complicated, remove secondary content and excessive heading depth while preserving the phase subheadings needed to follow the successful path. Shortening paragraphs under the same large heading tree or flattening a multi-phase procedure into an unstructured list does not satisfy the request.
 
-For example, a routine test release can be four numbered steps: publish the application image → update deployment references → build the package → verify the artifact. Keep an essential version-equality rule beside the relevant step rather than creating separate chapters for every version, historical failure, and test. Expand the structure when the user requests a detailed recovery runbook or a material failure branch cannot be handled briefly.
+For example, a routine test release can use four short subsections: publish the application image → update deployment references → build the package → verify the artifact. Each subsection contains only the necessary actions and checks. Keep an essential version-equality rule beside the relevant step rather than creating separate chapters for every version, historical failure, and test. Expand the structure when the user requests a detailed recovery runbook or a material failure branch cannot be handled briefly.
 
 ## Pre-Write Outline Gate
 
 When this skill creates a new knowledge-base note from new material, or materially redesigns an existing note's headings while incorporating new material, follow `ROUTER/SKILL.md`'s **Mandatory Pre-Write Outline Approval Gate**. Do not write or commit the archive, or present a completed note as already drafted, before the user explicitly confirms the proposed mind map and exact heading tree. After confirmation, preserve the approved hierarchy in the final note and adapt this skill's default template to it. The Router owns the gate's full procedure and note-type exception. Read-only retrieval, metadata-only changes, and narrow edits that preserve the heading hierarchy do not trigger this gate.
 
-Keep the review outline as compact as the intended note. Numbered actions can live under one heading; the outline gate does not require promoting them into subsections.
+Keep the review outline as compact as the intended note, including its useful phase subheadings. The outline gate does not require promoting each individual action into a subsection.
 
 ## Modes
 
@@ -426,9 +426,17 @@ Use by default, including procedures that span several tools or repositories:
 
 ## 关键步骤
 
-1. <action and necessary values or UI operation>
-2. <next action and its decisive check, if any>
-3. <completion action and minimum acceptance>
+### 1. 准备必要输入与配置
+
+<only the required preparation actions>
+
+### 2. 执行主要操作
+
+<actions, necessary values or UI operations, and decisive checks>
+
+### 3. 验证结果
+
+<completion action and minimum acceptance>
 
 <put copyable commands beside the step that uses them when commands are needed>
 
@@ -437,7 +445,7 @@ Use by default, including procedures that span several tools or repositories:
 <only essential caveats or evidence boundaries; omit this section when unnecessary>
 ````
 
-The sample step count is illustrative. Use as many actions as the task actually requires, and do not add sections just to fill the template.
+The sample phase names and count are illustrative. Name subheadings after the actual operational stages; use as many as the task needs. A single-phase procedure can use a numbered list without these subsections. Do not add sections just to fill the template.
 
 ## Full Shape
 
