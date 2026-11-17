@@ -41,11 +41,11 @@ Default to a short ordered procedure that the reader can follow directly. Severa
 
 - Give each step the action, necessary file/setting/command or exact UI operation, and only the check that determines whether the reader can continue.
 - Put short prerequisites, essential version relationships, and the completion condition next to the steps that use them. Keep warnings about concrete consequences; express them briefly.
-- Use a few concise phase subheadings when the procedure changes stage, repository, or execution location; group the concrete actions beneath them. A short single-phase task may use one numbered list. Keep useful navigation without giving every action or knowledge point its own heading.
+- Use `###` for operational phases when the procedure changes stage, repository, or execution location. Under each `###`, use 1–3 meaningful `####` subheadings to group the required actions, configuration, or checks. Keep their content brief and normally stop at this depth. A short single-phase task may use one numbered list without phase headings; follow a different structure when the user explicitly requests it.
 - Add background, diagrams, version histories, failure catalogs, detailed acceptance lists, and rollback sections only when requested or needed to make this operation executable. A long source conversation is not a reason to preserve a long document.
 - When the user says “简化”, “只要关键步骤”, or that the result is too complicated, remove secondary content and excessive heading depth while preserving the phase subheadings needed to follow the successful path. Shortening paragraphs under the same large heading tree or flattening a multi-phase procedure into an unstructured list does not satisfy the request.
 
-For example, a routine test release can use four short subsections: publish the application image → update deployment references → build the package → verify the artifact. Each subsection contains only the necessary actions and checks. Keep an essential version-equality rule beside the relevant step rather than creating separate chapters for every version, historical failure, and test. Expand the structure when the user requests a detailed recovery runbook or a material failure branch cannot be handled briefly.
+For example, a routine test release can use four short phase subsections: publish the application image → update deployment references → build the package → verify the artifact. The image-publication phase can have two fourth-level headings, “Update build configuration” and “Create a tag and verify publication”; put only the necessary actions and checks under each. Keep an essential version-equality rule beside the relevant step rather than creating separate chapters for every version, historical failure, and test. Expand the structure when the user requests a detailed recovery runbook or a material failure branch cannot be handled briefly.
 
 ## Pre-Write Outline Gate
 
@@ -428,13 +428,27 @@ Use by default, including procedures that span several tools or repositories:
 
 ### 1. 准备必要输入与配置
 
+#### 确认输入与适用环境
+
 <only the required preparation actions>
+
+#### 设置必要参数
+
+<values needed by the next phase>
 
 ### 2. 执行主要操作
 
-<actions, necessary values or UI operations, and decisive checks>
+#### 执行操作
+
+<actions, necessary values or UI operations>
+
+#### 检查阶段结果
+
+<only the checks that determine whether to continue>
 
 ### 3. 验证结果
+
+#### 验收输出
 
 <completion action and minimum acceptance>
 
@@ -445,7 +459,7 @@ Use by default, including procedures that span several tools or repositories:
 <only essential caveats or evidence boundaries; omit this section when unnecessary>
 ````
 
-The sample phase names and count are illustrative. Name subheadings after the actual operational stages; use as many as the task needs. A single-phase procedure can use a numbered list without these subsections. Do not add sections just to fill the template.
+The sample phase names and phase count are illustrative. Name headings after the actual operation and keep 1–3 fourth-level subheadings under each phase. Merge closely related points instead of adding filler headings or deeper nesting. A single-phase procedure can use a numbered list without these subsections.
 
 ## Full Shape
 
