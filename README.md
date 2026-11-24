@@ -9,7 +9,7 @@ Personal Codex skill collection with a split between first-party skills and publ
 - `public/obsidian-skills/`: public upstream skills from `kepano/obsidian-skills`, tracked as a git submodule.
 - `install.sh`: root-level installer. By default it links only the audited enterprise-safe Skill allowlist into `${CODEX_HOME:-$HOME/.codex}/skills`; pass `--all` to install `ROUTER` and every discovered Skill.
 
-Normal `./install.sh` runs also install a managed C++/Python coding-skill rule block in `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`. The block is updated on repeat installs without changing unrelated instructions. Use `--dry-run` to preview; using a custom `--target` skips global `AGENTS.md` changes.
+Normal `./install.sh` runs also install a managed global instruction block in `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`, covering C++/Python coding-skill activation and the assumption that users cannot perform device operations themselves during delegated execution tasks. The block is updated on repeat installs without changing unrelated instructions. Use `--dry-run` to preview; using a custom `--target` skips global `AGENTS.md` changes.
 
 ## Mandatory Coding Skill
 
