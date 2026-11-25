@@ -31,7 +31,7 @@ The following skills are primarily written for ChatGPT chat-triggered workflows 
 | Skill | Use when the user wants to... |
 |---|---|
 | `personal-vault-retrieval` | retrieve personal notes, archived conclusions, previous experiments, project documents, technical routes, tasks, or roadmaps from `mental1104/Obsidian` |
-| `task-harvest` | turn the current conversation into a small JSON todo list |
+| `task-harvest` | analyze current iCloud reminders or collect conversation tasks through the connected reminders MCP, preserving dates, notifications, priority and notes |
 | `calendar-harvest` | turn a short natural-language schedule request into a deterministic five-field calendar-event JSON array |
 | `english-harvest` | extract reusable English expressions from the current conversation |
 | `terminal-output-deconstruct` | explicitly ask “解构” or “解构一下” before a terminal transcript to produce copyable Markdown source in one outer code block, with level-five group headings over level-six purpose headings, paired commands and outputs, and brief summaries with output line references; shell blocks use `sh` or `powershell` as appropriate |
@@ -192,3 +192,18 @@ After creating an empty GitHub repository:
 git remote add origin <repo-url>
 git push -u origin main
 ```
+
+## Task Harvest backend and history
+
+`private/task-harvest/SKILL.md` keeps its original path and skill name. Version
+2.0.0 reads live reminders through the connected MCP for analysis and writes only
+when requested. Its current backend is `remindctl`; native tags and parent/child
+reminders require a separately verified backend and MCP upgrade. Text labels can
+be preserved in notes and are reported as text labels.
+
+The previous confirmation-and-JSON-export skill is preserved byte for byte at
+[`archive/task-harvest/2026-11-25-json-export.md`](archive/task-harvest/2026-11-25-json-export.md).
+That archive is outside the installer's discovered skill directories. Existing
+ChatGPT instructions can keep loading the active skill at its original path;
+the source update does not itself prove a chat has refreshed its cached content
+or selected the connected MCP. Verify those behaviors in the intended chat.
