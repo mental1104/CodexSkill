@@ -347,6 +347,8 @@ Label status: verified against existing repository labels
 
 ## Execution Policy
 
+Apply `document-quality-gate` to the final title and body before draft delivery or authorized publication. Preserve the title prefix, classification, acceptance criteria, labels and evidence; do not add editing reports or publication authorization.
+
 Default draft behavior:
 
 1. infer exactly one primary Issue type;

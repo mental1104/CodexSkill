@@ -410,6 +410,8 @@ Bad:
 
 ## Draft Versus Submission
 
+Apply `document-quality-gate` to the final title and body before draft delivery or authorized publication. Preserve the required body structure, evidence, exact commands, test status and title conventions; the gate adds no publication authorization.
+
 Draft-only requests include:
 
 - 写 PR 描述
